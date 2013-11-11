@@ -15,14 +15,13 @@ factor_norm <- function(mod, testdata, impute=FALSE){
     }
     return(testdata)
   } else if(impute==TRUE){
-    
     for(i in facnames){
       x <- as.character(testdata[,i])
       levels <- c(unlist(mod$xlevels[i]))
       chk <- unique(x) %in% levels
-      if(length(chk[is.na(chk)]) > 0){
+      if(length(chk[!is.na(chk)]) > 0){
         testdata[, i] <- as.character(testdata[, i])
-        id <- which(!(testdata[, i] %in% c(mod$xlevels[i])))
+        id <- which(!(testdata[, i] %in% levels))
         a <- as.data.frame(mod$coefficients)
         a$name <- row.names(a)
         a <- a[grepl(i, row.names(a)), ]
