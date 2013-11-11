@@ -1,0 +1,5 @@
+S3method(ROCtest,glm)
+S3method(ROCtest,train)
+S3method(summary,ROCtest)
+export(ROCtest)
+exportClasses(ROCtest)
