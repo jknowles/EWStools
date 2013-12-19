@@ -1,19 +1,16 @@
-################################################################################
-# ROC Functions
-################################################################################
 setOldClass("roc")
 
 ##' @export
-setClass("ROCtest", representation(thresh = "numeric", 
-                                   auc = "numeric", 
-                                   confusematrix = "data.frame", 
-                                   rarepercent = "numeric",
-                                   falsepositive = "numeric", 
-                                   rocobj = "roc",
-                                   modtype = "character",
-                                   modcall = "character", 
-                                   datatype = "character"),
-                    S3methods=TRUE)
+ROCit <- setClass("ROCit", representation(thresh = "numeric", 
+                                          auc = "numeric", 
+                                          confusematrix = "data.frame", 
+                                          rarepercent = "numeric",
+                                          falsepositive = "numeric", 
+                                          rocobj = "roc",
+                                          modtype = "character",
+                                          modcall = "character", 
+                                          datatype = "character"),
+                  S3methods=TRUE)
 
 ##' Generic function to build ROCtest
 ##'
@@ -38,7 +35,7 @@ setClass("ROCtest", representation(thresh = "numeric",
 ##' @export
 ##' @author Jared E. Knowles
 ROCtest <- function(mod, testdata, ...){
-   UseMethod("ROCtest")
+  UseMethod("ROCtest")
 }
 
 ##' @aliases ROCtest
@@ -61,10 +58,10 @@ ROCtest.glm <- function(mod, testdata, ...){
     cm <- confuse_mat(mod, thresh, prop=FALSE)
     rc <- cm[1,1] / (cm[1,1] + cm[1,2])
     fp <- cm[2,1] / (cm[1,1] + cm[2,1])
-    myROC <- ROCtest(thresh=thresh, auc=a, confusematrix=cm, 
-                     rarepercent=rc, falsepositive=fp, rocobj=mroc,
-                     modtype = class(mod), modcall=paste(mod$formula),
-                     datatype="train")
+    myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
+                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   modtype = class(mod), modcall=paste(mod$formula),
+                   datatype="train")
     return(myROC)
   }
   else if(!missing(testdata)){
@@ -81,10 +78,10 @@ ROCtest.glm <- function(mod, testdata, ...){
     cm <- confuse_mat(mod, thresh, prop=FALSE, testdata=testdata)
     rc <- cm[1,1] / (cm[1,1] + cm[1,2])
     fp <- cm[2,1] / (cm[1,1] + cm[2,1])
-    myROC <- ROCtest(thresh=thresh, auc=a, confusematrix=cm, 
-                     rarepercent=rc, falsepositive=fp, rocobj=mroc,
-                     modtype = class(mod), modcall=paste(mod$formula), 
-                     datatype="test")
+    myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
+                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   modtype = class(mod), modcall=paste(mod$formula), 
+                   datatype="test")
     return(myROC)
     
   }
@@ -111,10 +108,10 @@ ROCtest.train <- function(mod, testdata){
     cm <- confuse_mat.train2(test, t)
     rc <- cm[1,1] / (cm[1,1] + cm[1,2])
     fp <- cm[2,1] / (cm[1,1] + cm[2,1])
-    myROC <- ROCtest(thresh=t, auc=a, confusematrix=cm, 
-                     rarepercent=rc, falsepositive=fp, rocobj=mroc,
-                     modtype = class(mod), 
-                     modcall = paste(mod$call), datatype="train")
+    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   modtype = class(mod), 
+                   modcall = paste(mod$call), datatype="train")
     return(myROC)
   }
   else if(!missing(testdata)){
@@ -134,11 +131,11 @@ ROCtest.train <- function(mod, testdata){
     cm <- confuse_mat.train2(test, t)
     rc <- cm[1,1] / (cm[1,1] + cm[1,2])
     fp <- cm[2,1] / (cm[1,1] + cm[2,1])
-    myROC <- ROCtest(thresh=t, auc=a, confusematrix=cm, 
-                     rarepercent=rc, falsepositive=fp, rocobj=mroc,
-                     modtype = class(mod), 
-                     modcall = paste(mod$call), 
-                     datatype="test")
+    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   modtype = class(mod), 
+                   modcall = paste(mod$call), 
+                   datatype="test")
     return(myROC)
   }
 }
@@ -146,8 +143,8 @@ ROCtest.train <- function(mod, testdata){
 
 ##' @aliases summary
 ##' @title Getting a summary of an ROCtest object
-##' @S3method summary ROCtest
-summary.ROCtest <- function(x){
+##' @S3method summary ROCit
+summary.ROCit <- function(x){
   cat("Model Classification Statistics \n")
   cat("Performance on", x@datatype, "data \n")
   cat("Area under the ROC curve:", x@auc,"\n")
