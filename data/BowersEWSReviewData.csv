@@ -1,0 +1,111 @@
+id,study,year,grade,grade,dropout_indicator,sample_size,dropout_rate,prediction,sensitivity,specificity,false-positives_proportion
+1,Allensworth & Easton ,2007,9,9,"on track indicator, low course credits, and more than one failed course",20803,0.426,0.78,0.751,0.843,0.157
+2,Allensworth & Easton ,2007,9,12,3 or more Fs,20340,0.411,0.806,0.648,0.891,0.109
+3,Austin ISD ,1982,9,9,"Retention, student in grade 8 or lower",3899,0.242,0.487,0.453,0.848,0.152
+4,Balfanz et al,2007,6,6,Attended less than or equal to 80% of the time,12037,0.572,0.83,0.233,0.936,0.064
+5,Balfanz et al,2007,6,6,Failed math,12037,0.572,0.81,0.212,0.934,0.066
+6,Balfanz et al,2007,6,6,Failed english,12037,0.572,0.82,0.168,0.951,0.049
+7,Balfanz et al,2007,6,6,Suspended out of school,12037,0.572,0.8,0.098,0.967,0.033
+8,Balfanz et al,2007,6,6,Unsatisfactory behavior,12037,0.572,0.71,0.505,0.725,0.275
+9,Balfanz et al,2007,6,6,One or more flags,12037,0.572,0.71,0.595,0.675,0.325
+10,Balfanz et al,2007,6,6,Any one flag,12037,0.572,0.636,0.323,0.753,0.247
+11,Balfanz et al,2007,6,6,Any two flags,12037,0.572,0.791,0.153,0.946,0.054
+12,Balfanz et al,2007,6,6,Any three flags,12037,0.572,0.863,0.078,0.983,0.017
+13,Balfanz et al,2007,6,6,Any four flags,12037,0.572,0.923,0.044,0.995,0.005
+14,Bowers (b),2010,7,12,"Retention, student ever retained",193,0.244,0.909,0.426,0.986,0.014
+15,Bowers (b),2010,7,12,Low non-cumulative GPA,193,0.244,0.514,0.809,0.753,0.247
+16,Bowers (a),2010,K,6,Hierarchical cluster analysis of non-cumuluative course grades,145,0.186,0.258,0.63,0.585,0.415
+17,Bowers (a),2010,K,8,Hierarchical cluster analysis of non-cumuluative course grades,154,0.214,0.356,0.939,0.537,0.463
+18,Bowers (a),2010,K,12,Hierarchical cluster analysis of non-cumuluative course grades,186,0.237,0.379,0.886,0.549,0.451
+19,Bowers & Sprott (a),2012,9,12,Growth mixture modeling using non-cumulative GPA,5400,0.09,0.336,0.918,0.821,0.18
+20,Croninger and Lee,2001,10,12,"3-5 social factors (ses, esl, non-white, single parent, mother dropped out)",10979,0.114,0.106,0.405,0.561,0.439
+21,Croninger and Lee,2001,10,12,"academic risk (gpa <3, retained, will not go to college, high discipline)",10979,0.114,0.237,0.708,0.707,0.293
+22,Curtis et al. ,1983,9,12,D grade average,3907,0.241,0.81,0.199,0.985,0.015
+23,Curtis et al. ,1983,9,12,"Retention, student in grade 8 or lower",3907,0.241,0.486,0.453,0.848,0.152
+24,Dalton et al.,2009,10,12,"Retention, age 17 or older in grade 10",15360,0.066,0.276,0.284,0.947,0.053
+25,Dalton et al.,2009,10,12,non-native English speaker,15360,0.066,0.103,0.208,0.872,0.128
+26,Dalton et al.,2009,10,12,Lowest SES quartile,15360,0.066,0.124,0.457,0.772,0.228
+27,Dalton et al.,2009,10,12,Parent's education HS or less,15360,0.066,0.112,0.453,0.746,0.254
+28,Dalton et al.,2009,10,12,Changed schools 3 or more times,15360,0.066,0.083,0.245,0.808,0.192
+29,Dalton et al.,2009,10,12,Student does not expect to graduate HS,15360,0.066,0.299,0.045,0.992,0.008
+30,Dalton et al.,2009,10,12,English teacher does not expect student to graduate from HS,15360,0.066,0.342,0.15,0.98,0.02
+31,Dalton et al.,2009,10,12,Teachers rate student as not relating well to others,15360,0.066,0.179,0.116,0.962,0.038
+32,Dalton et al.,2009,10,12,Teachers rate student as disruptive in class,15360,0.066,0.137,0.143,0.936,0.064
+33,Dalton et al.,2009,10,12,Zero hours of homework completed per week,15360,0.066,0.123,0.136,0.931,0.069
+34,Dalton et al.,2009,10,12,Lowest standardized test quartile math and reading,15360,0.066,0.133,0.475,0.781,0.219
+35,Dalton et al.,2009,10,12,Less than 10 credits by spring of sophomore year,15360,0.066,0.546,0.29,0.983,0.017
+36,Doss,1986,9,9,"Four flags (low GPA, retained, gender, ethnicity, discipline)",3038,0.214,0.483,0.698,0.797,0.203
+37,Duchesne et al,2008,K,6,Anxiety trajectories,1817,0.308,0.361,0.597,0.531,0.469
+38,Eide and Showalter,2001,10,12,"Retention, student ever repeated a grade",7809,0.165,0.367,0.312,0.894,0.106
+39,Ekstrom ,1986,10,12,Cut classes,24000,0.15,0.276,0.54,0.75,0.25
+40,Ekstrom ,1986,10,12,Disciplinary problems,24000,0.15,0.311,0.41,0.84,0.16
+41,Ekstrom ,1986,10,12,Suspended or put on probation,24000,0.15,0.354,0.31,0.9,0.1
+42,Ekstrom ,1986,10,12,Serious trouble with law,24000,0.15,0.328,0.13,0.953,0.047
+43,Ekstrom ,1986,10,12,Not interested in school,24000,0.15,0.252,0.4,0.79,0.21
+44,Ekstrom ,1986,10,12,Not satisfied with the way education is going,24000,0.15,0.238,0.55,0.69,0.31
+45,Ekstrom ,1986,10,12,Does not like to work hard in school,24000,0.15,0.194,0.6,0.56,0.44
+46,Ekstrom ,1986,10,12,Close friend does not attend class regularly,24000,0.15,0.312,0.18,0.93,0.07
+47,Ekstrom ,1986,10,12,Close friend is not popular,24000,0.15,0.218,0.19,0.88,0.12
+48,Ekstrom ,1986,10,12,Close friend does not get good grades,24000,0.15,0.219,0.27,0.83,0.17
+49,Ekstrom ,1986,10,12,Close friend is not interested in school,24000,0.15,0.218,0.49,0.69,0.31
+50,Ekstrom ,1986,10,12,Close friend does not plan on going to college,24000,0.15,0.231,0.56,0.67,0.33
+51,Ensminger and Slusarcick,1992,1,1,"Low grades in Grade 1, C or less",864,0.508,0.599,0.62,0.572,0.428
+52,Finn et al,2008,8,10,"High misbehavior, four or more different misbehavior flags",16489,0.105,0.336,0.231,0.947,0.053
+53,Frazer,1991,9,12,"Texas At-Risk Category (retained, low math and reading skills, low or failing grades)",16657,0.187,0.272,0.665,0.59,0.41
+54,French and Conrad,2001,8,8,Grade 8 peer rejection and antisocial categories,218,0.133,0.217,0.448,0.751,0.249
+55,French and Conrad,2001,8,8,Grade 10 peer rejection and antisocial categories,610,0.062,0.095,0.421,0.734,0.266
+56,Gleason and Dynaraski,2002,10,12,HS multiple regression using multiple flags,2615,0.146,0.421,0.432,0.898,0.102
+57,Hess and Lauber,1985,9,9,"retention, student age 16 or older in grade 9",29942,0.428,0.621,0.048,0.978,0.022
+58,Hess and Lauber,1985,8,8,Low reading scores,29942,0.428,0.549,0.534,0.673,0.327
+59,HRSD,2006,9,12,Student lives in single parent household,9460,0.162,0.27,0.25,0.869,0.131
+60,HRSD,2006,9,12,Student did not live with either parent in the last year,9460,0.162,0.301,0.13,0.942,0.058
+61,HRSD,2006,9,12,Student reports that parents do not consider HS completion very important,9460,0.162,0.489,0.211,0.957,0.043
+62,HRSD,2006,9,12,High risk group,9460,0.162,0.27,0.667,0.652,0.348
+63,Janosz et al.,2008,8,12,Growth mixture modeling of unstable engagement pathways,13300,0.03,0.266,0.787,0.932,0.068
+64,Kupersmidt and Cole,1990,5,5,Rejection,99,0.182,0.313,0.278,0.864,0.136
+65,Kupersmidt and Cole,1990,5,5,aggression,99,0.182,0.538,0.389,0.926,0.074
+66,Kupersmidt and Cole,1990,5,5,absences,99,0.182,0.368,0.389,0.852,0.148
+67,Kupersmidt and Cole,1990,5,5,failing grades,99,0.182,0.235,0.222,0.84,0.16
+68,Lee and Staff,2007,9,10,working over 20 hours per week,4985,0.058,0.09,0.424,0.736,0.264
+69,Mahoney and Cairns,1997,7,12,middle school extracurricular activity (students not invlved in more than 1 activity),378,0.151,0.171,0.947,0.184,0.816
+70,Mahoney and Cairns,1997,7,12,High school extracurricular activities,337,0.095,0.168,0.969,0.498,0.502
+71,Mahoney and Cairns,1997,7,12,"Middle school at risk category (aggressive, unpopular, low achievement)",378,0.151,0.387,0.632,0.822,0.178
+72,Mahoney and Cairns,1997,7,12,"High school at risk category (aggressive, unpopular, low achievement)",337,0.095,0.229,0.5,0.823,0.177
+73,Mahoney,2000,4,12,No extracurricular activity participation,653,0.156,0.416,0.559,0.855,0.145
+74,Mahoney,2000,4,12,"Clsuter analysis of low academics, popularity, ses and high aggression",653,0.156,0.543,0.49,0.924,0.076
+75,McCaul,1989,10,12,Grades (averaged C&D's and below),2635,0.223,0.411,0.368,0.849,0.151
+76,McCaul,1989,10,12,Test score quartiles (lowest quartile),2635,0.223,0.384,0.492,0.774,0.226
+77,McCaul,1989,10,12,SES quartiles,2635,0.223,0.336,0.475,0.731,0.269
+78,McNeal,1997,10,12,Whether or not students worked,20493,0.082,0.082,0.591,0.409,0.591
+79,McNeal,1997,10,12,"Employed in retail service, manufacturing or other",20493,0.082,0.11,0.415,0.699,0.301
+80,Mensch and Kandel,1988,9,12,Smoking one or more packs per day,11661,0.223,0.337,0.539,0.685,0.305
+81,Mensch and Kandel,1988,9,12,Used marijuana 100 or more times ever,11661,0.223,0.346,0.275,0.85,0.15
+82,Mensch and Kandel,1988,9,12,Ever used cocaine,11661,0.223,0.28,0.23,0.83,0.17
+83,Mensch and Kandel,1988,9,12,Used other illicit drugs 40 or more times (excluding marijuana),11661,0.223,0.356,0.163,0.915,0.085
+84,Mensch and Kandel,1988,9,12,Women who became pregnant before age 19,5763,0.251,0.526,0.62,0.813,0.187
+85,Muthen,2004,7,12,Growth in mathematics test scores using growth mixture modeling,2757,0.147,0.693,0.896,0.932,0.068
+86,Pagani et al,2008,K,12,"Three risk factors (mother less than HS diploma, single parent family, retained)",1605,0.303,0.971,0.068,0.999,0.001
+87,Roderick,1994,4,12,Retained at least once between K-8,707,0.465,0.798,0.626,0.862,0.138
+88,Roderick,1994,4,12,Retained at least twice between K-8,707,0.465,0.938,0.319,0.981,0.019
+89,Sandefur,1992,8,12,"Student's family is neither two parent, step parent or single parent",5246,0.264,0.483,0.05,0.981,0.019
+90,Sandefur,1992,8,12,Change from two parent single parent or step parent to neither between ages 14-17,5246,0.264,0.616,0.209,0.953,0.047
+91,Sandefur,1992,8,12,Student's parents are step or single parent,5246,0.264,0.332,0.279,0.798,0.202
+92,Sandefur,1992,8,12,Not intact two parent family from ages 14-17,5246,0.264,0.398,0.694,0.623,0.377
+93,Silver et al,2008,7,12,Two or more Fs in middle school,48561,0.52,0.6,0.3,0.783,0.217
+94,Silver et al,2008,9,12,Low standardized test scores (9th grade below / far below basic),48561,0.52,0.54,0.727,0.329,0.671
+95,Silver et al,2008,9,12,Over age for typical 9th garder,48561,0.52,0.71,0.232,0.897,0.103
+96,Silver et al,2008,9,12,Does not pass algebra grade 9,48561,0.52,0.65,0.788,0.541,0.459
+97,Silver et al,2008,9,12,Attends more than one high school,48561,0.52,0.68,0.235,0.88,0.12
+98,South et al,2007,7,12,Mobility (student resided at residence one year or less),8516,0.033,0.059,0.047,0.975,0.025
+99,Suh and Suh,2007,7,12,Low GPA,6192,0.153,0.159,0.078,0.925,0.075
+100,Suh and Suh,2007,7,12,Low SES,6192,0.153,0.166,0.113,0.898,0.102
+101,Suh and Suh,2007,7,12,Suspended,6192,0.153,0.181,0.154,0.874,0.126
+102,Suh and Suh,2007,7,12,Any 1 flag only,6192,0.153,0.171,0.346,0.697,0.303
+103,Suh and Suh,2007,7,12,any 2 flags,6192,0.153,0.325,0.381,0.587,0.143
+104,Suh and Suh,2007,7,12,3 flags,6192,0.153,0.477,0.142,0.972,0.028
+105,Troob,1985,9,12,Failed 4 or more credits first term grade 9,10142,0.261,0.852,0.469,0.971,0.029
+106,Troob,1985,9,12,First term grade 9 low or failing GPA,9808,0.258,0.836,0.57,0.961,0.039
+107,Troob,1985,9,12,16 or more absences in first term grade 9,11068,0.257,0.831,0.467,0.967,0.033
+108,Warren and Lee,2003,8,12,Employed in grade 10,14787,0.063,0.068,0.26,0.761,0.239
+109,Warren and Lee,2003,8,12,Employed 1-20 hours per week,14787,0.063,0.041,0.11,0.826,0.174
+110,Warren and Lee,2003,8,12,Employed 21 or more hours per week,14787,0.063,0.126,0.14,0.935,0.065
