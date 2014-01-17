@@ -88,6 +88,7 @@ ROCtest.glm <- function(mod, testdata, ...){
 } 
 
 
+
 ##' @aliases ROCtest
 ##' @title Getting an ROCtest on a train object
 ##' @S3method ROCtest train
