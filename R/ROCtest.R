@@ -1,3 +1,9 @@
+################################################################################
+# Title: ROC methods and objects for rare classification
+################################################################################
+################################################################################
+# ROC Functions
+################################################################################
 setOldClass("roc")
 
 ##' @export
@@ -88,24 +94,60 @@ ROCtest.glm <- function(mod, testdata, ...){
 } 
 
 
+factor_norm <- function(mod, testdata, impute=FALSE){
+  facnames <- names(mod$xlevels)
+  if(impute==FALSE){
+    for(i in facnames){
+      x <- as.character(testdata[,i])
+      levels <- c(unlist(mod$xlevels[i]))
+      chk <- unique(x) %in% levels
+      if(length(chk[isTRUE(chk)]) > 0){
+        testdata[, i] <- as.character(testdata[, i])
+        id <- which(!(testdata[, i] %in% levels))
+        testdata[id, i] <- NA
+        testdata[,i] <- factor(testdata[,i])
+      }
+    }
+    return(testdata)
+  } else if(impute==TRUE){
+    for(i in facnames){
+      x <- as.character(testdata[,i])
+      levels <- c(unlist(mod$xlevels[i]))
+      chk <- unique(x) %in% levels
+      if(length(chk[!is.na(chk)]) > 0){
+        testdata[, i] <- as.character(testdata[, i])
+        id <- which(!(testdata[, i] %in% levels))
+        a <- as.data.frame(mod$coefficients)
+        a$name <- row.names(a)
+        a <- a[grepl(i, row.names(a)), ]
+        a <- a[order(a[1]) ,]
+        newlevel <- a$name[nrow(a) %/% 2]
+        testdata[id, i] <- gsub(i,"",newlevel)
+        testdata[, i] <- as.factor(testdata[, i])
+      }
+    }
+    return(testdata)
+  }
+}
+
 
 ##' @aliases ROCtest
 ##' @title Getting an ROCtest on a train object
 ##' @S3method ROCtest train
-ROCtest.train <- function(mod, testdata){
+ROCtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     if(is.null(mod$terms)==TRUE){
       test <- extractProb(list(mod))
     } else if (is.null(mod$terms)==FALSE){
       test <- predict(mod, type="prob")
-      test <- cbind(test, trainCLASS)
+      test <- cbind(test, mod1$trainingData$.outcome)
       names(test) <- c("Grad", "Non.grad", "obs")
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")
     print("Generating ROC...")
-    mroc <- roc(obs ~ Grad, data=test, precent=TRUE)
+    mroc <- roc(obs ~ Grad, data=test, precent=TRUE, algorithm=3)
     a <- mroc$auc[1]
-    t <- coords.roc(mroc, x="best")[1]
+    t <- coords.roc(mroc, x="best", ...)[1]
     cm <- confuse_mat.train2(test, t)
     rc <- cm[1,1] / (cm[1,1] + cm[1,2])
     fp <- cm[2,1] / (cm[1,1] + cm[2,1])
@@ -116,8 +158,11 @@ ROCtest.train <- function(mod, testdata){
     return(myROC)
   }
   else if(!missing(testdata)){
+    testData <- testdata$testData
+    testCLASS <- testdata$testCLASS
     if(is.null(mod$terms)==TRUE){
       test <- extractProb(list(mod), testX = testData, testY=testCLASS)
+      test <- subset(test, dataType == "Test")
     } else if (is.null(mod$terms)==FALSE){
       test <- predict(mod, newdata=cbind(testCLASS, testData), 
                       type="prob")
@@ -126,9 +171,9 @@ ROCtest.train <- function(mod, testdata){
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")
     print("Generating ROC...")
-    mroc <- roc(obs ~ Grad, data=test, precent=TRUE)
+    mroc <- roc(obs ~ Grad, data=test, precent=TRUE, algorithm = 3)
     a <- mroc$auc[1]
-    t <- coords.roc(mroc, x="best")[1]
+    t <- coords.roc(mroc, x="best", ...)[1]
     cm <- confuse_mat.train2(test, t)
     rc <- cm[1,1] / (cm[1,1] + cm[1,2])
     fp <- cm[2,1] / (cm[1,1] + cm[2,1])
@@ -157,3 +202,4 @@ summary.ROCit <- function(x){
   cat("\n")
   print(x@confusematrix)
 }
+

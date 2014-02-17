@@ -3,12 +3,13 @@
 library(devtools)
 #install_github("jknowles/datasynthR")
 library(datasynthR)
-
-getData <- function(N, luck){
+library(eeptools)
+library(arm)
+getData <- function(N, luck, treatments){
   
   if(!missing(luck)){
     degree <- luck
-  } else if(missing(luck){
+  } else if(missing(luck)){
     degree <- sample(c(-0.5, 0, 0.5), 1)
   }
   
@@ -141,3 +142,6 @@ getData <- function(N, luck){
   
   return(Monte)
 }
+
+
+test <- getData(100)
