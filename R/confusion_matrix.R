@@ -280,7 +280,7 @@ roc_plot.mer <- function(x, s,...){
 confuse_mat.train <- function(mod, thresh, prop = FALSE, newdata = NULL){
   if(!missing(newdata)){
     mypred <- predict(mod, newdata=newdata$preds, type="prob")[1]
-    y <- as.character(newdata$y)
+    y <- as.character(newdata$class)
   } else {
     mypred <- predict(mod, type="prob")
     y <- as.character(mod$trainingData$.outcome)

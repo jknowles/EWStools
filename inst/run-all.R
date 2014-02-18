@@ -1,0 +1,8 @@
+library(testthat)
+source("R/balanceFactors.R")
+source("R/confusion_matrix.R")
+source("R/robustPE.R")
+source("R/ROCtest.R")
+
+
+test_file("inst/tests/test-caretobjects.R")
