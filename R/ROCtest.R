@@ -71,9 +71,14 @@ ROCtest.glm <- function(mod, testdata, ...){
     return(myROC)
   }
   else if(!missing(testdata)){
+    # hack
     dv <- as.character(mod$formula[[2]])
+    testdata2 <- cbind(testdata$preds, testdata$class)
+    names(testdata2) <- c(names(testdata$preds), dv)
+    testdata <- testdata2; rm(testdata2)
+    # end hack
     if(!exists("impute")){impute <- FALSE}
-    testdata <- factor_norm(mod, testdata, impute=impute)
+    testdata <- factor_norm(mod, testdata, ...)
     testdata$fitted <- predict(mod, newdata=testdata, type="response")
     rocS <- testdata[, c(dv, "fitted")]
     names(rocS) <- c("y", "fitted")
@@ -141,11 +146,11 @@ ROCtest.train <- function(mod, testdata, ...){
     } else if (is.null(mod$terms)==FALSE){
       test <- predict(mod, type="prob")
       test <- cbind(test, mod$trainingData$.outcome)
-      names(test) <- c("Grad", "Non.grad", "obs")
+      names(test) <- c("common", "rare", "obs")
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")
     print("Generating ROC...")
-    mroc <- roc(obs ~ Grad, data=test, precent=TRUE, algorithm=3)
+    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm=3)
     a <- mroc$auc[1]
     t <- coords.roc(mroc, x="best", ...)[1]
     cm <- confuse_mat.train2(test, t)
@@ -167,11 +172,11 @@ ROCtest.train <- function(mod, testdata, ...){
       test <- predict(mod, newdata=cbind(testCLASS, testDATA), 
                       type="prob")
       test <- cbind(test, testCLASS)
-      names(test) <- c("Grad", "Non.grad", "obs")
+      names(test) <- c("common", "rare", "obs")
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")
     print("Generating ROC...")
-    mroc <- roc(obs ~ Grad, data=test, precent=TRUE, algorithm = 3)
+    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm = 3)
     a <- mroc$auc[1]
     t <- coords.roc(mroc, x="best", ...)[1]
     cm <- confuse_mat.train2(test, t)

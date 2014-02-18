@@ -1,44 +1,26 @@
-# Set up a classification test
+# Test glms
 
 set.seed(442)
 library(caret)
 train <- twoClassSim(n = 500, intercept = -8, linearVars = 1, 
-                        noiseVars = 10, corrVars = 2, corrValue = 0.6)
+                     noiseVars = 10, corrVars = 2, corrValue = 0.6)
 test <- twoClassSim(n = 1000, intercept = -7, linearVars = 1, 
-                       noiseVars = 10, corrVars = 2, corrValue = 0.6)
-
-ctrl <- trainControl(method = "repeatedcv", 
-                     repeats = 3, classProbs = TRUE, 
-                     summaryFunction = twoClassSummary)
+                    noiseVars = 10, corrVars = 2, corrValue = 0.6)
 
 
-fullModel <- train(Class ~ ., data = train, 
-                   method = "svmRadial", 
-                   preProc = c("center", "scale"), 
-                   tuneLength = 8, 
-                   metric = "ROC", 
-                   trControl = ctrl)
 
-# Tests
-# First correct ROC on the current data
-# ROC on current data with custom threshold preserved
-# ROC on new data
-# ROC on new data with custom threshold
-# Inspect all ROC objects
+fullModel <- glm(Class ~ ., data = train, 
+                   family = binomial)
 
-# fullTest <- roc(test$Class, 
-#                 predict(fullModel, test, type = "prob")[,1], 
-#                 levels = rev(levels(test$Class)))
-# fullTest
 
 context("ROCtest works properly with a train object and train data")
 
-res1 <- ROCtest.train(fullModel)
+res1 <- ROCtest.glm(fullModel)
 
-res2 <- ROCtest.train(fullModel, best.method="closest.topleft", 
+res2 <- ROCtest.glm(fullModel, best.method="closest.topleft", 
                       best.weights=c(1, .66))
 
-res3 <- ROCtest.train(fullModel, best.method="closest.topleft", 
+res3 <- ROCtest.glm(fullModel, best.method="closest.topleft", 
                       best.weights=c(100, .66))
 
 test_that("ROCtest produces correct objects", {
@@ -46,6 +28,7 @@ test_that("ROCtest produces correct objects", {
   expect_that(res2, is_a("ROCit"))
   expect_that(res3, is_a("ROCit"))
 })
+
 
 test_that("ROCtest throws messages", {
   expect_that(ROCtest.train(fullModel), shows_message())
@@ -73,19 +56,19 @@ test_that("ROCit objects pass best threshold parameters through", {
 
 context("ROCtest works correctly with train object and test data")
 
-res1t <- ROCtest.train(fullModel, 
+res1t <- ROCtest.glm(fullModel, 
                        testdata = list(preds = test[, -19], class = test[, 19]))
 
-res2t <- ROCtest.train(fullModel, best.method="closest.topleft", 
-                      best.weights=c(1, .66), 
-                      testdata = list(preds = test[, -19], class = test[, 19]))
+res2t <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+                       best.weights=c(1, .66), 
+                       testdata = list(preds = test[, -19], class = test[, 19]))
 
-res3t <- ROCtest.train(fullModel, best.method="closest.topleft", 
-                      best.weights=c(100, .66), 
-                      testdata = list(preds = test[, -19], class = test[, 19]))
+res3t <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+                       best.weights=c(100, .66), 
+                       testdata = list(preds = test[, -19], class = test[, 19]))
 
 test_that("ROCtest throws messages", {
-  expect_that(ROCtest.train(fullModel, 
+  expect_that(ROCtest.glm(fullModel, 
                             newdata = list(preds = test[, -19], 
                                            y = test[, 19])), shows_message())
   
@@ -119,14 +102,14 @@ test_that("ROCit objects pass best threshold parameters through", {
 })
 
 test_that("ROCtest generic functions correctly", {
-  expect_identical(ROCtest(fullModel), ROCtest.train(fullModel))
-  expect_error(ROCtest.glm(fullModel))
+  expect_identical(ROCtest(fullModel), ROCtest.glm(fullModel))
+  expect_error(ROCtest.train(fullModel))
   expect_identical(ROCtest(fullModel, 
                            testdata = list(preds = test[, -19], 
                                            class = test[, 19])), 
-                   ROCtest.train(fullModel, testdata = list(preds = test[, -19], 
+                   ROCtest.glm(fullModel, testdata = list(preds = test[, -19], 
                                                             class = test[, 19])))
-  expect_error(ROCtest.glm(fullModel, testdata = list(preds = test[, -19], 
+  expect_error(ROCtest.train(fullModel, testdata = list(preds = test[, -19], 
                                                       class = test[, 19])))
 })
 
@@ -138,27 +121,3 @@ test_that("ROCtest summaries function correctly", {
   
 })
 
-
-# Test if confusion matrix function is accurate
-
-# confuse_mat.train(fullModel, thresh=0.99, prop=TRUE)
-# confuse_mat.train(fullModel, thresh=0.99, prop=FALSE)
-# confuse_mat.train(fullModel, thresh=0.01, prop=FALSE)
-# confuse_mat.train(fullModel, thresh=0.01, prop=FALSE)
-# 
-# # Test if confusion matrix produces predictions on new data well
-# 
-# confuse_mat.train(fullModel, thresh = 0.99, prop=FALSE, 
-#                   newdata = list(preds = test[, -19], y = test[, 19]))
-# 
-# confuse_mat.train(fullModel, thresh = 0.5, prop=TRUE, 
-#                   newdata = list(preds = test[, -19], y = test[, 19]))
-# 
-# 
-# # Create a plot function
-# 
-# roc_plot.train(fullModel, s = 20, 
-#                newdata = list(preds = test[, -19], y = test[, 19]))
-# 
-# 
-# roc_plot.train(fullModel, 100, newdata = train)
