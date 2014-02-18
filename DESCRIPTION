@@ -6,14 +6,14 @@ Version: 0.1
 Date: 2013-11-11
 Authors@R: c(person("Jared", "Knowles", "E", role=c("aut", "cre"),
     email="Jared.Knowles@dpi.wi.gov")
-Description: More about what it does (maybe more than one line)
+Description: A number of convenience functions for developing early warning models 
+in education using a predictive modeling framework. Includes methods for ROC testing, 
+model search, and post-prediction model adjustment. 
 License: GPL-3
 Depends:
-    R (>= 2.15.3); pROC
+    R (>= 2.15.3); pROC; caret
 Imports:
-    pROC
 Suggests:
-    caret
 Collate:
     'ROCtest.R'
     'balanceFactors.R'

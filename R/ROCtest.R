@@ -140,7 +140,7 @@ ROCtest.train <- function(mod, testdata, ...){
       test <- extractProb(list(mod))
     } else if (is.null(mod$terms)==FALSE){
       test <- predict(mod, type="prob")
-      test <- cbind(test, mod1$trainingData$.outcome)
+      test <- cbind(test, mod$trainingData$.outcome)
       names(test) <- c("Grad", "Non.grad", "obs")
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")

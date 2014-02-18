@@ -277,18 +277,27 @@ roc_plot.mer <- function(x, s,...){
 # Returns a data.frame
 ################################################################################
 
-confuse_mat.train <- function(x, thresh, prop, preds, y,...){
-  mypred <- predict(x, newdata=preds, type="prob")[1]
-  y <- as.character(y)
+confuse_mat.train <- function(mod, thresh, prop = FALSE, newdata = NULL){
+  if(!missing(newdata)){
+    mypred <- predict(mod, newdata=newdata$preds, type="prob")[1]
+    y <- as.character(newdata$y)
+  } else {
+    mypred <- predict(mod, type="prob")
+    y <- as.character(mod$trainingData$.outcome)
+  }
+  
   statmod <- function(x) {
     z <- table(as.vector(x))
     names(z)[z == max(z)]
   }
+  
   mode <- statmod(y)
   y[y == mode] <- "1"
   y[y != "1"] <- 0
   y <- as.character(y)
   y <- as.numeric(y)
+  # normalize preds
+  mypred <- mypred[, 1]
   tp <- length(y[y > 0 & mypred >= thresh])
   fp <- length(y[y < 1 & mypred >= thresh])
   fn <- length(y[y > 0 & mypred <= thresh])
@@ -347,7 +356,7 @@ roc_plot.train <- function(x, s, ...){
   dat <- data.frame(xax=rep(NA, s), yax=rep(NA, s), 
                     thresha=seq(0.01, 0.99, length.out=s))
   for (i in seq(0.01, 0.99, length.out=s)){
-    mat <- confuse_mat.train(x, thresh=i, prop=FALSE,...)
+    mat <- confuse_mat.train(x, thresh=i, ...)
     recall <- mat[2, 2] / (mat[2, 2] + mat[2, 1])
     falsea <- mat[1, 2] / (mat[1, 2] + mat[1, 1])
     dat$xax[dat$thresha == i] <- falsea
