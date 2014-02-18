@@ -37,13 +37,8 @@ modobj3 <- modAcc(fullModel, datatype = c("train"), modelKeep = FALSE)
 
 test_that("modAcc produces named lists", {
   expect_that(modobj, is_a("list"))
-  expect_that(modobj2, is_a("ROCit"))
-  expect_that(modobj3, is_a("ROCit"))
-})
-
-test_that("modAcc throws messages", {
-  expect_that(modAcc(fullModel, datatype = c("train"), modelKeep = FALSE), 
-              shows_message())
+  expect_that(modobj2, is_a("list"))
+  expect_that(modobj3, is_a("list"))
 })
 
 test_that("modAcc list has correct slots", {
@@ -54,8 +49,8 @@ test_that("modAcc list has correct slots", {
 })
 
 test_that("modAcc reports NULL for slots without objects", {
-  expect_identical(modobj2$summaryTr, "NULL")
-  expect_identical(modobj3$summaryTe, "NULL")
+  expect_that(modobj2$summaryTr, is_null())
+  expect_that(modobj3$summaryTe, is_null())
   
 })
 

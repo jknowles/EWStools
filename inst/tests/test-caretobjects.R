@@ -47,9 +47,9 @@ test_that("ROCtest produces correct objects", {
   expect_that(res3, is_a("ROCit"))
 })
 
-test_that("ROCtest throws messages", {
-  expect_that(ROCtest.train(fullModel), shows_message())
-})
+# test_that("ROCtest throws messages", {
+#   expect_that(ROCtest.train(fullModel), shows_message())
+# })
 
 test_that("ROCit object has correct slots", {
   expect_that(res1@thresh, is_a("numeric"))
@@ -84,12 +84,12 @@ res3t <- ROCtest.train(fullModel, best.method="closest.topleft",
                       best.weights=c(100, .66), 
                       testdata = list(preds = test[, -19], class = test[, 19]))
 
-test_that("ROCtest throws messages", {
-  expect_that(ROCtest.train(fullModel, 
-                            newdata = list(preds = test[, -19], 
-                                           y = test[, 19])), shows_message())
-  
-})
+# test_that("ROCtest throws messages", {
+#   expect_that(ROCtest.train(fullModel, 
+#                             newdata = list(preds = test[, -19], 
+#                                            y = test[, 19])), shows_message())
+#   
+# })
 
 test_that("ROCtest produces correct objects", {
   expect_that(res1t, is_a("ROCit"))

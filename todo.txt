@@ -8,3 +8,7 @@
 - Test utilities 
 - Benchmark analysis
 - Calibration curves
+- Passing tests
+- Write documentation
+- Extend tests to regression framework too
+- Model selection algorithm in model search

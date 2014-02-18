@@ -57,7 +57,7 @@ ROCtest.glm <- function(mod, testdata, ...){
     #     test <- na.omit(test)
     yhat <- mod$fitted.values
     y <- mod$y
-    message("Generating ROC...")
+   # message("Generating ROC...")
     mroc <- roc(y~yhat, percent=TRUE)
     a <- mroc$auc[1]
     thresh <- coords(mroc, x="best", ...)[1]
@@ -82,7 +82,7 @@ ROCtest.glm <- function(mod, testdata, ...){
     testdata$fitted <- predict(mod, newdata=testdata, type="response")
     rocS <- testdata[, c(dv, "fitted")]
     names(rocS) <- c("y", "fitted")
-    message("Generating ROC...")
+    #message("Generating ROC...")
     mroc <- roc(y~fitted, percent=TRUE, data=rocS)
     a <- mroc$auc[1]
     thresh <- coords(mroc, x="best", ...)[1]
@@ -99,7 +99,7 @@ ROCtest.glm <- function(mod, testdata, ...){
 } 
 
 
-factor_norm <- function(mod, testdata, impute=FALSE){
+factor_norm <- function(mod, testdata, impute=FALSE, ...){
   facnames <- names(mod$xlevels)
   if(impute==FALSE){
     for(i in facnames){
@@ -149,7 +149,7 @@ ROCtest.train <- function(mod, testdata, ...){
       names(test) <- c("common", "rare", "obs")
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")
-    print("Generating ROC...")
+    #message("Generating ROC...")
     mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm=3)
     a <- mroc$auc[1]
     t <- coords.roc(mroc, x="best", ...)[1]
@@ -175,7 +175,7 @@ ROCtest.train <- function(mod, testdata, ...){
       names(test) <- c("common", "rare", "obs")
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")
-    print("Generating ROC...")
+    #message("Generating ROC...")
     mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm = 3)
     a <- mroc$auc[1]
     t <- coords.roc(mroc, x="best", ...)[1]

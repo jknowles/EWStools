@@ -30,9 +30,9 @@ test_that("ROCtest produces correct objects", {
 })
 
 
-test_that("ROCtest throws messages", {
-  expect_that(ROCtest.train(fullModel), shows_message())
-})
+# test_that("ROCtest throws messages", {
+#   expect_that(ROCtest.glm(fullModel), shows_message())
+# })
 
 test_that("ROCit object has correct slots", {
   expect_that(res1@thresh, is_a("numeric"))
@@ -48,9 +48,9 @@ test_that("ROCit object has correct slots", {
 })
 
 test_that("ROCit objects pass best threshold parameters through", {
-  expect_more_than(res3@thresh, res2@thresh)
-  expect_more_than(res3@rarepercent, res2@rarepercent)
-  expect_more_than(res3@falsepositive, res2@falsepositive)
+  expect_more_than(res2@thresh, res3@thresh)
+  expect_more_than(res2@rarepercent, res3@rarepercent)
+  expect_more_than(res2@falsepositive, res3@falsepositive)
   expect_equal(res2@auc, res3@auc)
 })
 
@@ -67,12 +67,12 @@ res3t <- ROCtest.glm(fullModel, best.method="closest.topleft",
                        best.weights=c(100, .66), 
                        testdata = list(preds = test[, -19], class = test[, 19]))
 
-test_that("ROCtest throws messages", {
-  expect_that(ROCtest.glm(fullModel, 
-                            newdata = list(preds = test[, -19], 
-                                           y = test[, 19])), shows_message())
-  
-})
+# test_that("ROCtest throws messages", {
+#   expect_that(ROCtest.glm(fullModel, 
+#                             newdata = list(preds = test[, -19], 
+#                                            y = test[, 19])), shows_message())
+#   
+# })
 
 test_that("ROCtest produces correct objects", {
   expect_that(res1t, is_a("ROCit"))
@@ -95,9 +95,10 @@ test_that("ROCit object has correct slots", {
 })
 
 test_that("ROCit objects pass best threshold parameters through", {
-  expect_more_than(res3t@thresh, res2t@thresh)
-  expect_more_than(res3t@rarepercent, res2t@rarepercent)
-  expect_more_than(res3t@falsepositive, res2t@falsepositive)
+  expect_more_than(res2t@thresh, res3t@thresh)
+  expect_more_than(res1t@auc, res1@auc)
+  expect_more_than(res2t@rarepercent, res3t@rarepercent)
+  expect_more_than(res2t@falsepositive, res3t@falsepositive)
   expect_equal(res2t@auc, res3t@auc)
 })
 
