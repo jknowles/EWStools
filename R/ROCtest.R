@@ -208,32 +208,3 @@ summary.ROCit <- function(x){
   print(x@confusematrix)
 }
 
-
-dfExtract <- function(mod){
-  #mod <- list(mod$model, mod$summaryTr, mod$summaryTe)
-  suppressWarnings({
-    newdatB <- data.frame(sens = smooth(mod$summaryTr@rocobj)$sensitivities, 
-                          spec = smooth(mod$summaryTr@rocobj)$specificities, 
-                          grp="train", 
-                          auc = mod$summaryTr@auc,
-                          method = mod$method, 
-                          elapsedTime = mod$time)
-    
-    newdatA <- data.frame(sens = smooth(mod$summaryTe@rocobj)$sensitivities, 
-                          spec = smooth(mod$summaryTe@rocobj)$specificities, 
-                          grp="test",
-                          auc  = mod$summaryTe@auc,
-                          method = mod$method, 
-                          elapsedTime = mod$time)
-    tmp <- rbind(newdatA, newdatB)
-    tmp$sens <- as.numeric(tmp$sens)
-    tmp$spec <- as.numeric(tmp$spec)
-    tmp$auc <- as.numeric(tmp$auc)
-    tmp$method <- as.character(tmp$method)
-    tmp$auc <- as.numeric(tmp$auc)
-    tmp$grp <- as.character(tmp$grp)
-    tmp$elapsedTime <- as.numeric(tmp$elapsedTime)
-    return(tmp)
-  })
-  
-}
