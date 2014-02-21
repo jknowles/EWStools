@@ -12,3 +12,5 @@
 - Write documentation
 - Extend tests to regression framework too
 - Model selection algorithm in model search
+- Expand model search tests to GLMs as well
+- Model ensembles 

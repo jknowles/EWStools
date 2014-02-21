@@ -1,0 +1,17 @@
+<!--
+%\VignetteEngine{knitr}
+%\VignetteIndexEntry{Baseball benchmarks}
+-->
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  error = FALSE,
+  tidy = FALSE
+)
+
+```
+
+# Introduction
+
+# Conveniently Compare Accuracy
