@@ -1,6 +1,6 @@
 <!--
 %\VignetteEngine{knitr}
-%\VignetteIndexEntry{Baseball benchmarks}
+%\VignetteIndexEntry{Simulated Data}
 -->
 
 ```{r, echo = FALSE, message = FALSE}
@@ -10,8 +10,46 @@ knitr::opts_chunk$set(
   tidy = FALSE
 )
 
+
+
 ```
 
 # Introduction
+
+The `EWStools` package is designed to automate many of the model building and 
+checking tests that are common in predictive analytics, specifically for the 
+education domain. To do this, let's work with a simple simulated dataset we can 
+construct using the `twoClassSim` function in the `caret` package:
+
+```{r builddata}
+set.seed(442)
+library(caret)
+train <- twoClassSim(n = 1000, intercept = -8, linearVars = 3, 
+                        noiseVars = 10, corrVars = 4, corrValue = 0.6)
+test <- twoClassSim(n = 1500, intercept = -7, linearVars = 3, 
+                       noiseVars = 10, corrVars = 4, corrValue = 0.6)
+
+```
+
+
+
+
+Now let's build a model:
+
+```{r buildexamplemodel}
+
+
+ctrl <- trainControl(method = "repeatedcv", 
+                     repeats = 3, classProbs = TRUE, 
+                     summaryFunction = twoClassSummary)
+
+fullModel <- train(Class ~ ., data = train, 
+                   method = "svmRadial", 
+                   preProc = c("center", "scale"), 
+                   tuneLength = 8, 
+                   metric = "ROC", 
+                   trControl = ctrl)
+
+```
 
 # Conveniently Compare Accuracy

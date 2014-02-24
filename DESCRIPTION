@@ -11,7 +11,7 @@ in education using a predictive modeling framework. Includes methods for ROC tes
 model search, and post-prediction model adjustment. 
 License: GPL-3
 Depends:
-    R (>= 2.15.3); pROC; caret
+    R (>= 3.0); pROC; caret
 Imports:
 Suggests:
 Collate:
