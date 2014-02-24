@@ -31,24 +31,39 @@ test <- twoClassSim(n = 1500, intercept = -7, linearVars = 3,
 
 ```
 
+Let's see what this produces
 
+```{r inspectdata}
+head(train[, c(1:5, 20:23)])
+table(train$Class)
+```
 
+Our training data has an imbalanced class structure and 22 predictors that are scaled 
+and centered.
+
+A key thing to note is that the `train` and `test` data have the exact same 
+variable names and scales:
+
+```{r compare}
+names(train)
+names(test)
+```
 
 Now let's build a model:
 
 ```{r buildexamplemodel}
-
-
 ctrl <- trainControl(method = "repeatedcv", 
                      repeats = 3, classProbs = TRUE, 
                      summaryFunction = twoClassSummary)
 
 fullModel <- train(Class ~ ., data = train, 
-                   method = "svmRadial", 
+                   method = "knn", 
                    preProc = c("center", "scale"), 
                    tuneLength = 8, 
                    metric = "ROC", 
                    trControl = ctrl)
+
+fullModel
 
 ```
 

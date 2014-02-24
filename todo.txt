@@ -14,3 +14,4 @@
 - Model selection algorithm in model search
 - Expand model search tests to GLMs as well
 - Model ensembles 
+- Build robust post-estimation routines into separate branch and merge back
