@@ -68,3 +68,31 @@ fullModel
 ```
 
 # Conveniently Compare Accuracy
+
+```{r roctest1}
+test1 <- ROCtest(fullModel)
+summary(test1)
+```
+
+This tells us how the model fits the training data in a convenient and easy to 
+interpret fashion. We can also use the same function to evaluate performance 
+on the test data using a named list of new data:
+
+```{r roctesttestdata}
+test2 <- ROCtest(fullModel, testdata = list(preds = test[, -23], 
+                                            class = test[, "Class"]))
+
+summary(test2)
+```
+
+As we can see, the model performs less effectively on the test data. 
+
+# Model Accuracy
+
+```{r modacc}
+
+test2 <- modAcc(fullModel, datatype = "test", testdata = list(preds = test[, 1:22], 
+                                                     class = test[, 23]))
+
+summary(dfExtract(test2))
+```
