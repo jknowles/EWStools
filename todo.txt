@@ -15,3 +15,4 @@
 - Expand model search tests to GLMs as well
 - Model ensembles 
 - Build robust post-estimation routines into separate branch and merge back
+- Fix so glms capture time as well

@@ -18,7 +18,8 @@ knitr::opts_chunk$set(
 
 The `EWStools` package is designed to automate many of the model building and 
 checking tests that are common in predictive analytics, specifically for the 
-education domain. To do this, let's work with a simple simulated dataset we can 
+education domain. We will focus on this suite of tools around the ROC classification 
+procedure. To do this, let's work with a simple simulated dataset we can 
 construct using the `twoClassSim` function in the `caret` package:
 
 ```{r builddata}
@@ -52,8 +53,7 @@ names(test)
 Now let's build a model:
 
 ```{r buildexamplemodel}
-ctrl <- trainControl(method = "repeatedcv", 
-                     repeats = 3, classProbs = TRUE, 
+ctrl <- trainControl(method = "cv", classProbs = TRUE, 
                      summaryFunction = twoClassSummary)
 
 fullModel <- train(Class ~ ., data = train, 
@@ -67,7 +67,10 @@ fullModel
 
 ```
 
-# Conveniently Compare Accuracy
+The standard output from the `caret` object is nice, but we want a more flexible 
+and robust classification testing suite built around the ROC specifically. 
+
+# Conveniently Compare Accuracy Between Train and Test Data
 
 ```{r roctest1}
 test1 <- ROCtest(fullModel)
@@ -75,8 +78,9 @@ summary(test1)
 ```
 
 This tells us how the model fits the training data in a convenient and easy to 
-interpret fashion. We can also use the same function to evaluate performance 
-on the test data using a named list of new data:
+interpret fashion. We get a sense of the area under the curve. We can also use 
+the same function to evaluate performance on the test data using a named list of 
+new data:
 
 ```{r roctesttestdata}
 test2 <- ROCtest(fullModel, testdata = list(preds = test[, -23], 
@@ -85,14 +89,54 @@ test2 <- ROCtest(fullModel, testdata = list(preds = test[, -23],
 summary(test2)
 ```
 
-As we can see, the model performs less effectively on the test data. 
+As we can see, the model performs less effectively on the test data. But, what 
+if we want to compare many models?
 
-# Model Accuracy
+
+# Model Accuracy Profiles
 
 ```{r modacc}
 
-test2 <- modAcc(fullModel, datatype = "test", testdata = list(preds = test[, 1:22], 
+test3 <- modAcc(fullModel, datatype = c("train","test"), testdata = list(preds = test[, 1:22], 
                                                      class = test[, 23]))
 
-summary(dfExtract(test2))
+summary(dfExtract(test3))
+```
+
+
+# Compare GLMs
+
+Sometimes we want to compare more theoretically driven generalized linear models to 
+the machine learning algorithms fit with the `caret` package. While the `caret` package 
+can certainly produce models using a glm, we can also compare `glm` objects directly. 
+
+
+```{r glmexamp}
+glmModel <- glm(Class ~ . , data=train, family = binomial)
+testGLM <- ROCtest(glmModel)
+```
+
+```{r glmsummary}
+summary(testGLM)
+```
+
+
+And, we can use this to automate our process of inspecting the performance on 
+test data as well:
+
+```{r glmtestdata}
+testGLM2 <- ROCtest(glmModel, testdata = list(preds = test[, -23], 
+                                            class = test[, "Class"]))
+
+
+```
+
+And, we can extract results and generate dataframes of the performance profiles of 
+`glm` objects just as we can with `train` objects:
+
+```{r glmmodacc}
+testGLM3 <- modAcc(glmModel, datatype =c("train", "test"), testdata = list(preds = test[, 1:22], 
+                                                     class = test[, 23]))
+
+summary(dfExtract(testGLM3))
 ```
