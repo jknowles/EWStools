@@ -5,7 +5,8 @@
 
 # For use in lists when ensembling models, stores the fit characteristics, but 
 # not necessarily the model
-modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE){
+modAcc <- function(fit, datatype = c("train", "test"), testdata = NULL, modelKeep = FALSE){
+  datatype <- match.arg(datatype, several.ok=TRUE)
   if (length(datatype) > 1){
     ROCtr <- ROCtest(fit)
     ROCte <-  ROCtest(fit, testdata=list(preds = testdata$preds, 

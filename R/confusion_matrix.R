@@ -1,4 +1,13 @@
 
+confuse_mat.train <- function(model, testdata=NULL){
+  if(missing(testdata)){
+    cm1 <- confusionMatrix(model$trainingData$.outcome, predict(model))
+    return(cm1)
+  } else{
+    cm1 <- confusionMatrix(testdata$class, predict(model, newdata = testdata$preds))
+    return(cm1)
+  }
+}
 
 confuse_mat <- function(mod, thresh, prop = FALSE, testdata){
   if(!missing(testdata)){
@@ -278,6 +287,17 @@ roc_plot.mer <- function(x, s,...){
 # 
 # Returns a data.frame
 ################################################################################
+
+confuse_mat.train <- function(model, testdata=NULL){
+  if(missing(testdata)){
+    cm1 <- confusionMatrix(model$trainingData$.outcome, predict(model))
+    return(cm1)
+  } else{
+    cm1 <- confusionMatrix(testdata$class, predict(model, newdata = testdata$preds))
+    return(cm1)
+  }
+}
+
 
 confuse_mat.train <- function(mod, thresh, prop = FALSE, newdata = NULL){
   if(!missing(newdata)){
