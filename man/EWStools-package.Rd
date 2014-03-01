@@ -3,38 +3,39 @@
 \alias{EWStools}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+Tools for Building and Testing Early Warning Systems for Education
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Tools to help education data analysts build early warning metrics for educational 
+outcomes. 
 }
 \details{
 \tabular{ll}{
 Package: \tab EWStools\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2013-11-11\cr
-License: \tab What license is it under?\cr
+Version: \tab 0.1\cr
+Date: \tab 2014-04-01\cr
+License: \tab GPL-2 \cr
 }
-~~ An overview of how to use the package, including the most important functions ~~
+
+This package is built around improving the ability to develop ROC metrics for 
+classification
+
 }
 \author{
-Who wrote it
+Created by Jared E. Knowles
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+Maintainer: Jared E. Knowles <jknowles@gmail.com>
+
 }
 \references{
-~~ Literature or other references for background information ~~
+Bowers, A.J., Sprott, R., Taff, S.A. (2013) Do we Know Who Will Drop Out? A Review of 
+the Predictors of Dropping out of High School: Precision, Sensitivity and Specificity. The 
+High School Journal, 96(2), 77-100. \url{doi:10.1353/hsj.2013.0000} (Preprint available.)
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R ~~
-~~ documentation directory ~~
 \keyword{ package }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
+ \code{\link[caret-package]{caret}} 
 }
 \examples{
 ~~ simple examples of the most important functions ~~

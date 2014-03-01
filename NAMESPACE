@@ -1,5 +1,6 @@
 S3method(ROCtest,glm)
 S3method(ROCtest,train)
-S3method(summary,ROCtest)
+S3method(summary,ROCit)
 export(ROCtest)
-exportClasses(ROCtest)
+exportClasses(ROCit)
+export(bowersEWS)
