@@ -1,18 +1,18 @@
 \name{ROCtest}
 \alias{ROCtest}
-\title{Generic function to build ROCtest}
+\title{Generic function to build ROCit}
 \usage{
   ROCtest(mod, testdata, ...)
 }
 \arguments{
   \item{mod}{A model object to generate an
-  \code{\linkS4class{ROCtest}} for}
+  \code{\linkS4class{ROCit}} for}
 
   \item{testdata}{A dataframe to generate the ROC for the
   mode on}
 }
 \value{
-  A \code{\linkS4cass{ROCtest}} object
+  A \code{\linkS4cass{ROCit}} object
 }
 \description{
   Allow the user to specify a formula for generating a
