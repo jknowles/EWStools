@@ -74,6 +74,19 @@ rarecase_f <- function(x,...){
 # s = the number of points along the curve to calculate
 # Requires ggplot2
 ################################################################################
+ROCplot.train <- function(mod, datatype = NULL, ...){
+  if(!missing(datatype)){
+    dt <- datatype
+  } else{
+    dt <- "train"
+  }
+  test1 <- modAcc(fullModel, datatype=dt, ...)
+  plotdf <- dfExtract(test1)
+  qplot(1-spec, sens, data=plotdf, geom='line', group=1, se=FALSE) + 
+    geom_abline(slope=1, intercept=0) + theme_bw()+ 
+    coord_cartesian(xlim = c(0, 1), ylim = c(0, 1))
+  
+}
 
 # KILL THIS FOR LOOP
 

@@ -31,34 +31,11 @@ confuse_mat.train2(fullModel, thresh = 0.5, newdata = test)
 
 # ROCplot of fullModel
 
-ROCplot.train <- function(mod, ...){
-  if(missing(datatype)){
-    dt <- datatype
-  } else{
-    dt <- "train"
-  }
-  test1 <- modAcc(fullModel, datatype=dt)
-  plotdf <- dfExtract(test1)
-  qplot(1-spec, sens, data=plotdf, geom='smooth', group=1, se=FALSE) + 
-    geom_abline(slope=1, intercept=0) + theme_bw()
-  
-}
-
-test1 <- modAcc(fullModel, datatype="train")
-test1 <- modAcc(fullModel)
-plotdf <- dfExtract(test1)
-
-qplot(1-spec, sens, data=plotdf, geom='smooth', group=1, se=FALSE) + 
-  geom_abline(slope=1, intercept=0) + theme_bw()
-
 
 
 ROCplot.train(fullModel)
+ROCplot.train(fullModel, datatype = "test", 
+              testdata =list(class = test[, 19], preds=test[, -19]))
 
-
-qplot(1-spec, sens, data=plotdf, geom='smooth', group=1, se=FALSE) + 
-  geom_abline(slope=1, intercept=0) + theme_bw()
-
-names(plotdf)
 
 
