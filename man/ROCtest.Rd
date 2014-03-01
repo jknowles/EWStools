@@ -12,7 +12,7 @@
   mode on}
 }
 \value{
-  A \code{\linkS4cass{ROCit}} object
+  A \code{\linkS4class{ROCit}} object
 }
 \description{
   Allow the user to specify a formula for generating a

@@ -2,10 +2,10 @@
 \alias{dfExtract}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+Create dataframes from ROCtests
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Extract dataframes from the results of \code\link{modAcc}} 
 }
 \usage{
 dfExtract(mod)

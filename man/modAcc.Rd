@@ -1,8 +1,8 @@
 \name{modAcc}
 \alias{modAcc}
-%- Also NEED an '\alias' for EACH other topic documented here.
+Create ROCtests for train and test data on the same model
 \title{
-%%  ~~function to do ... ~~
+Create ROCtests for train and test data on the same model.
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

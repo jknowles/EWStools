@@ -1,21 +1,17 @@
 Package: EWStools
 Type: Package
-Title: Tools for automating the testing and evaluation of education early
-    warning system models
+Title: Tools for automating the testing and evaluation of education early warning system models
 Version: 0.1
 Date: 2013-11-11
-Authors@R: c(person("Jared", "Knowles", "E", role=c("aut", "cre"),
+Author: c(person("Jared", "Knowles", "E", role=c("aut", "cre"),
     email="Jared.Knowles@dpi.wi.gov")
-Description: A number of convenience functions for developing early warning models 
-in education using a predictive modeling framework. Includes methods for ROC testing, 
-model search, and post-prediction model adjustment. 
+Maintainer: Jared E. Knowles <jknowles@gmail.com>
+Description: A number of convenience functions for developing early warning models in education using a predictive modeling framework. Includes methods for ROC testing, model search, and post-prediction model adjustment. 
 License: GPL-2
-Depends:
-    R (>= 3.0); pROC; caret
+Depends: R (>= 3.0), pROC, caret
 Imports:
 Suggests:
 Collate:
     'ROCtest.R'
-    'balanceFactors.R'
     'confusion_matrix.R'
-    'robustPE.R'
+    'modsearch.R'
