@@ -1,61 +1,35 @@
-\name{ROCit-class}
-\Rdversion{1.1}
 \docType{class}
+\name{ROCit-class}
 \alias{ROCit-class}
-\alias{ROCit}
-
-\title{Class \code{"ROCit"}}
+\alias{summary.ROCit}
+\title{Class "ROCit" of ROC classification statistics}
 \description{
-ROCit objects allow the user to store the results of various ROC 
-tests for classification models. These objects conveniently summarize 
-various classification metrics for models from \code{\link{train}} or 
-\code{\link{glm}} objects.
+A \code{\link{glm}} or \code{\link{train}} object with a
+binary classification can be easily summarized using the
+receiver-operating characteristic statistic. This class
+provides an efficient mechanism to store and compare these
+results across models.
+}
+\details{
+The object has the following items \itemize{ \item{thresh -
+the threshold for the ROC} \item{auc - the area under the
+curve} \item{confusematrix - the confusion matrix for the
+ROC fit} \item{rarepercent - percent of rare class correct}
+\item{falsepositive - percent of false rare class
+identifications} \item{modtype - the class of the model
+object} \item{modcall - the call to the model fitting
+function} \item{datatype - whether the ROC was computed on
+the "train" or the "test" data} }
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{ROCtest(model)}.
-%%  ~~ describe objects here ~~ 
-}
-\section{Slots}{
-  \describe{
-    \item{\code{thresh}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{auc}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{confusematrix}:}{Object of class \code{"data.frame"} ~~ }
-    \item{\code{rarepercent}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{falsepositive}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{rocobj}:}{Object of class \code{"roc"} ~~ }
-    \item{\code{modtype}:}{Object of class \code{"character"} ~~ }
-    \item{\code{modcall}:}{Object of class \code{"character"} ~~ }
-    \item{\code{datatype}:}{Object of class \code{"character"} ~~ }
-    \item{\code{.S3Class}:}{Object of class \code{"character"} ~~ }
-  }
-}
-\section{Methods}{
-The following methods exist:
-  \describe{
-  \item{\code{summary}:}{Computes and returns a list of summary statistics of the fitted model, the amount of output can be controlled via the \code{print} method, see also \code{\link{summary}}.}
-
-}
-}
-
-\references{
-%%  ~~put references to the literature/web site here~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%%  ~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-%%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
+  Objects are created by calls to \code{\link{ROCtest}}.
 }
 \examples{
 showClass("ROCit")
+methods(class="ROCit")
+}
+\seealso{
+\code{\link{ROCtest}}
 }
 \keyword{classes}
-\usage{
-ROCit(...)
-}
-\arguments{
-  \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
-}
-}
+
