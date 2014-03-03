@@ -78,9 +78,6 @@ ROCtest <- function(mod, testdata, ...){
 }
 
 ##' @title Getting an ROCtest on a generalized linear model
-##' @param mod A model object to generate an \code{\linkS4class{ROCit}} for
-##' @param testdata A dataframe to generate the ROC for the mode on
-##' @param ... optional additional parameters. 
 ##' @rdname ROCtest
 ##' @method ROCtest glm
 ##' @S3method ROCtest glm
@@ -135,49 +132,7 @@ ROCtest.glm <- function(mod, testdata, ...){
   }
 } 
 
-##' @title Internal function to aide with factors in predicting new data for ROCtest
-##' @keywords internal
-factor_norm <- function(mod, testdata, impute=FALSE, ...){
-  facnames <- names(mod$xlevels)
-  if(impute==FALSE){
-    for(i in facnames){
-      x <- as.character(testdata[,i])
-      levels <- c(unlist(mod$xlevels[i]))
-      chk <- unique(x) %in% levels
-      if(length(chk[isTRUE(chk)]) > 0){
-        testdata[, i] <- as.character(testdata[, i])
-        id <- which(!(testdata[, i] %in% levels))
-        testdata[id, i] <- NA
-        testdata[,i] <- factor(testdata[,i])
-      }
-    }
-    return(testdata)
-  } else if(impute==TRUE){
-    for(i in facnames){
-      x <- as.character(testdata[,i])
-      levels <- c(unlist(mod$xlevels[i]))
-      chk <- unique(x) %in% levels
-      if(length(chk[!is.na(chk)]) > 0){
-        testdata[, i] <- as.character(testdata[, i])
-        id <- which(!(testdata[, i] %in% levels))
-        a <- as.data.frame(mod$coefficients)
-        a$name <- row.names(a)
-        a <- a[grepl(i, row.names(a)), ]
-        a <- a[order(a[1]) ,]
-        newlevel <- a$name[nrow(a) %/% 2]
-        testdata[id, i] <- gsub(i,"",newlevel)
-        testdata[, i] <- as.factor(testdata[, i])
-      }
-    }
-    return(testdata)
-  }
-}
-
-
 ##' @title Getting an ROCtest on a train object
-##' @param mod A model object to generate an \code{\linkS4class{ROCit}} for
-##' @param testdata A dataframe to generate the ROC for the mode on
-##' @param ... optional additional parameters. 
 ##' @rdname ROCtest
 ##' @method ROCtest train
 ##' @S3method ROCtest train
@@ -232,6 +187,47 @@ ROCtest.train <- function(mod, testdata, ...){
     return(myROC)
   }
 }
+
+
+##' @title Internal function to aide with factors in predicting new data for ROCtest
+##' @keywords internal
+factor_norm <- function(mod, testdata, impute=FALSE, ...){
+  facnames <- names(mod$xlevels)
+  if(impute==FALSE){
+    for(i in facnames){
+      x <- as.character(testdata[,i])
+      levels <- c(unlist(mod$xlevels[i]))
+      chk <- unique(x) %in% levels
+      if(length(chk[isTRUE(chk)]) > 0){
+        testdata[, i] <- as.character(testdata[, i])
+        id <- which(!(testdata[, i] %in% levels))
+        testdata[id, i] <- NA
+        testdata[,i] <- factor(testdata[,i])
+      }
+    }
+    return(testdata)
+  } else if(impute==TRUE){
+    for(i in facnames){
+      x <- as.character(testdata[,i])
+      levels <- c(unlist(mod$xlevels[i]))
+      chk <- unique(x) %in% levels
+      if(length(chk[!is.na(chk)]) > 0){
+        testdata[, i] <- as.character(testdata[, i])
+        id <- which(!(testdata[, i] %in% levels))
+        a <- as.data.frame(mod$coefficients)
+        a$name <- row.names(a)
+        a <- a[grepl(i, row.names(a)), ]
+        a <- a[order(a[1]) ,]
+        newlevel <- a$name[nrow(a) %/% 2]
+        testdata[id, i] <- gsub(i,"",newlevel)
+        testdata[, i] <- as.factor(testdata[, i])
+      }
+    }
+    return(testdata)
+  }
+}
+
+
 
 
 ##' @title Print a summary of an \code{\linkS4class{ROCit}} object
