@@ -1,10 +1,32 @@
 \name{ROCtest}
 \alias{ROCtest}
+\alias{ROCtest.glm}
+\alias{ROCtest.train}
 \title{Generic function to build ROCtest}
 \usage{
 ROCtest(mod, testdata, ...)
+
+\method{ROCtest}{glm}(mod, testdata, ...)
+
+\method{ROCtest}{train}(mod, testdata, ...)
 }
 \arguments{
+  \item{mod}{A model object to generate an
+  \code{\linkS4class{ROCit}} for}
+
+  \item{testdata}{A dataframe to generate the ROC for the
+  mode on}
+
+  \item{...}{optional additional parameters.}
+
+  \item{mod}{A model object to generate an
+  \code{\linkS4class{ROCit}} for}
+
+  \item{testdata}{A dataframe to generate the ROC for the
+  mode on}
+
+  \item{...}{optional additional parameters.}
+
   \item{mod}{A model object to generate an
   \code{\linkS4class{ROCit}} for}
 
@@ -19,6 +41,10 @@ A \code{\linkS4class{ROCit}} object
 \description{
 Allow the user to specify a formula for generating a
 binomial dependent variable
+
+Getting an ROCtest on a generalized linear model
+
+Getting an ROCtest on a train object
 }
 \details{
 The object has the following items \itemize{ \item{thresh -

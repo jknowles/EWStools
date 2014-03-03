@@ -15,12 +15,12 @@ fullModel <- glm(Class ~ ., data = train,
 
 context("ROCtest works properly with a train object and train data")
 
-res1 <- ROCtest.glm(fullModel)
+res1 <- ROCtest(fullModel)
 
-res2 <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+res2 <- ROCtest(fullModel, best.method="closest.topleft", 
                       best.weights=c(1, .66))
 
-res3 <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+res3 <- ROCtest(fullModel, best.method="closest.topleft", 
                       best.weights=c(100, .66))
 
 test_that("ROCtest produces correct objects", {
@@ -56,14 +56,14 @@ test_that("ROCit objects pass best threshold parameters through", {
 
 context("ROCtest works correctly with train object and test data")
 
-res1t <- ROCtest.glm(fullModel, 
+res1t <- ROCtest(fullModel, 
                        testdata = list(preds = test[, -19], class = test[, 19]))
 
-res2t <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+res2t <- ROCtest(fullModel, best.method="closest.topleft", 
                        best.weights=c(1, .66), 
                        testdata = list(preds = test[, -19], class = test[, 19]))
 
-res3t <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+res3t <- ROCtest(fullModel, best.method="closest.topleft", 
                        best.weights=c(100, .66), 
                        testdata = list(preds = test[, -19], class = test[, 19]))
 

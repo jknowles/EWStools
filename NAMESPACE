@@ -1,3 +1,5 @@
+S3method(ROCtest,glm)
+S3method(ROCtest,train)
 export(ROCtest)
 export(dfExtract)
 export(modAcc)

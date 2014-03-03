@@ -70,7 +70,8 @@ ROCit <- setClass("ROCit", representation(thresh = "numeric",
 ##' \item{datatype - whether the ROC was computed on the "train" or the "test" data}
 ##' }
 ##' @note Yadda yadda yadda
-##' @export
+##' @export ROCtest
+##' @rdname ROCtest
 ##' @author Jared E. Knowles
 ROCtest <- function(mod, testdata, ...){
   UseMethod("ROCtest")
@@ -80,7 +81,9 @@ ROCtest <- function(mod, testdata, ...){
 ##' @param mod A model object to generate an \code{\linkS4class{ROCit}} for
 ##' @param testdata A dataframe to generate the ROC for the mode on
 ##' @param ... optional additional parameters. 
+##' @rdname ROCtest
 ##' @method ROCtest glm
+##' @S3method ROCtest glm
 ROCtest.glm <- function(mod, testdata, ...){
   # can pass optional values such as: 
   #best.method="closest.topleft", 
@@ -175,7 +178,9 @@ factor_norm <- function(mod, testdata, impute=FALSE, ...){
 ##' @param mod A model object to generate an \code{\linkS4class{ROCit}} for
 ##' @param testdata A dataframe to generate the ROC for the mode on
 ##' @param ... optional additional parameters. 
+##' @rdname ROCtest
 ##' @method ROCtest train
+##' @S3method ROCtest train
 ROCtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     if(is.null(mod$terms)==TRUE){
