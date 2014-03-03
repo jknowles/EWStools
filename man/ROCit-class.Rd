@@ -1,7 +1,6 @@
 \docType{class}
 \name{ROCit-class}
 \alias{ROCit-class}
-\alias{summary.ROCit}
 \title{Class "ROCit" of ROC classification statistics}
 \description{
 A \code{\link{glm}} or \code{\link{train}} object with a

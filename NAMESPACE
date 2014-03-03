@@ -1,7 +1,4 @@
-S3method(print,ROCit)
-S3method(summary,ROCit)
 export(ROCtest)
 export(dfExtract)
 export(modAcc)
 exportClasses(ROCit)
-exportMethods(show)

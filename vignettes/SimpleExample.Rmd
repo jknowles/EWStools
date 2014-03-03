@@ -74,7 +74,7 @@ and robust classification testing suite built around the ROC specifically.
 
 ```{r roctest1}
 test1 <- ROCtest(fullModel)
-summary(test1)
+print(test1)
 ```
 
 This tells us how the model fits the training data in a convenient and easy to 
@@ -86,7 +86,7 @@ new data:
 test2 <- ROCtest(fullModel, testdata = list(preds = test[, -23], 
                                             class = test[, "Class"]))
 
-summary(test2)
+print(test2)
 ```
 
 As we can see, the model performs less effectively on the test data. But, what 
@@ -117,7 +117,7 @@ testGLM <- ROCtest(glmModel)
 ```
 
 ```{r glmsummary}
-summary(testGLM)
+print(testGLM)
 ```
 
 

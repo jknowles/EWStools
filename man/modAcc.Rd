@@ -7,6 +7,17 @@ modAcc(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE)
 \arguments{
   \item{fit}{a \code{\linkS4class{ROCit}} object generated
   by \code{\link{ROCtest}}}
+
+  \item{datatype}{a named character representing the
+  accuracy object be built on either "train" or "test"
+  data, user can include both}
+
+  \item{testdata}{a list of length two containing a named
+  slot for the matrix of predictors (pred) and the vector
+  of classes (class)}
+
+  \item{modelKeep}{a logical indicating whether the
+  original model object should be stored}
 }
 \value{
 a list with the following: \itemize{ \item{method - the

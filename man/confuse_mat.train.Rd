@@ -9,4 +9,5 @@ confuse_mat.train(x, thresh)
 An internal function for creating the confusion matrix for
 \code{\linkS4class{ROCit}} objects from train
 }
+\keyword{internal}
 

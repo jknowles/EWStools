@@ -9,4 +9,5 @@ confuse_mat(mod, thresh, prop = FALSE, testdata)
 An internal function for creating the confusion matrix for
 \code{\linkS4class{ROCit}} objects
 }
+\keyword{internal}
 

@@ -1,6 +1,7 @@
 
 ##' @title An internal function for creating the confusion matrix for \code{\linkS4class{ROCit}} 
 ##' objects
+##' @keywords internal
 confuse_mat <- function(mod, thresh, prop = FALSE, testdata){
   if(!missing(testdata)){
     dv <- as.character(mod$formula[[2]])
@@ -41,6 +42,7 @@ confuse_mat <- function(mod, thresh, prop = FALSE, testdata){
 
 ##' @title An internal function for creating the confusion matrix for \code{\linkS4class{ROCit}} 
 ##' objects from train
+##' @keywords internal
 confuse_mat.train <- function(x, thresh){
   x$yn <- as.character(x$obs)
   statmod <- function(x) {
