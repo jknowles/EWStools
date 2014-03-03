@@ -1,5 +1,6 @@
 library(testthat)
-test_check("EWS_tools")
+library(EWStools)
+test_check("EWStools")
 
 
 # source("R/balanceFactors.R")

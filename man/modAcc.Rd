@@ -1,11 +1,10 @@
 \name{modAcc}
 \alias{modAcc}
-Create ROCtests for train and test data on the same model
 \title{
 Create ROCtests for train and test data on the same model.
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Create ROCtests for train and test data on the same model.
 }
 \usage{
 modAcc(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE)

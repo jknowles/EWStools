@@ -38,5 +38,5 @@ High School Journal, 96(2), 77-100. \url{doi:10.1353/hsj.2013.0000} (Preprint av
  \code{\link[caret-package]{caret}} 
 }
 \examples{
-~~ simple examples of the most important functions ~~
+
 }

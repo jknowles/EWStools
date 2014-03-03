@@ -5,7 +5,7 @@
 Create dataframes from ROCtests
 }
 \description{
-Extract dataframes from the results of \code\link{modAcc}} 
+Extract dataframes from the results of \code{\link{modAcc}} 
 }
 \usage{
 dfExtract(mod)

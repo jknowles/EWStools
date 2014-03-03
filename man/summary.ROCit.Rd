@@ -3,7 +3,7 @@
 \alias{summary.ROCit}
 \title{Getting a summary of an ROCit object}
 \usage{
-  summary.ROCtest(x)
+  summary(x)
 }
 \description{
   Getting a summary of an ROCit object
