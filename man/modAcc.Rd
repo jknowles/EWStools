@@ -1,87 +1,28 @@
 \name{modAcc}
 \alias{modAcc}
-\title{
-Create ROCtests for train and test data on the same model.
-}
-\description{
-Create ROCtests for train and test data on the same model.
-}
+\title{Generate a list of \code{\linkS4class{ROCit}} objects for different datasets}
 \usage{
 modAcc(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{fit}{
-%%     ~~Describe \code{fit} here~~
-}
-  \item{datatype}{
-%%     ~~Describe \code{datatype} here~~
-}
-  \item{testdata}{
-%%     ~~Describe \code{testdata} here~~
-}
-  \item{modelKeep}{
-%%     ~~Describe \code{modelKeep} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{fit}{a \code{\linkS4class{ROCit}} object generated
+  by \code{\link{ROCtest}}}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+a list with the following: \itemize{ \item{method - the
+\code{\link{train}} method used to fit the model}
+\item{summaryTr - the \code{\linkS4class{ROCit}} for the
+training data} \item{summaryTe - the
+\code{\linkS4class{ROCit}} for the test data} \item{time -
+the time reported for the model to run, taken from the
+\code{\link{train}} object if available} }
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
+\description{
+Generate a list of \code{\linkS4class{ROCit}} objects for
+different datasets
 }
 \note{
-%%  ~~further notes~~
+The values presented are for the optimal threshold as
+computed by the \code{\link{roc}} function.
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (fit, datatype = c("test", "train"), testdata, modelKeep = FALSE) 
-{
-    if (length(datatype) > 1) {
-        ROCtr <- ROCtest(fit)
-        ROCte <- ROCtest(fit, testdata = list(preds = testdata$preds, 
-            class = testdata$class))
-    }
-    else if (length(datatype) < 2 & datatype == "test") {
-        ROCte <- ROCtest(fit, testdata = list(preds = testdata$preds, 
-            class = testdata$class))
-        ROCtr <- NULL
-    }
-    else if (length(datatype) < 2 & datatype == "train") {
-        ROCtr <- ROCtest.train(fit)
-        ROCte <- NULL
-    }
-    if (modelKeep == TRUE) {
-        return(list(model = fit, summaryTr = ROCtr, summaryTe = ROCte, 
-            method = fit$method, time = fit$times$everything[3]))
-    }
-    else if (modelKeep == FALSE) {
-        return(list(method = fit$method, summaryTr = ROCtr, summaryTe = ROCte, 
-            time = fit$times$everything[3]))
-    }
-  }
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

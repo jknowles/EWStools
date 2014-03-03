@@ -2,9 +2,9 @@
 \alias{ROCtest.train}
 \title{Getting an ROCtest on a train object}
 \usage{
-  ROCtest(mod, testdata)
+\method{ROCtest}{train}(mod, testdata, ...)
 }
 \description{
-  Getting an ROCtest on a train object
+Getting an ROCtest on a train object
 }
 

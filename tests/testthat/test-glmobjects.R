@@ -117,8 +117,8 @@ test_that("ROCtest generic functions correctly", {
 context("Test the summary method for the ROCtest")
 
 test_that("ROCtest summaries function correctly", {
-  expect_that(summary(res1), is_a("data.frame"))
-  expect_that(summary(res1t), is_a("data.frame"))
+  expect_that(summary(res1), is_a("list"))
+  expect_that(summary(res1t), is_a("list"))
   
 })
 
