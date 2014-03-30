@@ -164,13 +164,13 @@ ROCtest.train <- function(mod, testdata, ...){
     testDATA <- testdata$preds
     testCLASS <- testdata$class
     if(is.null(mod$terms)==TRUE){
-      test <- extractProb(list(mod), testX = testDATA, testY=testCLASS)
+      test <- extractProb(list(mod), testX = testdata$preds, testY=testdata$class)
       test <- subset(test, dataType == "Test")
       names(test)[1:3] <- c("common", "rare", "obs")
     } else if (is.null(mod$terms)==FALSE){
-      test <- predict(mod, newdata=cbind(testCLASS, testDATA), 
+      test <- predict(mod, newdata=cbind(testdata$class, testdata$preds), 
                       type="prob")
-      test <- cbind(test, testCLASS)
+      test <- cbind(test, testdata$class)
       names(test) <- c("common", "rare", "obs")
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")
