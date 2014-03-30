@@ -166,6 +166,7 @@ ROCtest.train <- function(mod, testdata, ...){
     if(is.null(mod$terms)==TRUE){
       test <- extractProb(list(mod), testX = testDATA, testY=testCLASS)
       test <- subset(test, dataType == "Test")
+      names(test)[1:3] <- c("common", "rare", "obs")
     } else if (is.null(mod$terms)==FALSE){
       test <- predict(mod, newdata=cbind(testCLASS, testDATA), 
                       type="prob")
