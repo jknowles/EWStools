@@ -10,8 +10,6 @@ knitr::opts_chunk$set(
   tidy = FALSE
 )
 
-
-
 ```
 
 # Introduction
@@ -96,8 +94,8 @@ if we want to compare many models?
 # Model Accuracy Profiles
 
 ```{r modacc}
-
-test3 <- modAcc(fullModel, datatype = c("train","test"), testdata = list(preds = test[, 1:22], 
+test3 <- modAcc(fullModel, datatype = c("train","test"), 
+                testdata = list(preds = test[, 1:22], 
                                                      class = test[, 23]))
 
 summary(dfExtract(test3))
@@ -140,3 +138,5 @@ testGLM3 <- modAcc(glmModel, datatype =c("train", "test"), testdata = list(preds
 
 summary(dfExtract(testGLM3))
 ```
+
+

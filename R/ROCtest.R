@@ -140,6 +140,7 @@ ROCtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     if(is.null(mod$terms)==TRUE){
       test <- extractProb(list(mod))
+      names(test)[1:3] <- c("common", "rare", "obs")
     } else if (is.null(mod$terms)==FALSE){
       test <- predict(mod, type="prob")
       test <- cbind(test, mod$trainingData$.outcome)
