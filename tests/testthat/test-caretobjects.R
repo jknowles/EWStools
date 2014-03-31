@@ -119,14 +119,14 @@ test_that("ROCit objects pass best threshold parameters through", {
 })
 
 test_that("ROCtest generic functions correctly", {
-  expect_identical(ROCtest(fullModel), ROCtest.train(fullModel))
-  expect_error(ROCtest.glm(fullModel))
+  expect_identical(ROCtest(fullModel), EWStools:::ROCtest.train(fullModel))
+  expect_error(EWStools:::ROCtest.glm(fullModel))
   expect_identical(ROCtest(fullModel, 
                            testdata = list(preds = test[, -19], 
                                            class = test[, 19])), 
-                   ROCtest.train(fullModel, testdata = list(preds = test[, -19], 
+                   EWStools:::ROCtest.train(fullModel, testdata = list(preds = test[, -19], 
                                                             class = test[, 19])))
-  expect_error(ROCtest.glm(fullModel, testdata = list(preds = test[, -19], 
+  expect_error(EWStools:::ROCtest.glm(fullModel, testdata = list(preds = test[, -19], 
                                                       class = test[, 19])))
 })
 
