@@ -19,17 +19,17 @@
 ##' }
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' @export
-modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE){
+modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE, ...){
   if (length(datatype) > 1){
-    ROCtr <- ROCtest(fit)
+    ROCtr <- ROCtest(fit, ...)
     ROCte <-  ROCtest(fit, testdata=list(preds = testdata$preds, 
-                                          class = testdata$class))    
+                                          class = testdata$class), ...)    
   } else if(length(datatype) < 2 & datatype=="test"){
     ROCte <- ROCtest(fit, testdata=list(preds = testdata$preds, 
-                                        class = testdata$class))
+                                        class = testdata$class), ...)
     ROCtr <- NULL
   } else if (length(datatype) < 2 & datatype=="train"){
-    ROCtr <- ROCtest.train(fit)
+    ROCtr <- ROCtest(fit, ...)
     ROCte <- NULL
   }
   if(modelKeep == TRUE){
