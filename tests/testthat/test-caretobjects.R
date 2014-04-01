@@ -84,12 +84,7 @@ res3t <- ROCtest(fullModel, best.method="closest.topleft",
                       best.weights=c(100, .66), 
                       testdata = list(preds = test[, -19], class = test[, 19]))
 
-# test_that("ROCtest throws messages", {
-#   expect_that(ROCtest.train(fullModel, 
-#                             newdata = list(preds = test[, -19], 
-#                                            y = test[, 19])), shows_message())
-#   
-# })
+
 
 test_that("ROCtest produces correct objects", {
   expect_that(res1t, is_a("ROCit"))
@@ -135,6 +130,15 @@ context("Test the summary method for the ROCtest")
 test_that("ROCtest summaries function correctly", {
   expect_that(summary(res1), is_a("list"))
   expect_that(summary(res1t), is_a("list"))
+  
+})
+
+context("Errors are thrown appropriately")
+test_that("ROCtest throws error when testdata is misspecified", {
+  expect_error(ROCtest(fullModel, 
+                       testdata = test))
+  expect_error(ROCtest(fullModel, 
+                       testdata = list(testdata = test[, -19], testclass = test[, 19])))
   
 })
 

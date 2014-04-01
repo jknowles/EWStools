@@ -114,6 +114,16 @@ test_that("ROCtest generic functions correctly", {
                                                       class = test[, 19])))
 })
 
+context("Errors are thrown appropriately")
+test_that("ROCtest throws error when testdata is misspecified", {
+  expect_error(ROCtest(fullModel, 
+                       testdata = test))
+  expect_error(ROCtest(fullModel, 
+                       testdata = list(testdata = test[, -19], testclass = test[, 19])))
+  
+})
+
+
 context("Test the summary method for the ROCtest")
 
 test_that("ROCtest summaries function correctly", {
