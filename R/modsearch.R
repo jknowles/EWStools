@@ -130,7 +130,7 @@ dfExtract <- function(mod){
 ##' }
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' @export
-modSearch <- function(method, datatype=c("train", "test"), traindata, testdata, 
+modTest <- function(method, datatype=c("train", "test"), traindata, testdata, 
                       modelKeep=NULL, length,  
                       omit = NULL, fitControl = NULL, metric = "ROC"){
   # Let's dump out some defaults
@@ -223,7 +223,7 @@ buildROCcurveFrame <- function(methods){
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
 ##' 
-multimodeltest <- function(methods, timeout, ...){
+modSearch <- function(methods, timeout, ...){
   ModelFits <- buildROCcurveFrame(methods)
   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
     for(i in methods){
@@ -232,7 +232,7 @@ multimodeltest <- function(methods, timeout, ...){
       timeout <- timeout
       fit <- tryCatch({
         evalWithTimeout({
-          modSearch(method = i,...);
+          modTest(method = i,...);
         }, timeout = timeout, elapsed = timeout, onTimeout = "warning")},
         TimeoutException = function(ex) {
           print("Timeout. Skip")
@@ -240,7 +240,7 @@ multimodeltest <- function(methods, timeout, ...){
                                        "\n", " For: ",e)})
           
     } else if(missing(timeout)){
-      fit <- try(modSearch(method = i, ...))
+      fit <- try(modTest(method = i, ...))
     }
     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
