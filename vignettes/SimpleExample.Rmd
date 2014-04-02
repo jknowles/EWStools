@@ -10,8 +10,6 @@ knitr::opts_chunk$set(
   tidy = FALSE
 )
 
-
-
 ```
 
 # Introduction
@@ -74,7 +72,7 @@ and robust classification testing suite built around the ROC specifically.
 
 ```{r roctest1}
 test1 <- ROCtest(fullModel)
-summary(test1)
+print(test1)
 ```
 
 This tells us how the model fits the training data in a convenient and easy to 
@@ -86,7 +84,7 @@ new data:
 test2 <- ROCtest(fullModel, testdata = list(preds = test[, -23], 
                                             class = test[, "Class"]))
 
-summary(test2)
+print(test2)
 ```
 
 As we can see, the model performs less effectively on the test data. But, what 
@@ -96,8 +94,8 @@ if we want to compare many models?
 # Model Accuracy Profiles
 
 ```{r modacc}
-
-test3 <- modAcc(fullModel, datatype = c("train","test"), testdata = list(preds = test[, 1:22], 
+test3 <- modAcc(fullModel, datatype = c("train","test"), 
+                testdata = list(preds = test[, 1:22], 
                                                      class = test[, 23]))
 
 summary(dfExtract(test3))
@@ -117,7 +115,7 @@ testGLM <- ROCtest(glmModel)
 ```
 
 ```{r glmsummary}
-summary(testGLM)
+print(testGLM)
 ```
 
 
@@ -128,7 +126,7 @@ test data as well:
 testGLM2 <- ROCtest(glmModel, testdata = list(preds = test[, -23], 
                                             class = test[, "Class"]))
 
-
+print(testGLM2)
 ```
 
 And, we can extract results and generate dataframes of the performance profiles of 
@@ -140,3 +138,5 @@ testGLM3 <- modAcc(glmModel, datatype =c("train", "test"), testdata = list(preds
 
 summary(dfExtract(testGLM3))
 ```
+
+

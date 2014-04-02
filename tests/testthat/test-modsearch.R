@@ -54,6 +54,29 @@ test_that("modAcc reports NULL for slots without objects", {
   
 })
 
+modobjE <- modAcc(fullModel, datatype = c("train", "test"), modelKeep = FALSE, 
+                 testdata = list(preds = test[, -19], class = test[, 19]), 
+                 best.method = "closest.topleft", best.weights = c(10, 0.11))
+
+test_that("modAcc passes ellipsis through correct", {
+  expect_that(modobjE, is_a("list"))
+})
+
+modobj <- modAcc(fullModel, datatype = c("train", "test"), modelKeep = TRUE, 
+                 testdata = list(preds = test[, -19], class = test[, 19]))
+
+modobj2 <- modAcc(fullModel, datatype = c("test"), modelKeep = TRUE, 
+                  testdata = list(preds = test[, -19], class = test[, 19]))
+
+modobj3 <- modAcc(fullModel, datatype = c("train"), modelKeep = TRUE)
+
+test_that("modAcc keeps the model correctly", {
+  expect_that(modobj$model, is_a("train"))
+  expect_that(modobj2$model, is_a("train"))
+  expect_that(modobj3$model, is_a("train"))
+})
+
+
 test_that("modAcc subobjects have correct slots for train data", {
   expect_that(modobj$summaryTr@thresh, is_a("numeric"))
   expect_that(modobj$summaryTr@auc, is_a("numeric"))

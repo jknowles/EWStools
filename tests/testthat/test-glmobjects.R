@@ -15,12 +15,12 @@ fullModel <- glm(Class ~ ., data = train,
 
 context("ROCtest works properly with a train object and train data")
 
-res1 <- ROCtest.glm(fullModel)
+res1 <- ROCtest(fullModel)
 
-res2 <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+res2 <- ROCtest(fullModel, best.method="closest.topleft", 
                       best.weights=c(1, .66))
 
-res3 <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+res3 <- ROCtest(fullModel, best.method="closest.topleft", 
                       best.weights=c(100, .66))
 
 test_that("ROCtest produces correct objects", {
@@ -56,14 +56,14 @@ test_that("ROCit objects pass best threshold parameters through", {
 
 context("ROCtest works correctly with train object and test data")
 
-res1t <- ROCtest.glm(fullModel, 
+res1t <- ROCtest(fullModel, 
                        testdata = list(preds = test[, -19], class = test[, 19]))
 
-res2t <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+res2t <- ROCtest(fullModel, best.method="closest.topleft", 
                        best.weights=c(1, .66), 
                        testdata = list(preds = test[, -19], class = test[, 19]))
 
-res3t <- ROCtest.glm(fullModel, best.method="closest.topleft", 
+res3t <- ROCtest(fullModel, best.method="closest.topleft", 
                        best.weights=c(100, .66), 
                        testdata = list(preds = test[, -19], class = test[, 19]))
 
@@ -103,22 +103,32 @@ test_that("ROCit objects pass best threshold parameters through", {
 })
 
 test_that("ROCtest generic functions correctly", {
-  expect_identical(ROCtest(fullModel), ROCtest.glm(fullModel))
-  expect_error(ROCtest.train(fullModel))
+  expect_identical(ROCtest(fullModel), EWStools:::ROCtest.glm(fullModel))
+  expect_error(EWStools:::ROCtest.train(fullModel))
   expect_identical(ROCtest(fullModel, 
                            testdata = list(preds = test[, -19], 
                                            class = test[, 19])), 
-                   ROCtest.glm(fullModel, testdata = list(preds = test[, -19], 
+                   EWStools:::ROCtest.glm(fullModel, testdata = list(preds = test[, -19], 
                                                             class = test[, 19])))
-  expect_error(ROCtest.train(fullModel, testdata = list(preds = test[, -19], 
+  expect_error(EWStools:::ROCtest.train(fullModel, testdata = list(preds = test[, -19], 
                                                       class = test[, 19])))
 })
+
+context("Errors are thrown appropriately")
+test_that("ROCtest throws error when testdata is misspecified", {
+  expect_error(ROCtest(fullModel, 
+                       testdata = test))
+  expect_error(ROCtest(fullModel, 
+                       testdata = list(testdata = test[, -19], testclass = test[, 19])))
+  
+})
+
 
 context("Test the summary method for the ROCtest")
 
 test_that("ROCtest summaries function correctly", {
-  expect_that(summary(res1), is_a("data.frame"))
-  expect_that(summary(res1t), is_a("data.frame"))
+  expect_that(summary(res1), is_a("list"))
+  expect_that(summary(res1t), is_a("list"))
   
 })
 

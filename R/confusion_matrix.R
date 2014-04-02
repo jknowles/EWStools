@@ -9,6 +9,9 @@ confuse_mat.train <- function(model, testdata=NULL){
   }
 }
 
+##' @title An internal function for creating the confusion matrix for \code{\linkS4class{ROCit}} 
+##' objects
+##' @keywords internal
 confuse_mat <- function(mod, thresh, prop = FALSE, testdata){
   if(!missing(testdata)){
     dv <- as.character(mod$formula[[2]])
@@ -45,6 +48,7 @@ confuse_mat <- function(mod, thresh, prop = FALSE, testdata){
     ifelse(prop==TRUE, return((mat / length(mod$y)) * 100), return(mat))
   }
 }
+
 ################################################################################
 # Title: A function to calculate the F measure of classification accuracy
 # x = an lm or glm model fit object
@@ -88,7 +92,7 @@ ROCplot.train <- function(mod, datatype = NULL, ...){
   
 }
 
-# KILL THIS FOR LOOP
+
 
 roc_plot<-function(x,s,...){
   require(ggplot2)
@@ -111,13 +115,6 @@ roc_plot<-function(x,s,...){
     labs(x="False Alarm", y="Recall", title="ROC Curve", colour="Threshold")+
     coord_cartesian(xlim=c(0, 1), ylim=c(0, 1)) + scale_x_reverse()
 }
-
-################################################################################
-# Title: A function to draw a classification curve from a model fit object
-# x = an lm or glm model fit object
-# s = the number of points along the curve to calculate
-# Requires ggplot2
-################################################################################
 
 
 classcorrect_plot<-function(x,s,...){
@@ -311,38 +308,10 @@ confuse_mat.train <- function(model, testdata=NULL){
   }
 }
 
-
-confuse_mat.train <- function(mod, thresh, prop = FALSE, newdata = NULL){
-  if(!missing(newdata)){
-    mypred <- predict(mod, newdata=newdata$preds, type="prob")[1]
-    y <- as.character(newdata$class)
-  } else {
-    mypred <- predict(mod, type="prob")
-    y <- as.character(mod$trainingData$.outcome)
-  }
-  
-  statmod <- function(x) {
-    z <- table(as.vector(x))
-    names(z)[z == max(z)]
-  }
-  
-  mode <- statmod(y)
-  y[y == mode] <- "1"
-  y[y != "1"] <- 0
-  y <- as.character(y)
-  y <- as.numeric(y)
-  # normalize preds
-  mypred <- mypred[, 1]
-  tp <- length(y[y > 0 & mypred >= thresh])
-  fp <- length(y[y < 1 & mypred >= thresh])
-  fn <- length(y[y > 0 & mypred <= thresh])
-  tn <- length(y[y < 1 & mypred <= thresh])
-  mat <- data.frame("Predicted NC"=c(tn, fn), "Predicted C"=c(fp, tp))
-  row.names(mat) <- c("Actual NC", "Actual C")
-  ifelse(prop==TRUE, return((mat / length(y)) * 100), return(mat))
-}
-
-confuse_mat.train2 <- function(x, thresh){
+##' @title An internal function for creating the confusion matrix for \code{\linkS4class{ROCit}} 
+##' objects from train
+##' @keywords internal
+confuse_mat.train <- function(x, thresh){
   x$yn <- as.character(x$obs)
   statmod <- function(x) {
     z <- table(as.vector(x))
@@ -362,63 +331,3 @@ confuse_mat.train2 <- function(x, thresh){
   row.names(mat) <- c("Actual NC", "Actual C")
   return(mat)
 }
-
-################################################################################
-# Title: A function to calculate the F measure of classification accuracy
-# x = a train model fit object (from caret)
-# depends on confuse_mat.train
-# Returns a named list
-################################################################################
-
-rarecase_f.train <- function(x,...){
-  mat <- confuse_mat.train(x, ..., prop=FALSE)
-  recall <- mat[2, 2] / (mat[2, 2] + mat[2, 1])
-  prec <- mat[2, 2] / (mat[2, 2] + mat[1, 2])
-  f    <- (2 * recall * prec) / (prec + recall)
-  results <- list("Recall" = recall, "Precision" = prec, "F-Measure:" = f)
-  return(results)
-}
-
-################################################################################
-# Title: A function to draw a ROC curve from a model fit object
-# x = a train object, caret package
-# s = the number of points along the curve to calculate
-# Requires ggplot2
-################################################################################
-
-roc_plot.train <- function(x, s, ...){
-  require(ggplot2)
-  dat <- data.frame(xax=rep(NA, s), yax=rep(NA, s), 
-                    thresha=seq(0.01, 0.99, length.out=s))
-  for (i in seq(0.01, 0.99, length.out=s)){
-    mat <- confuse_mat.train(x, thresh=i, ...)
-    recall <- mat[2, 2] / (mat[2, 2] + mat[2, 1])
-    falsea <- mat[1, 2] / (mat[1, 2] + mat[1, 1])
-    dat$xax[dat$thresha == i] <- falsea
-    dat$yax[dat$thresha == i] <- recall
-  }
-  
-  qplot(xax, yax, data=dat, colour=thresha, label=round(thresha, digits=2),
-        geom='point') + theme_bw() + geom_line() + geom_text(hjust=-0.5) +
-    geom_abline(aes(intercept=0, slope=1)) +
-    labs(x="False Alarm", y="Recall", title="ROC Curve", colour="Threshold") +
-    coord_cartesian(xlim=c(0, 1), ylim=c(0, 1))
-}
-
-################################################################################
-# Title: A function to test for rank-deficient model matrix
-# x = a formula
-# df = a dataframe
-################################################################################
-
-rankdef_test <- function(x, df,...){
-  mm1  <- model.matrix(x, df)
-  rank <- qr(mm1)$rank
-  n <- ncol(mm1)
-  z <- ifelse(rank >= n, "NO", "YES")
-  result <- list("model rank"=rank, "mod matrix columns"=n, "rank deficient?"=z)
-  return(result)
-}
-
-
-###############################

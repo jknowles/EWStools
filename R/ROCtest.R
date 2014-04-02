@@ -4,8 +4,39 @@
 ################################################################################
 # ROC Functions
 ################################################################################
+
 setOldClass("roc")
 
+##' Class "ROCit" of ROC classification statistics
+##'
+##' A \code{\link{glm}} or \code{\link{train}} object with a binary classification 
+##' can be easily summarized using the receiver-operating characteristic statistic. 
+##' This class provides an efficient mechanism to store and compare these results 
+##' across models. 
+##'
+##' @name ROCit-class
+##' @aliases ROCit-class
+##' @docType class
+##' @section Objects from the Class: Objects are created by calls to
+##' \code{\link{ROCtest}}.
+##' @details
+##' The object has the following items
+##' \itemize{
+##' \item{thresh - the threshold for the ROC}
+##' \item{auc - the area under the curve}
+##' \item{confusematrix - the confusion matrix for the ROC fit}
+##' \item{rarepercent - percent of rare class correct}
+##' \item{falsepositive - percent of false rare class identifications}
+##' \item{modtype - the class of the model object}
+##' \item{modcall - the call to the model fitting function}
+##' \item{datatype - whether the ROC was computed on the "train" or the "test" data}
+##' }
+##' @seealso \code{\link{ROCtest}}
+##' @keywords classes
+##' @examples
+##'
+##' showClass("ROCit")
+##' methods(class="ROCit")
 ##' @export
 ROCit <- setClass("ROCit", representation(thresh = "numeric", 
                                           auc = "numeric", 
@@ -21,10 +52,11 @@ ROCit <- setClass("ROCit", representation(thresh = "numeric",
 ##' Generic function to build ROCtest
 ##'
 ##' Allow the user to specify a formula for generating a binomial dependent variable
-##' 
-##' @param mod A model object to generate an \code{\linkS4class{ROCtest}} for
+##' @usage ROCtest(mod, testdata, ...)
+##' @param mod A model object to generate an \code{\linkS4class{ROCit}} for
 ##' @param testdata A dataframe to generate the ROC for the mode on
-##' @return A \code{\linkS4cass{ROCtest}} object 
+##' @param ... optional additional parameters. 
+##' @return A \code{\linkS4class{ROCit}} object 
 ##' @details
 ##' The object has the following items
 ##' \itemize{
@@ -38,14 +70,16 @@ ROCit <- setClass("ROCit", representation(thresh = "numeric",
 ##' \item{datatype - whether the ROC was computed on the "train" or the "test" data}
 ##' }
 ##' @note Yadda yadda yadda
-##' @export
+##' @export ROCtest
+##' @rdname ROCtest
 ##' @author Jared E. Knowles
 ROCtest <- function(mod, testdata, ...){
   UseMethod("ROCtest")
 }
 
-##' @aliases ROCtest
 ##' @title Getting an ROCtest on a generalized linear model
+##' @rdname ROCtest
+##' @method ROCtest glm
 ##' @S3method ROCtest glm
 ROCtest.glm <- function(mod, testdata, ...){
   # can pass optional values such as: 
@@ -71,7 +105,16 @@ ROCtest.glm <- function(mod, testdata, ...){
     return(myROC)
   }
   else if(!missing(testdata)){
-    # hack
+    # error handling
+    if(class(testdata) != "list"){
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    if("preds" %in% names(testdata)){
+      
+    } else {
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    # end error handling
     dv <- as.character(mod$formula[[2]])
     testdata2 <- cbind(testdata$preds, testdata$class)
     names(testdata2) <- c(names(testdata$preds), dv)
@@ -98,7 +141,75 @@ ROCtest.glm <- function(mod, testdata, ...){
   }
 } 
 
+##' @title Getting an ROCtest on a train object
+##' @rdname ROCtest
+##' @method ROCtest train
+##' @S3method ROCtest train
+ROCtest.train <- function(mod, testdata, ...){
+  if(missing(testdata)){
+    if(is.null(mod$terms)==TRUE){
+      test <- extractProb(list(mod))
+      names(test)[1:3] <- c("common", "rare", "obs")
+    } else if (is.null(mod$terms)==FALSE){
+      test <- predict(mod, type="prob")
+      test <- cbind(test, mod$trainingData$.outcome)
+      names(test) <- c("common", "rare", "obs")
+    }
+    if(is.null(test)==TRUE) stop("Cannot generate probabilities")
+    #message("Generating ROC...")
+    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm=3)
+    a <- mroc$auc[1]
+    t <- coords.roc(mroc, x="best", ...)[1]
+    cm <- confuse_mat.train(test, t)
+    rc <- cm[1,1] / (cm[1,1] + cm[1,2])
+    fp <- cm[2,1] / (cm[1,1] + cm[2,1])
+    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   modtype = class(mod), 
+                   modcall = paste(mod$call), datatype="train")
+    return(myROC)
+  }
+  else if(!missing(testdata)){
+    # error handling
+    if(class(testdata) != "list"){
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    if("preds" %in% names(testdata)){
+      
+    } else {
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    # end error handling
+    if(is.null(mod$terms)==TRUE){
+      test <- extractProb(list(mod), testX = testdata$preds, testY=testdata$class)
+      test <- subset(test, dataType == "Test")
+      names(test)[1:3] <- c("common", "rare", "obs")
+    } else if(is.null(mod$terms)==FALSE){
+      test <- predict(mod, newdata=cbind(testdata$class, testdata$preds), 
+                      type="prob")
+      test <- cbind(test, testdata$class)
+      names(test) <- c("common", "rare", "obs")
+    }
+    if(is.null(test)==TRUE) stop("Cannot generate probabilities")
+    #message("Generating ROC...")
+    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm = 3)
+    a <- mroc$auc[1]
+    t <- coords.roc(mroc, x="best", ...)[1]
+    cm <- confuse_mat.train(test, t)
+    rc <- cm[1,1] / (cm[1,1] + cm[1,2])
+    fp <- cm[2,1] / (cm[1,1] + cm[2,1])
+    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   modtype = class(mod), 
+                   modcall = paste(mod$call), 
+                   datatype="test")
+    return(myROC)
+  }
+}
 
+
+##' @title Internal function to aide with factors in predicting new data for ROCtest
+##' @keywords internal
 factor_norm <- function(mod, testdata, impute=FALSE, ...){
   facnames <- names(mod$xlevels)
   if(impute==FALSE){
@@ -136,66 +247,15 @@ factor_norm <- function(mod, testdata, impute=FALSE, ...){
 }
 
 
-##' @aliases ROCtest
-##' @title Getting an ROCtest on a train object
-##' @S3method ROCtest train
-ROCtest.train <- function(mod, testdata, ...){
-  if(missing(testdata)){
-    if(is.null(mod$terms)==TRUE){
-      test <- extractProb(list(mod))
-    } else if (is.null(mod$terms)==FALSE){
-      test <- predict(mod, type="prob")
-      test <- cbind(test, mod$trainingData$.outcome)
-      names(test) <- c("common", "rare", "obs")
-    }
-    if(is.null(test)==TRUE) stop("Cannot generate probabilities")
-    #message("Generating ROC...")
-    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm=3)
-    a <- mroc$auc[1]
-    t <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confuse_mat.train2(test, t)
-    rc <- cm[1,1] / (cm[1,1] + cm[1,2])
-    fp <- cm[2,1] / (cm[1,1] + cm[2,1])
-    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
-                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
-                   modtype = class(mod), 
-                   modcall = paste(mod$call), datatype="train")
-    return(myROC)
-  }
-  else if(!missing(testdata)){
-    testDATA <- testdata$preds
-    testCLASS <- testdata$class
-    if(is.null(mod$terms)==TRUE){
-      test <- extractProb(list(mod), testX = testDATA, testY=testCLASS)
-      test <- subset(test, dataType == "Test")
-    } else if (is.null(mod$terms)==FALSE){
-      test <- predict(mod, newdata=cbind(testCLASS, testDATA), 
-                      type="prob")
-      test <- cbind(test, testCLASS)
-      names(test) <- c("common", "rare", "obs")
-    }
-    if(is.null(test)==TRUE) stop("Cannot generate probabilities")
-    #message("Generating ROC...")
-    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm = 3)
-    a <- mroc$auc[1]
-    t <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confuse_mat.train2(test, t)
-    rc <- cm[1,1] / (cm[1,1] + cm[1,2])
-    fp <- cm[2,1] / (cm[1,1] + cm[2,1])
-    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
-                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
-                   modtype = class(mod), 
-                   modcall = paste(mod$call), 
-                   datatype="test")
-    return(myROC)
-  }
-}
 
 
-##' @aliases summary
-##' @title Getting a summary of an ROCtest object
-##' @S3method summary ROCit
-summary.ROCit <- function(x){
+##' @title Print a summary of an \code{\linkS4class{ROCit}} object
+##' @param x a \code{\linkS4class{ROCit}} object generated by \code{\link{ROCtest}}
+##' @param ... optional additional parameters. 
+##' @return A 
+##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
+##' @method print ROCit
+print.ROCit <- function(x, ...){
   cat("Model Classification Statistics \n")
   cat("Performance on", x@datatype, "data \n")
   cat("Area under the ROC curve:", x@auc,"\n")
@@ -208,3 +268,30 @@ summary.ROCit <- function(x){
   print(x@confusematrix)
 }
 
+
+
+##' @title Extract a summary of an \code{\linkS4class{ROCit}} object
+##' @param object a \code{\linkS4class{ROCit}} object generated by \code{\link{ROCtest}}
+##' @param ... optional additional parameters. 
+##' @return A list with the following items:
+##' \itemize{
+##' \item{datatype - whether the ROC was computed on the "train" or the "test" data}
+##' \item{auc - the area under the curve}
+##' \item{rarepercent - percent of rare class correct}
+##' \item{falsepositive - percent of false rare class identifications}
+##' \item{threshold - the optimal ROC threshold given by \code{\link{ROCtest}}}
+##' \item{confusematrix - the confusion matrix for the ROC fit}
+##' } 
+##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
+##' @method summary ROCit
+summary.ROCit <- function(object, ...){
+  summary <- list(
+    datatype = object@datatype, 
+    auc = object@auc, 
+    rarepercent =  object@rarepercent*100, 
+    falsepositive = object@falsepositive*100,
+    threshold = object@thresh,
+    confusionmatrix = object@confusematrix
+    )
+  return(summary)
+}
