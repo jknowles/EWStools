@@ -208,6 +208,8 @@ buildROCcurveFrame <- function(methods){
 ##' @param methods a list of \code{train} method names to generate the dataframe for
 ##' @param timeout an integer representing when the function should quit on a method and move on
 ##' @param ... additional arguments passed to \code{\link{modSearch}}
+##' @note Timeout does not work for all model types. See documentation on \code{\link{evalWithTimeout}} for details. 
+##' Importantly it does not work for methods that call underlying C code. 
 ##' @return a \code{\link{data.frame}} with the following columns:
 ##' \itemize{
 ##' \item{sens - the sensitivities of the model at various thresholds}
