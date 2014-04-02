@@ -138,39 +138,37 @@ modSearch <- function(method, datatype=c("train", "test"), traindata, testdata,
   #
   datD <- c("rda", "lda2", "hda", 'mlp', 'mlpWeightDecay', 'rbf', 'rpart2', 
             "treebag", 'rf', 'plr', 'lda', 'xyf')
-  if(x %in% datD){
+  if(method %in% datD){
     fit <- tryCatch({
       train(traindata$preds[, -omit], traindata$class,
             method=method,
             trControl=fitControl,
-            tuneLength = length, metric= metric)}, error = function(e) e, 
-      finally = print(paste0("Model failed to run: ", e)))
+            tuneLength = length, metric= metric)}, error = function(e) 
+              print(paste0("Model failed to run: ", method)))
   } else {
     fit <- tryCatch({
       train(traindata$preds, traindata$class,
             method=method,
             trControl=fitControl,
-            tuneLength = length, metric= metric)}, error = function(e) e, 
-      finally = print(paste0("Model failed to run: ", e)))
+            tuneLength = length, metric= metric)}, error = function(e) 
+              print(paste0("Model failed to run: ", method)))
   }
   if(class(fit) == "character"){
     cat(fit)
     
   } else if(class(fit) == "train"){
-    if (length(datatype) > 1){
-      if(x %in% datD){
+      if(method %in% datD){
         fitSum <- modAcc(fit, datatype = datatype, 
                          testdata=list(preds = testdata$preds[, -omit], 
                                        class = testdata$class ), 
-                         modelKeep == FALSE)
+                         modelKeep = modelKeep)
       } else {
         fitSum <- modAcc(fit, datatype = datatype, 
-                         testdata=testdata, 
-                         modelKeep == FALSE)
+                         testdata = testdata, 
+                         modelKeep = modelKeep)
       }
       
-    }
-  }
+    } 
   return(fitSum)
 }
 
@@ -204,23 +202,53 @@ buildROCcurveFrame <- function(methods){
   
 }
 
-
-
-
-############################################
-# Loop through candidate mods
-for(i in candidatemods){
-  p <- match(i, candidatemods)
-  fit <- try(modSearch(i, datatype=c("test","train"), modelKeep=FALSE, 
-                       length = LENGTH, timeout = TIMEOUT))
-  tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
-  #
-  if(class(tmp) == "data.frame"){
-    ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
-  } else{
-    ModelFits <- ModelFits
-    print(paste(tmp, "failure for model type:", i, sep=" "))
+##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
+##' @description Used for generating the data to make good looking ROC curves of 
+##' training and test data.
+##' @param methods a list of \code{train} method names to generate the dataframe for
+##' @param timeout an integer representing when the function should quit on a method and move on
+##' @param ... additional arguments passed to \code{\link{modSearch}}
+##' @return a \code{\link{data.frame}} with the following columns:
+##' \itemize{
+##' \item{sens - the sensitivities of the model at various thresholds}
+##' \item{spec - the specificities of the model at various thresholds}
+##' \item{grp - whether the model is using training or test data}
+##' \item{auc - the area under the curve}
+##' \item{method - the model method}
+##' \item{elapsedTime - the time reported for the model to run}
+##' }
+##' @note The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
+##' \code{\linkS4class{ROCit}} object
+##' @export
+##' 
+multimodeltest <- function(methods, timeout, ...){
+  ModelFits <- buildROCcurveFrame(methods)
+  pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
+    for(i in methods){
+    p <- match(i, methods)
+    if(!missing(timeout)){
+      timeout <- timeout
+      fit <- tryCatch({
+        evalWithTimeout({
+          modSearch(method = i,...);
+        }, timeout = timeout, elapsed = timeout, onTimeout = "warning")},
+        TimeoutException = function(ex) {
+          print("Timeout. Skip")
+        }, error = function(e) {paste0("Failure of model: ", i, 
+                                       "\n", " For: ",e)})
+          
+    } else if(missing(timeout)){
+      fit <- try(modSearch(method = i, ...))
+    }
+    tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
+    #
+    if(class(tmp) == "data.frame"){
+      ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
+    } else{
+      ModelFits <- ModelFits
+      message(paste(tmp, "failure for model type:", i, sep=" "))
+    }
+    setTxtProgressBar(pb, p)
   }
-  setTxtProgressBar(pb, p)
+  return(ModelFits)
 }
-

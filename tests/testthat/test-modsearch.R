@@ -121,8 +121,29 @@ test_that("dfExtract functions when only test or training data present", {
   expect_identical(nrow(dfExtract(modobj2)), nrow(dfExtract(modobj3)))
 })
 
-# 
-# class(dfExtract(modobj))
-# 
-# 
-# dfExtract(modobj)
+context("Evaluate model in a search framework")
+
+ROCtest(fullModel,  
+        testdata=list(preds =test[, -19], 
+                      class = test[, 19] ))
+
+
+
+fit1 <- modSearch(method = "svmRadial", datatype = c("train", "test"), 
+                  traindata = list(preds = train[, -19], class = train[, 19]), 
+                  testdata = list(preds = test[, -19], class = test[, 19]), 
+                  modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                  metric = "Kappa")
+
+
+
+resultSet <- multimodeltest(methods = c("knn", "glm", "svmRadial"), 
+                            timeout = 10,
+                            datatype = c("train", "test"), 
+                            traindata = list(preds = train[, -19], class = train[, 19]), 
+                            testdata = list(preds = test[, -19], class = test[, 19]), 
+                            modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                            metric = "ROC")
+
+
+
