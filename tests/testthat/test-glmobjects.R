@@ -103,16 +103,26 @@ test_that("ROCit objects pass best threshold parameters through", {
 })
 
 test_that("ROCtest generic functions correctly", {
-  expect_identical(ROCtest(fullModel), ROCtest.glm(fullModel))
-  expect_error(ROCtest.train(fullModel))
+  expect_identical(ROCtest(fullModel), EWStools:::ROCtest.glm(fullModel))
+  expect_error(EWStools:::ROCtest.train(fullModel))
   expect_identical(ROCtest(fullModel, 
                            testdata = list(preds = test[, -19], 
                                            class = test[, 19])), 
-                   ROCtest.glm(fullModel, testdata = list(preds = test[, -19], 
+                   EWStools:::ROCtest.glm(fullModel, testdata = list(preds = test[, -19], 
                                                             class = test[, 19])))
-  expect_error(ROCtest.train(fullModel, testdata = list(preds = test[, -19], 
+  expect_error(EWStools:::ROCtest.train(fullModel, testdata = list(preds = test[, -19], 
                                                       class = test[, 19])))
 })
+
+context("Errors are thrown appropriately")
+test_that("ROCtest throws error when testdata is misspecified", {
+  expect_error(ROCtest(fullModel, 
+                       testdata = test))
+  expect_error(ROCtest(fullModel, 
+                       testdata = list(testdata = test[, -19], testclass = test[, 19])))
+  
+})
+
 
 context("Test the summary method for the ROCtest")
 

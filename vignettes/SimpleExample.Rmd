@@ -128,7 +128,7 @@ test data as well:
 testGLM2 <- ROCtest(glmModel, testdata = list(preds = test[, -23], 
                                             class = test[, "Class"]))
 
-
+print(testGLM2)
 ```
 
 And, we can extract results and generate dataframes of the performance profiles of 

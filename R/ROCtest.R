@@ -73,7 +73,7 @@ ROCit <- setClass("ROCit", representation(thresh = "numeric",
 ##' @export ROCtest
 ##' @rdname ROCtest
 ##' @author Jared E. Knowles
-ROCtest <- function(mod, testdata, ...){
+ROCtest <- function(mod, testdata=NULL, ...){
   UseMethod("ROCtest")
 }
 
@@ -105,7 +105,16 @@ ROCtest.glm <- function(mod, testdata, ...){
     return(myROC)
   }
   else if(!missing(testdata)){
-    # hack
+    # error handling
+    if(class(testdata) != "list"){
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    if("preds" %in% names(testdata)){
+      
+    } else {
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    # end error handling
     dv <- as.character(mod$formula[[2]])
     testdata2 <- cbind(testdata$preds, testdata$class)
     names(testdata2) <- c(names(testdata$preds), dv)
@@ -161,6 +170,16 @@ ROCtest.train <- function(mod, testdata, ...){
     return(myROC)
   }
   else if(!missing(testdata)){
+    # error handling
+    if(class(testdata) != "list"){
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    if("preds" %in% names(testdata)){
+      
+    } else {
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    # end error handling
     if(is.null(mod$terms)==TRUE){
       test <- extractProb(list(mod), testX = testdata$preds, testY=testdata$class)
       test <- subset(test, dataType == "Test")

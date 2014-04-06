@@ -16,3 +16,5 @@
 - Model ensembles 
 - Build robust post-estimation routines into separate branch and merge back
 - Fix so glms capture time as well
+- Check valid caret methods, error if none found
+- Auto omit variables if user forgets

@@ -2,7 +2,7 @@
 \alias{modAcc}
 \title{Generate a list of \code{\linkS4class{ROCit}} objects for different datasets}
 \usage{
-modAcc(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE)
+modAcc(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE, ...)
 }
 \arguments{
   \item{fit}{a \code{\linkS4class{ROCit}} object generated
