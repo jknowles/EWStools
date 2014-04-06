@@ -68,6 +68,8 @@ fullModel
 The standard output from the `caret` object is nice, but we want a more flexible 
 and robust classification testing suite built around the ROC specifically. 
 
+# Build and compare models 
+
 # Conveniently Compare Accuracy Between Train and Test Data
 
 ```{r roctest1}
