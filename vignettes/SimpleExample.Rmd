@@ -68,6 +68,26 @@ fullModel
 The standard output from the `caret` object is nice, but we want a more flexible 
 and robust classification testing suite built around the ROC specifically. 
 
+# Look at Train and Test Fit
+
+A key piece of an analysis is seeing how a model type performs on both training 
+and test data. `EWStools` makes this easy:
+
+```{r}
+mod.out <- modTest("knn", datatype=c("train", "test"),
+                     traindata = list(preds = train[, -23], class = train[, 23]),
+                     testdata = list(preds = test[, -23], class = test[, 23]), 
+                      modelKeep=FALSE, length = 5, fitControl = ctrl, 
+                     metric = "ROC")
+
+```
+
+The `modTest` function allows the user to evaluate a method defined for the `train` 
+function in `caret` on both a training and a test set of data, and it reports 
+a number of model summary statistics for the model on both the training and the 
+test data. Future extensions will include support for **validation** data as 
+well. 
+
 # Build and compare models 
 
 While `caret` has made it very easy to build models, `EWStools` seeks to improve 
@@ -77,6 +97,7 @@ storing them), the user may:
 
 ```{r}
 library(EWStools)
+
 mod.out <- modSearch(methods = c("glm", "knn"), datatype=c("train", "test"),
                      traindata = list(preds = train[, -23], class = train[, 23]),
                      testdata = list(preds = test[, -23], class = test[, 23]), 
