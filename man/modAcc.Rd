@@ -17,7 +17,7 @@ modAcc(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE, ...)
   of classes (class)}
 
   \item{modelKeep}{a logical indicating whether the
-  original model object should be stored}
+  original model object should be stored, default is FALSE}
 }
 \value{
 a list with the following: \itemize{ \item{method - the

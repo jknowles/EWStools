@@ -27,6 +27,11 @@ prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3"
 
 head(buildModelMatrix(data = full, predvars = prednames, na.omit=TRUE))
 
-  
+
+
+
+
+
+
 table(split1$test$Class)
 table(split1$train$Class)

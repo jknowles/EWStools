@@ -1,0 +1,26 @@
+\name{buildModelMatrix}
+\alias{buildModelMatrix}
+\title{Turn a dataframe into a model matrix for caret functions}
+\usage{
+buildModelMatrix(data, predvars, na.omit = TRUE)
+}
+\arguments{
+  \item{data}{a dataframe that the user would like to
+  convert to a model matrix}
+
+  \item{predvars}{a character vector of the names of
+  predictor variables}
+
+  \item{na.omit}{behavior with missing values, defaults to
+  TRUE}
+}
+\value{
+A model matrix
+}
+\description{
+Turn a dataframe into a model matrix for caret functions
+}
+\note{
+Built on the \code{\link{model.matrix}} function
+}
+
