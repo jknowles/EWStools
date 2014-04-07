@@ -70,6 +70,36 @@ and robust classification testing suite built around the ROC specifically.
 
 # Build and compare models 
 
+While `caret` has made it very easy to build models, `EWStools` seeks to improve 
+on this by allowing multiple models to be built, evaluated, and compared in 
+a few easy easy functions. For example, to compare multiple models (without 
+storing them), the user may:
+
+```{r}
+library(EWStools)
+mod.out <- modSearch(methods = c("glm", "knn"), datatype=c("train", "test"),
+                     traindata = list(preds = train[, -23], class = train[, 23]),
+                     testdata = list(preds = test[, -23], class = test[, 23]), 
+                      modelKeep=FALSE, length = 5, fitControl = ctrl, 
+                     metric = "ROC")
+```
+
+This produces a data frame with ROC statistics for the models that allow the 
+construction of ROC curves. 
+
+```{r}
+library(ggplot2)
+
+ggplot(mod.out[mod.out$grp == "test",], 
+       aes(x = 1- spec, y = sens, group = method, color = method)) + 
+         geom_line() + 
+  theme_bw() + theme(legend.position = c(.8, .2))
+
+
+```
+
+We can do even more with model fit evaluation. 
+
 # Conveniently Compare Accuracy Between Train and Test Data
 
 ```{r roctest1}

@@ -9,7 +9,7 @@
 ##' user can include both
 ##' @param testdata a list of length two containing a named slot for the matrix of predictors 
 ##' (pred) and the vector of classes (class)
-##' @param modelKeep a logical indicating whether the original model object should be stored
+##' @param modelKeep a logical indicating whether the original model object should be stored, default is FALSE
 ##' @return a list with the following:
 ##' \itemize{
 ##' \item{method - the \code{\link{train}} method used to fit the model}
@@ -20,6 +20,9 @@
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' @export
 modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE, ...){
+  if (missing(modelKeep)){
+    modelKeep <- FALSE
+  }
   if (length(datatype) > 1){
     ROCtr <- ROCtest(fit, ...)
     ROCte <-  ROCtest(fit, testdata=list(preds = testdata$preds, 
