@@ -73,7 +73,7 @@ ROCit <- setClass("ROCit", representation(thresh = "numeric",
 ##' @export ROCtest
 ##' @rdname ROCtest
 ##' @author Jared E. Knowles
-ROCtest <- function(mod, testdata, ...){
+ROCtest <- function(mod, testdata=NULL, ...){
   UseMethod("ROCtest")
 }
 

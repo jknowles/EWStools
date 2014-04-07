@@ -121,8 +121,69 @@ test_that("dfExtract functions when only test or training data present", {
   expect_identical(nrow(dfExtract(modobj2)), nrow(dfExtract(modobj3)))
 })
 
-# 
-# class(dfExtract(modobj))
-# 
-# 
-# dfExtract(modobj)
+context("Evaluate modSearch function ")
+ 
+
+test1 <- modTest(method = "svmRadial", datatype = c("train", "test"), 
+                   traindata = list(preds = train[, -19], class = train[, 19]), 
+                   testdata = list(preds = test[, -19], class = test[, 19]), 
+                   modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                   metric = "ROC")
+
+test1a <- modTest(method = "knn", datatype =  "test", 
+                 traindata = list(preds = train[, -19], class = train[, 19]), 
+                 testdata = list(preds = test[, -19], class = test[, 19]), 
+                 modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                 metric = "ROC")
+test1b <- modTest(method = "knn", datatype =  "train", 
+                  traindata = list(preds = train[, -19], class = train[, 19]), 
+                  testdata = list(preds = test[, -19], class = test[, 19]), 
+                  modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                  metric = "ROC")
+
+test2 <- modTest(method = "svmRadial", datatype = c("train", "test"), 
+               traindata = list(preds = train[, -19], class = train[, 19]), 
+               testdata = list(preds = test[, -19], class = test[, 19]), 
+               modelKeep = TRUE, length = 6, fitControl = ctrl, 
+               metric = "ROC")
+ 
+test_that("modTest returns the right objects", {
+  expect_that(test1, is_a("list"))
+  expect_that(test2, is_a("list"))
+  expect_that(test2$model, is_a("train"))
+  expect_that(test1a$summaryTr, is_null())
+  expect_that(test1a$summaryTe, is_a("ROCit"))
+  expect_that(test1b$summaryTe, is_null())
+  expect_that(test1b$summaryTr, is_a("ROCit"))
+  
+})
+
+
+
+context("Evaluate modSearch function ")
+
+resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"), 
+                            timeout = 10,
+                            datatype = c("train", "test"), 
+                            traindata = list(preds = train[, -19], class = train[, 19]), 
+                            testdata = list(preds = test[, -19], class = test[, 19]), 
+                            modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                            metric = "ROC")
+
+resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"), 
+                       datatype = c("train", "test"), 
+                       traindata = list(preds = train[, -19], class = train[, 19]), 
+                       testdata = list(preds = test[, -19], class = test[, 19]), 
+                       modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                       metric = "ROC", omit = NULL)
+
+test_that("modSearch returns the right objects", {
+  expect_that(resultSet, is_a("data.frame"))
+  expect_that(resultSet, is_a("data.frame"))
+  expect_error(modSearch(methods = c("knn", "glm", "lda2"), 
+                         datatype = c("train", "test"), 
+                         traindata = list(preds = train[, -19], class = train[, 19]), 
+                         testdata = list(preds = test[, -19], class = test[, 19]), 
+                         modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                         metric = "ROC", omit = NULL))
+})
