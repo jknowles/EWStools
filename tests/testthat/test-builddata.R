@@ -27,7 +27,9 @@
 # 
 # head(buildModelMatrix(data = full, predvars = prednames, na.omit=TRUE))
 # 
-# 
+# context("Test building of data on matrices")
+# make a matrix
+# test it
 # 
 # 
 # table(split1$test$Class)

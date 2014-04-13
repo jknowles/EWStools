@@ -146,8 +146,9 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     myclus <- makePSOCKcluster(cores) 
     registerDoParallel(myclus)
   }
-  datD <- c("rda", "lda2", "hda", 'mlp', 'mlpWeightDecay', 'rbf', 'rpart2', 
-            "treebag", 'rf', 'plr', 'lda', 'xyf')
+  datD <- c('rda', 'lda2', 'hda', 'mda', 'mlp', 'mlpWeightDecay', 
+            'rbf', 'rpart2', 
+            'treebag', 'rf', 'plr', 'lda', 'xyf')
   if(method %in% datD){
     omit <- findLinearCombos(traindata$preds)$remove
     fit <- tryCatch({
