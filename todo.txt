@@ -8,8 +8,8 @@
 - Test utilities 
 - Benchmark analysis
 - Calibration curves
-- Passing tests
-- Write documentation
+X - Passing tests
+X - Write documentation
 - Extend tests to regression framework too
 - Model selection algorithm in model search
 - Expand model search tests to GLMs as well
@@ -18,3 +18,6 @@
 - Fix so glms capture time as well
 - Check valid caret methods, error if none found
 - Auto omit variables if user forgets
+- Better report out of modTest and modAcc objects
+- Robust parallelization in modTest and modSearch
+- 

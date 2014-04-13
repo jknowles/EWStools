@@ -2,7 +2,7 @@
 \alias{modSearch}
 \title{Generate an empty dataframe to match \code{\link{modAcc}} lists}
 \usage{
-modSearch(methods, timeout, ...)
+modSearch(methods, timeout = NULL, ...)
 }
 \arguments{
   \item{methods}{a list of \code{train} method names to

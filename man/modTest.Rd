@@ -4,7 +4,7 @@
 \usage{
 modTest(method, datatype = c("train", "test"), traindata, testdata,
   modelKeep = NULL, length, omit = NULL, fitControl = NULL,
-  metric = "ROC")
+  metric = "ROC", cores = NULL)
 }
 \arguments{
   \item{method}{a a string specifying which classification
@@ -52,6 +52,9 @@ modTest(method, datatype = c("train", "test"), traindata, testdata,
   in trainControl, the value of metric should match one of
   the arguments. If it does not, a warning is issued and
   the first metric given by the summaryFunction is used.}
+
+  \item{cores}{An integer representing the number of cores
+  to use on Windows}
 }
 \value{
 A character string with an error if unsuccessful. The

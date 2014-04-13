@@ -68,3 +68,21 @@ assembleData <- function(data, class, p, ...){
   return(list(traindata = traindata, testdata = testdata))
   
 }
+
+
+##' @title Omit linear combinations from a predictor matrix
+##' @description Some \code{\link{train}} methods do not play well with linear 
+##' combinations in the predictor matrix. This function allows the user to strip 
+##' them out using the \code{\link{findLinearCombos}} function in the \code{caret} 
+##' package.
+##' @param A matrix of predictors
+##' @return A trimmed matrix
+##' @note Built on the \code{\link{findLinearCombos}} function. To find out which 
+##' columns will be trimmed, call \code{\link{findLinearCombos}} on the matrix 
+##' first. 
+##' @export
+omitLinearCombos <- function(preds){
+  combos <- findLinearCombos(preds)
+  preds <- preds[, -combos$remove]
+  return(preds)
+}

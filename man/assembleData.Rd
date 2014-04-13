@@ -2,7 +2,7 @@
 \alias{assembleData}
 \title{Assemble train and test data for model building with EWStools}
 \usage{
-assembleData(data, class, predvars, p, ...)
+assembleData(data, class, p, ...)
 }
 \arguments{
   \item{data}{a dataframe that the user would like to split
