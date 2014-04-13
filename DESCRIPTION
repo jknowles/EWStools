@@ -20,4 +20,5 @@ Imports:
 Suggests:
     testthat,
     MASS, 
-    R.utils
+    R.utils, 
+    doParallel
