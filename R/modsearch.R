@@ -140,7 +140,10 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
   # Let's dump out some defaults
   # Set up cores for Windows
   if(!missing(cores)){
-    # add a check against Windows here
+    myOS <- Sys.info()['sysname']
+    if(myOS!="Windows") stop("Only declare cores on Windows machines. On Linux 
+                             you can declare parallel outside of the modTest 
+                             or modSearch call.")
     myclus <- makePSOCKcluster(cores) 
     registerDoParallel(myclus)
   }

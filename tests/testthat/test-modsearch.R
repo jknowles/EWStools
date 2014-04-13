@@ -188,10 +188,10 @@ test_that("modSearch returns the right objects", {
                          metric = "ROC", omit = NULL))
 })
 
-context("Test modSearch in parallel on Windows")
+context("Test modTest and modSearch in parallel on Windows")
 
 library(doParallel)
-CORES <- 4
+CORES <- 2
 
 testSVM <- modTest(method = "svmRadial", datatype = c("train", "test"), 
                  traindata = list(preds = train[, -19], class = train[, 19]), 
