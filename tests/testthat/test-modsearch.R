@@ -175,7 +175,7 @@ resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"),
                        traindata = list(preds = train[, -19], class = train[, 19]), 
                        testdata = list(preds = test[, -19], class = test[, 19]), 
                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
-                       metric = "ROC", omit = NULL)
+                       metric = "ROC", omit = 4)
 
 test_that("modSearch returns the right objects", {
   expect_that(resultSet, is_a("data.frame"))
@@ -187,3 +187,17 @@ test_that("modSearch returns the right objects", {
                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
                          metric = "ROC", omit = NULL))
 })
+
+context("Test modSearch in parallel on Windows")
+
+library(doParallel)
+CORES <- 4
+
+
+resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"), 
+                        datatype = c("train", "test"), 
+                        traindata = list(preds = train[, -19], class = train[, 19]), 
+                        testdata = list(preds = test[, -19], class = test[, 19]), 
+                        modelKeep = FALSE, length = 12, fitControl = ctrl, 
+                        metric = "ROC", omit = 4, cores = CORES)
+
