@@ -42,7 +42,7 @@
 #                     class = "Class", p = 0.25, predvars = prednames)
 # 
 # context("Test linear combos omission")
-# 
+# # 
 # testData1 <- matrix(0, nrow=20, ncol=8)
 # testData1[,1] <- 1
 # testData1[,2] <- round(rnorm(20), 1)
@@ -52,7 +52,16 @@
 # testData1[1:4,6] <- 1
 # testData1[5:10,7] <- 1
 # testData1[11:20,8] <- 1
+# # 
+# #colnames(testData1) <- letters[1:8]\
+# splits <- splitData(testData1, class = "g", p =.2)
 # 
+# traindata <- list(preds = splits$train[, names(splits$train) != class], 
+#                   class = splits$train[, class])
+# testdata <- list(preds = splits$test[, names(splits$test) != class], 
+#                  class = splits$test[, class])
+# 
+
 # findLinearCombos(testData1)
 # 
 # omitLinearCombos(testData1)

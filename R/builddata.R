@@ -69,8 +69,8 @@ assembleData <- function(data, class, p, ...){
   testdata <- list(preds = splits$test[, names(splits$test) != class], 
                    class = splits$test[, class])
   if(class(data) == "matrix"){
-    traindata$preds <- apply(traindata$preds, 1, as.numeric)
-    testdata$preds <- apply(testdata$preds, 1, as.numeric)
+    traindata$preds <- apply(traindata$preds, 2, as.numeric)
+    testdata$preds <- apply(testdata$preds, 2, as.numeric)
     traindata$class <- as.factor(traindata$class)
     testdata$class <- as.factor(testdata$class)
   }
