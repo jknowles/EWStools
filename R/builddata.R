@@ -53,8 +53,8 @@ buildModelMatrix <- function(data, predvars, na.omit = TRUE){
 ##' } 
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
 ##' @export
-assembleData <- function(data, class, predvars, p, ...){
-  full.p <- buildModelMatrix(data, predvars, na.omit = FALSE)
+assembleData <- function(data, class, p, ...){
+  full.p <- buildModelMatrix(data, ...)
   full.p <- as.data.frame(full.p)
   full.p <- cbind(full.p, data[, class])
   names(full.p)[ncol(full.p)] <- class

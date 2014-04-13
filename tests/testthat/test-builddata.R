@@ -30,8 +30,11 @@ head(buildModelMatrix(data = full, predvars = prednames, na.omit=TRUE))
 
 
 
-
-
-
 table(split1$test$Class)
 table(split1$train$Class)
+
+zed <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
+
+zed <- assembleData(full[full$Factor1 == "e" | 
+                           full$Factor1 == "d",], 
+                    class = "Class", p = 0.25, predvars = prednames)
