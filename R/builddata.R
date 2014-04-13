@@ -59,9 +59,11 @@ assembleData <- function(data, class, p, ...){
     full.p <- as.data.frame(full.p)
     full.p <- cbind(full.p, data[, class])
     names(full.p)[ncol(full.p)] <- class
+    splits <- splitData(data = full.p, class = class, p = p)
+  } else {
+    splits <- splitData(data = data, class = class, p = p)
   }
-  splits <- splitData(data = full.p, class = class, p = p)
-  
+    
   traindata <- list(preds = splits$train[, names(splits$train) != class], 
                     class = splits$train[, class])
   testdata <- list(preds = splits$test[, names(splits$test) != class], 
