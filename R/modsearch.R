@@ -124,6 +124,7 @@ dfExtract <- function(mod){
 ##' argument in trainControl, the value of metric should match one of the arguments. 
 ##' If it does not, a warning is issued and the first metric given by the 
 ##' summaryFunction is used. 
+##' @param cores An integer representing the number of cores to use on Windows
 ##' @return A character string with an error if unsuccessful. The result of the \code{modAcc} call if successful: 
 ##' \itemize{
 ##' \item{method - the \code{\link{train}} method used to fit the model}
@@ -134,12 +135,15 @@ dfExtract <- function(mod){
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' @export
 modTest <- function(method, datatype=c("train", "test"), traindata, testdata, 
-                      modelKeep=NULL, length,  
-                      omit = NULL, fitControl = NULL, metric = "ROC"){
-  
+                      modelKeep=NULL, length, omit = NULL, fitControl = NULL, 
+                    metric = "ROC", cores = NULL){
   # Let's dump out some defaults
-  #
-  #
+  # Set up cores for Windows
+  if(!missing(cores)){
+    # add a check against Windows here
+    myclus <- makePSOCKcluster(cores) 
+    registerDoParallel(myclus)
+  }
   datD <- c("rda", "lda2", "hda", 'mlp', 'mlpWeightDecay', 'rbf', 'rpart2', 
             "treebag", 'rf', 'plr', 'lda', 'xyf')
   if(method %in% datD){
@@ -156,6 +160,9 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
             trControl=fitControl,
             tuneLength = length, metric= metric)}, error = function(e) 
               print(paste0("Model failed to run: ", method)))
+  }
+  if(!missing(cores)){
+    try(stopImplicitCluster())
   }
   if(class(fit) == "character"){
     cat(fit)
@@ -211,8 +218,6 @@ buildROCcurveFrame <- function(methods){
 ##' training and test data.
 ##' @param methods a list of \code{train} method names to generate the dataframe for
 ##' @param timeout an integer representing when the function should quit on a method and move on
-##' @param cluster A cluster object from \code{\link{makeCluster}} to be passed 
-##' to the call in Windows only. 
 ##' @param ... additional arguments passed to \code{\link{modSearch}}
 ##' @note Timeout does not work for all model types. See documentation on \code{\link{evalWithTimeout}} for details. 
 ##' Importantly it does not work for methods that call underlying C code. 
@@ -229,16 +234,11 @@ buildROCcurveFrame <- function(methods){
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
 ##' 
-modSearch <- function(methods, timeout = NULL, cores = NULL, ...){
+modSearch <- function(methods, timeout = NULL, ...){
   ModelFits <- buildROCcurveFrame(methods)
   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
     for(i in methods){
     p <- match(i, methods)
-    if(!missing(cores)){
-      # add a check against Windows here
-      myclus <- makePSOCKcluster(cores) 
-      registerDoParallel(myclus)
-    }
     if(!missing(timeout)){
       timeout <- timeout
       fit <- tryCatch({
@@ -253,10 +253,7 @@ modSearch <- function(methods, timeout = NULL, cores = NULL, ...){
     } else if(missing(timeout)){
       fit <- try(modTest(method = i, ...))
     }
-    if(!missing(cores)){
-      try(stopImplicitCluster())
-    }
-    tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
+     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
     if(class(tmp) == "data.frame"){
       ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
