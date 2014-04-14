@@ -145,7 +145,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
                              you can declare parallel outside of the modTest 
                              or modSearch call.")
     require(doParallel)
-    myclus <- makePSOCKcluster(cores) 
+    myclus <- makeCluster(cores) 
     registerDoParallel(myclus)
   }
   datD <- c("rda", "lda2", "hda", 'mlp', 'mlpWeightDecay', 'rbf', 'rpart2', 
@@ -166,6 +166,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
               print(paste0("Model failed to run: ", method)))
   }
   if(!missing(cores)){
+    try(stopCluster(myclus))
     try(stopImplicitCluster())
   }
   if(class(fit) == "character"){
