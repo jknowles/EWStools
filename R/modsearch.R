@@ -147,7 +147,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     registerDoParallel(myclus)
   }
   datD <- c('rda', 'lda2', 'hda', 'mda', 'mlp', 'mlpWeightDecay', 
-            'rbf', 'rpart2', 
+            'rbf', 'rpart2', 'C5.0Rules', 'pda2', 'rda', 
             'treebag', 'rf', 'plr', 'lda', 'xyf')
   if(method %in% datD){
     omit <- findLinearCombos(traindata$preds)$remove
