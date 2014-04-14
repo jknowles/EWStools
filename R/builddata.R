@@ -64,9 +64,9 @@ assembleData <- function(data, class, p, ...){
     splits <- splitData(data = data, class = class, p = p)
   }
     
-  traindata <- list(preds = splits$train[, names(splits$train) != class], 
+  traindata <- list(preds = splits$train[, colnames(splits$train) != class], 
                     class = splits$train[, class])
-  testdata <- list(preds = splits$test[, names(splits$test) != class], 
+  testdata <- list(preds = splits$test[, colnames(splits$test) != class], 
                    class = splits$test[, class])
   if(class(data) == "matrix"){
     mode(traindata$preds) <- "numeric"
