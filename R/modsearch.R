@@ -241,10 +241,14 @@ buildROCcurveFrame <- function(methods){
 ##' 
 modSearch <- function(methods, timeout = NULL, ...){
   ModelFits <- buildROCcurveFrame(methods)
-  pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
-    for(i in methods){
-    p <- match(i, methods)
-    if(!missing(timeout)){
+  if(missing(cores)){
+    pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
+    }
+  for(i in methods){
+      if(missing(cores)){
+        p <- match(i, methods)
+          }
+      if(!missing(timeout)){
       timeout <- timeout
       fit <- tryCatch({
         evalWithTimeout({
@@ -266,8 +270,10 @@ modSearch <- function(methods, timeout = NULL, ...){
       ModelFits <- ModelFits
       message(paste(tmp, "failure for model type:", i, sep=" "))
     }
-    setTxtProgressBar(pb, p)
-        
+    if(missing(cores)){
+      setTxtProgressBar(pb, p)      
+    }
+    
   }
   return(ModelFits)
 }
