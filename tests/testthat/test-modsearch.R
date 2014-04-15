@@ -191,7 +191,7 @@ test_that("modSearch returns the right objects", {
 context("Test modTest and modSearch in parallel on Windows")
 
 library(doParallel)
-CORES <- 2
+CORES <- 3
 
 if(Sys.info()['sysname'] != "Windows"){
   print("Not running test now")
@@ -202,12 +202,25 @@ if(Sys.info()['sysname'] != "Windows"){
                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
                      metric = "ROC", cores = CORES)
   
-  resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"), 
+  resultSet2 <- modSearch(methods = c("knn", "glm", "lda2", "fda", "earth"), 
                           datatype = c("train", "test"), 
                           traindata = list(preds = train[, -19], class = train[, 19]), 
                           testdata = list(preds = test[, -19], class = test[, 19]), 
                           modelKeep = FALSE, length = 12, fitControl = ctrl, 
-                          metric = "ROC", omit = 4, cores = CORES)
+                          metric = "ROC", cores = CORES)
+  
+  testSVM <- modTest(method = "RRF", datatype = c("train", "test"), 
+                     traindata = list(preds = train[, -19], class = train[, 19]), 
+                     testdata = list(preds = test[, -19], class = test[, 19]), 
+                     modelKeep = TRUE, length = 6, fitControl = ctrl, 
+                     metric = "ROC", cores = CORES)
+  
+  resultSet3 <- modSearch(methods = c("rf", "mlp", "nnet", "rbf", "qrf", 'RRF'), 
+                          datatype = c("train", "test"), 
+                          traindata = list(preds = train[, -19], class = train[, 19]), 
+                          testdata = list(preds = test[, -19], class = test[, 19]), 
+                          modelKeep = FALSE, length = 12, fitControl = ctrl, 
+                          metric = "ROC", cores = CORES)
   
 }
 

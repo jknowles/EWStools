@@ -151,31 +151,33 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
             'treebag', 'rf', 'plr', 'lda', 'xyf')
   if(method %in% datD){
     omit <- findLinearCombos(traindata$preds)$remove
+    cols <- 1:ncol(traindata$preds)
+    keep <- cols[!cols %in% omit]
     fit <- tryCatch({
-      train(traindata$preds[, -omit], traindata$class,
+      train(traindata$preds[, keep], traindata$class,
             method=method,
             trControl=fitControl,
             tuneLength = length, metric= metric)}, error = function(e) 
-              print(paste0("Model failed to run: ", method)))
+              message(paste0("Model failed to run: ", method)))
   } else {
     fit <- tryCatch({
       train(traindata$preds, traindata$class,
             method=method,
             trControl=fitControl,
             tuneLength = length, metric= metric)}, error = function(e) 
-              print(paste0("Model failed to run: ", method)))
+              message(paste0("Model failed to run: ", e)))
   }
   if(!missing(cores)){
     try(stopCluster(myclus))
     try(stopImplicitCluster())
   }
   if(class(fit) == "character"){
-    cat(fit)
+    message(paste0("Model failed to run: ", method))
     
   } else if(class(fit) == "train"){
       if(method %in% datD){
         fitSum <- modAcc(fit, datatype = datatype, 
-                         testdata=list(preds = testdata$preds[, -omit], 
+                         testdata=list(preds = testdata$preds[, keep], 
                                        class = testdata$class ), 
                          modelKeep = modelKeep)
       } else {
@@ -241,11 +243,11 @@ buildROCcurveFrame <- function(methods){
 ##' 
 modSearch <- function(methods, timeout = NULL, ...){
   ModelFits <- buildROCcurveFrame(methods)
-  if(missing(cores)){
+  if("cores" %in% names(list(...))){
     pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
     }
   for(i in methods){
-      if(missing(cores)){
+      if("cores" %in% names(list(...))){
         p <- match(i, methods)
           }
       if(!missing(timeout)){
@@ -270,7 +272,7 @@ modSearch <- function(methods, timeout = NULL, ...){
       ModelFits <- ModelFits
       message(paste(tmp, "failure for model type:", i, sep=" "))
     }
-    if(missing(cores)){
+    if("cores" %in% names(list(...))){
       setTxtProgressBar(pb, p)      
     }
     

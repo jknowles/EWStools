@@ -71,8 +71,6 @@ assembleData <- function(data, class, p, ...){
   if(class(data) == "matrix"){
     mode(traindata$preds) <- "numeric"
     mode(testdata$preds) <- "numeric"
-#     traindata$preds <- apply(traindata$preds, 2, as.numeric)
-#     testdata$preds <- apply(testdata$preds, 2, as.numeric)
     traindata$class <- as.factor(traindata$class)
     testdata$class <- as.factor(testdata$class)
   }
