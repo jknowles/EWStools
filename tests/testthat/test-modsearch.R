@@ -209,13 +209,16 @@ if(Sys.info()['sysname'] != "Windows"){
                           modelKeep = FALSE, length = 12, fitControl = ctrl, 
                           metric = "ROC", cores = CORES)
   
-  testSVM <- modTest(method = "RRF", datatype = c("train", "test"), 
+  zed <- train(train[, -19], train[, 19], method = "mlp", 
+               trControl = ctrl, length = 6, metric = "ROC")
+  
+  testSVM <- modTest(method = "nnet", datatype = c("train", "test"), 
                      traindata = list(preds = train[, -19], class = train[, 19]), 
                      testdata = list(preds = test[, -19], class = test[, 19]), 
                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
                      metric = "ROC", cores = CORES)
   
-  resultSet3 <- modSearch(methods = c("rf", "mlp", "nnet", "rbf", "qrf", 'RRF'), 
+  resultSet3 <- modSearch(methods = c("mlp", "nnet", "lda2", "hda"), 
                           datatype = c("train", "test"), 
                           traindata = list(preds = train[, -19], class = train[, 19]), 
                           testdata = list(preds = test[, -19], class = test[, 19]), 
