@@ -206,7 +206,7 @@ if(Sys.info()['sysname'] != "Windows"){
                           datatype = c("train", "test"), 
                           traindata = list(preds = train[, -19], class = train[, 19]), 
                           testdata = list(preds = test[, -19], class = test[, 19]), 
-                          modelKeep = FALSE, length = 12, fitControl = ctrl, 
+                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
                           metric = "ROC", cores = CORES)
   
   zed <- train(train[, -19], train[, 19], method = "mlp", 

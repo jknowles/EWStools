@@ -245,13 +245,16 @@ buildROCcurveFrame <- function(methods){
 modSearch <- function(methods, timeout = NULL, ...){
   ModelFits <- buildROCcurveFrame(methods)
   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
+  args <- as.list(substitute(list(...)))[-1L]
   for(i in methods){
       p <- match(i, methods)
+      z<-list(method = i)
+      z<-c(z,args)
         if(!missing(timeout)){
       timeout <- timeout
       fit <- tryCatch({
         evalWithTimeout({
-          modTest(method = i, ...);
+          do.call(modTest, z);
         }, timeout = timeout, elapsed = timeout, onTimeout = "warning")},
         TimeoutException = function(ex) {
           print("Timeout. Skip")
@@ -259,7 +262,7 @@ modSearch <- function(methods, timeout = NULL, ...){
                                        "\n", " For: ",e)})
           
     } else if(missing(timeout)){
-      fit <- try(modTest(method = i, ...), silent = TRUE)
+      fit <- try(do.call(modTest, z), silent = TRUE)
     }
      tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
