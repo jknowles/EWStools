@@ -133,7 +133,7 @@ dfExtract <- function(mod){
 ##' For some model types linear combos of predictors may be omitted.
 ##' @export
 modTest <- function(method, datatype=c("train", "test"), traindata, testdata, 
-                      modelKeep=NULL, length, fitControl = NULL, 
+                      modelKeep=FALSE, length, fitControl = NULL, 
                     metric = "ROC", cores = NULL){
   # Let's dump out some defaults
   # Set up cores for Windows
@@ -142,13 +142,13 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     if(myOS!="Windows") stop("Only declare cores on Windows machines. On Linux 
                              you can declare parallel outside of the modTest 
                              or modSearch call.")
-    require(doParallel)
     myclus <- makeCluster(cores) 
     registerDoParallel(myclus)
   }
   datD <- c('rda', 'lda2', 'hda', 'mda', 'mlp', 'mlpWeightDecay', 
             'rbf', 'rpart2', 'C5.0Rules', 'pda2', 'rda', 
-            'treebag', 'rf', 'plr', 'lda', 'xyf')
+            'treebag', 'rf', 'plr', 'lda', 'xyf', 'sddaLDA', 'sddaQDA', 
+            'LogitBoost')
   if(method %in% datD){
     omit <- findLinearCombos(traindata$preds)$remove
     cols <- 1:ncol(traindata$preds)
@@ -242,29 +242,16 @@ buildROCcurveFrame <- function(methods){
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
 ##' 
-modSearch <- function(methods, timeout = NULL, ...){
+modSearch <- function(methods, ...){
   ModelFits <- buildROCcurveFrame(methods)
   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
   args <- as.list(substitute(list(...)))[-1L]
   for(i in methods){
-      p <- match(i, methods)
-      z<-list(method = i)
-      z<-c(z,args)
-        if(!missing(timeout)){
-      timeout <- timeout
-      fit <- tryCatch({
-        evalWithTimeout({
-          do.call(modTest, z);
-        }, timeout = timeout, elapsed = timeout, onTimeout = "warning")},
-        TimeoutException = function(ex) {
-          print("Timeout. Skip")
-        }, error = function(e) {paste0("Failure of model: ", i, 
-                                       "\n", " For: ",e)})
-          
-    } else if(missing(timeout)){
-      fit <- try(do.call(modTest, z), silent = TRUE)
-    }
-     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
+    p <- match(i, methods)
+    z<-list(method = i)
+    z<-c(z,args)
+    fit <- try(do.call(modTest, z), silent = TRUE)
+    tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
     if(class(tmp) == "data.frame"){
       ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
@@ -276,3 +263,18 @@ modSearch <- function(methods, timeout = NULL, ...){
   }
   return(ModelFits)
 }
+
+# old block for timeout
+# 
+# if(!missing(timeout)){
+#   timeout <- timeout
+#   fit <- tryCatch({
+#     evalWithTimeout({
+#       do.call(modTest, z);
+#     }, timeout = timeout, elapsed = timeout, onTimeout = "warning")},
+#     TimeoutException = function(ex) {
+#       print("Timeout. Skip")
+#     }, error = function(e) {paste0("Failure of model: ", i, 
+#                                    "\n", " For: ",e)})
+#   
+# } else if(missing(timeout)){
