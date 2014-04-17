@@ -182,7 +182,8 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
                          modelKeep = modelKeep)
       } else {
         fitSum <- modAcc(fit, datatype = datatype, 
-                         testdata = testdata, 
+                         testdata = list(preds = testdata$preds, 
+                                         class = testdata$class), 
                          modelKeep = modelKeep)
       }
       
@@ -250,7 +251,7 @@ modSearch <- function(methods, timeout = NULL, ...){
       timeout <- timeout
       fit <- tryCatch({
         evalWithTimeout({
-          modTest(method = i,...);
+          modTest(method = i, ...);
         }, timeout = timeout, elapsed = timeout, onTimeout = "warning")},
         TimeoutException = function(ex) {
           print("Timeout. Skip")
@@ -258,7 +259,7 @@ modSearch <- function(methods, timeout = NULL, ...){
                                        "\n", " For: ",e)})
           
     } else if(missing(timeout)){
-      fit <- try(modTest(method = i, ...))
+      fit <- try(modTest(method = i, ...), silent = TRUE)
     }
      tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #

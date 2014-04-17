@@ -191,18 +191,18 @@ test_that("modSearch returns the right objects", {
 context("Test modTest and modSearch in parallel on Windows")
 
 library(doParallel)
-CORES <- 3
+CORES <- 2
 
 if(Sys.info()['sysname'] != "Windows"){
   print("Not running test now")
 } else{
-  testSVM <- modTest(method = "svmRadial", datatype = c("train", "test"), 
+  testSVM <- modTest(method = "avNNet", datatype = c("train", "test"), 
                      traindata = list(preds = train[, -19], class = train[, 19]), 
                      testdata = list(preds = test[, -19], class = test[, 19]), 
                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
                      metric = "ROC", cores = CORES)
   
-  resultSet2 <- modSearch(methods = c("knn", "glm", "lda2", "fda", "earth"), 
+  resultSet2 <- modSearch(methods = c("avNNet", "knn", "lda2", "fda", "earth"), 
                           datatype = c("train", "test"), 
                           traindata = list(preds = train[, -19], class = train[, 19]), 
                           testdata = list(preds = test[, -19], class = test[, 19]), 
