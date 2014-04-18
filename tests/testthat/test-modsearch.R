@@ -245,11 +245,10 @@ if(Sys.info()['sysname'] != "Windows"){
 }
 
 
-context("Test building of data")
+context("Test handling of assembleData data")
 
 set.seed(442)
-library(caret)
-full <- twoClassSim(n = 1500, intercept = -8, linearVars = 1, 
+full <- twoClassSim(n = 1200, intercept = -8, linearVars = 1, 
                      noiseVars = 1, corrVars = 1, corrValue = 0.6)
 
 prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
@@ -257,10 +256,10 @@ prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3"
 
 zed <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
 
-testSVM <- modTest(method = "avNNet", datatype = c("train", "test"), 
+testSVM <- modTest(method = "pda2", datatype = c("train", "test"), 
                    traindata = zed$traindata, 
                    testdata = zed$testdata, 
-                   modelKeep = TRUE, length = 2, fitControl = ctrl, 
+                   modelKeep = TRUE, length = 5, fitControl = ctrl, 
                    metric = "ROC", cores = 2+1)
 
 ctrl <- trainControl(method='cv', number=5, savePredictions = FALSE, 
@@ -272,7 +271,7 @@ zed$testdata$preds <- predict(fix, zed$testdata$preds); rm(fix)
 zed$traindata$preds <- as.data.frame(zed$traindata$preds)
 zed$testdata$preds <- as.data.frame(zed$testdata$preds)
 
-resultSet2 <- modSearch(methods = c("avNNet"), 
+resultSet2 <- modSearch(methods = c("C5.0"), 
                         datatype = c("train", "test"), 
                         traindata = zed$traindata, 
                         testdata = zed$testdata, 
@@ -280,7 +279,7 @@ resultSet2 <- modSearch(methods = c("avNNet"),
                         metric = "ROC", cores = 2+1)
 
 
-resultSet2 <- modSearch(methods = c("sddaLDA", "LogitBoost"), 
+resultSet2 <- modSearch(methods = c("sddaLDA", "LogitBoost", "C5.0"), 
                         datatype = c("train", "test"), 
                         traindata = zed$traindata, 
                         testdata = zed$testdata, 
@@ -288,14 +287,14 @@ resultSet2 <- modSearch(methods = c("sddaLDA", "LogitBoost"),
                         metric = "ROC", cores = 2+1)
 
 mymethods <- c("bagFDA", "C5.0", "C5.0Rules", "C5.0Tree", "fda", "hda", "lda",
-               "lda2", "logitBoost", "multinom", "pda", "pda2", "plr", "rda",
-               "sda", "sddaLDA", "sddaQDA", "sparseLDA", "stepLDA", "stepQDA")
+               "lda2", "LogitBoost", "multinom", "pda", "pda2", "plr", "rda",
+               "sda", "sddaQDA", "sparseLDA", "stepLDA", "stepQDA")
 
-resultSet2 <- modSearch(methods = mymethods, 
+resultSet2 <- modSearch(methods = mymethods[12:17], 
                         datatype = c("train", "test"), 
                         traindata = zed$traindata, 
                         testdata = zed$testdata, 
-                        length = 2, fitControl = ctrl, 
+                        length = 5, fitControl = ctrl, 
                         metric = "ROC", cores = 2+1)
-
-
+# 
+# 

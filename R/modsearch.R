@@ -146,7 +146,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     registerDoParallel(myclus)
   }
   datD <- c('rda', 'lda2', 'hda', 'mda', 'mlp', 'mlpWeightDecay', 
-            'rbf', 'rpart2', 'C5.0Rules', 'pda2', 'rda', 
+            'rbf', 'rpart2', 'C5.0Rules', 'pda2', 'rda', 'glm',
             'treebag', 'rf', 'plr', 'lda', 'xyf', 'sddaLDA', 'sddaQDA', 
             'LogitBoost')
   if(method %in% datD){
