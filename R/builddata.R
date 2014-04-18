@@ -14,11 +14,29 @@
 ##' } 
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
 ##' @export
-splitData <- function(data, class, p){
-  idx <- createDataPartition(data[, class], 1, p = p)
-  train <- data[idx[[1]], ]
-  test <- data[-idx[[1]], ]
-  return(list(train = train, test = test, indexes = idx))
+splitData <- function(data, class, p, pvalid = NULL){
+  if(missing(pvalid)){
+    type <- "two"
+  } else if(!missing(pvalid)){
+    type <- "three"
+  }
+  if(type == "two"){
+    idx <- createDataPartition(data[, class], times = 1, p = p)
+    train <- data[idx[[1]], ]
+    test <- data[-idx[[1]], ]
+    return(list(train = train, test = test, indexes = idx))
+    } else if(type == "three") {
+      idx <- createDataPartition(data[, class], times = 3, p = p)
+      train <- data[idx[[1]], ]
+      rest <- data[-idx[[1]], ]
+      idx2 <- createDataPartition(rest[, class], times = 2, p = pvalid)
+      valid <- rest[idx2[[1]], ]
+      test <- rest[-idx2[[1]], ]
+      return(list(train = train, test = test, valid = valid, 
+                  indexes = list(idx, idx2)))
+      
+    }
+
 }
 
 ##' @title Turn a dataframe into a model matrix for caret functions
@@ -53,29 +71,65 @@ buildModelMatrix <- function(data, predvars, na.omit = TRUE){
 ##' } 
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
 ##' @export
-assembleData <- function(data, class, p, ...){
-  if(class(data) != "matrix"){
-    full.p <- buildModelMatrix(data, ...)
-    full.p <- as.data.frame(full.p)
-    full.p <- cbind(full.p, data[, class])
-    names(full.p)[ncol(full.p)] <- class
-    splits <- splitData(data = full.p, class = class, p = p)
-  } else {
-    splits <- splitData(data = data, class = class, p = p)
-  }
+assembleData <- function(data, class, p, predvars, ...){
+  args <- as.list(substitute(list(...)))
+  if("pvalid" %in% names(args)){
+    if(class(data) != "matrix"){
+      if(!missing(predvars)){
+        full.p <- buildModelMatrix(data, predvars)
+        full.p <- as.data.frame(full.p)
+        full.p <- cbind(full.p, data[, class])
+        names(full.p)[ncol(full.p)] <- class
+        splits <- splitData(data = full.p, class = class, p = p, ...)
+      } else {
+        splits <- splitData(data = data, class = class, p = p, ...)
+      }
+    } else {
+      splits <- splitData(data = data, class = class, p = p, ...)
+    }
     
-  traindata <- list(preds = splits$train[, colnames(splits$train) != class], 
-                    class = splits$train[, class])
-  testdata <- list(preds = splits$test[, colnames(splits$test) != class], 
-                   class = splits$test[, class])
-  if(class(data) == "matrix"){
-    mode(traindata$preds) <- "numeric"
-    mode(testdata$preds) <- "numeric"
-    traindata$class <- as.factor(traindata$class)
-    testdata$class <- as.factor(testdata$class)
+    traindata <- list(preds = splits$train[, colnames(splits$train) != class], 
+                      class = splits$train[, class])
+    testdata <- list(preds = splits$test[, colnames(splits$test) != class], 
+                     class = splits$test[, class])
+    validdata <- list(preds = splits$valid[, colnames(splits$valid) != class], 
+                     class = splits$valid[, class])
+    if(class(data) == "matrix"){
+      mode(traindata$preds) <- "numeric"
+      mode(testdata$preds) <- "numeric"
+      mode(validdata$preds) <- "numeric"
+      traindata$class <- as.factor(traindata$class)
+      testdata$class <- as.factor(testdata$class)
+      validdata$class <- as.factor(validdata$class)
+    }
+    return(list(traindata = traindata, testdata = testdata, validdata = validdata))
+  } else {
+    if(class(data) != "matrix"){
+      if(!missing(predvars)){
+        full.p <- buildModelMatrix(data, predvars)
+        full.p <- as.data.frame(full.p)
+        full.p <- cbind(full.p, data[, class])
+        names(full.p)[ncol(full.p)] <- class
+        splits <- splitData(data = full.p, class = class, p = p)
+      } else {
+        splits <- splitData(data = data, class = class, p = p)
+      }
+    } else {
+      splits <- splitData(data = data, class = class, p = p)
+    }
+    
+    traindata <- list(preds = splits$train[, colnames(splits$train) != class], 
+                      class = splits$train[, class])
+    testdata <- list(preds = splits$test[, colnames(splits$test) != class], 
+                     class = splits$test[, class])
+    if(class(data) == "matrix"){
+      mode(traindata$preds) <- "numeric"
+      mode(testdata$preds) <- "numeric"
+      traindata$class <- as.factor(traindata$class)
+      testdata$class <- as.factor(testdata$class)
+    }
+    return(list(traindata = traindata, testdata = testdata))
   }
-  return(list(traindata = traindata, testdata = testdata))
-  
 }
 
 
