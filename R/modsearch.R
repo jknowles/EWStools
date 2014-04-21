@@ -148,7 +148,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
   datD <- c('rda', 'lda2', 'hda', 'mda', 'mlp', 'mlpWeightDecay', 
             'rbf', 'rpart2', 'C5.0Rules', 'pda2', 'rda', 'glm',
             'treebag', 'rf', 'plr', 'lda', 'xyf', 'sddaLDA', 'sddaQDA', 
-            'LogitBoost')
+            'LogitBoost', 'C5.0', 'bag', 'C5.0Tree')
   if(method %in% datD){
     omit <- findLinearCombos(traindata$preds)$remove
     cols <- 1:ncol(traindata$preds)

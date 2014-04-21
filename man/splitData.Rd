@@ -2,7 +2,7 @@
 \alias{splitData}
 \title{Split data into a training and a test dataset}
 \usage{
-splitData(data, class, p)
+splitData(data, class, p, pvalid = NULL)
 }
 \arguments{
   \item{data}{a dataframe that the user would like to split

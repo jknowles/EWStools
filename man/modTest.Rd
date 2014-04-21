@@ -3,7 +3,7 @@
 \title{Train a model and store \code{\linkS4class{ROCit}} tests on different datasets}
 \usage{
 modTest(method, datatype = c("train", "test"), traindata, testdata,
-  modelKeep = NULL, length, fitControl = NULL, metric = "ROC",
+  modelKeep = FALSE, length, fitControl = NULL, metric = "ROC",
   cores = NULL)
 }
 \arguments{

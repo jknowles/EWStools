@@ -1,0 +1,150 @@
+Model?,method Argument Value?,Type?,Packages?,Tuning Parameters?,Tag,RequireJava
+Boosted Classification Trees,ada,Classification,ada,"iter, maxdepth, nu","boosting, ensemble, featureselect_Imp, treebased",no
+Neural Network,AMORE,Dual Use,AMORE,"layer1, layer2, layer3, learning.rate.global",neuralnet,no
+Model Averaged Neural Network,avNNet,Dual Use,nnet,"size, decay, bag","bagging, ensemble, L2regularization, neuralnet",no
+Bagged Model,bag,Dual Use,caret,vars,"bagging, ensemble",no
+Bagged MARS,bagEarth,Dual Use,earth,"nprune, degree","bagging, ensemble, featureselect_Imp, MARS",no
+Bagged Flexible Discriminant Analysis,bagFDA,Classification,"earth, mda","degree, nprune","bagging, ensemble, featureselect_Imp, MARS",no
+Bayesian Generalized Linear Model,bayesglm,Dual Use,arm,None,"glm, linearclassify, logisticregression",no
+Self-Organizing Map,bdk,Dual Use,kohonen,"xdim, ydim, xweight, topo",selforgmaps,no
+Boosted Tree,blackboost,Dual Use,"party, mboost, plyr","mstop, maxdepth","boosting, ensemble, treebased",no
+Random Forest with Additional Feature Selection,Boruta,Dual Use,"Boruta, randomForest",mtry,"ensemble, featureselect, randomforest, treebased",no
+Bayesian Regularized Neural Networks,brnn,Regression,brnn,neurons,"bayesian, neuralnet, regularization",no
+Boosted Linear Model,bstLs,Dual Use,"bst, plyr","mstop, nu","boosting, ensemble, featureselect_Imp, linearregression",no
+Boosted Smoothing Spline,bstSm,Dual Use,"bst, plyr","mstop, nu","boosting, featureselect_Imp",no
+Boosted Tree,bstTree,Dual Use,"bst, plyr","mstop, maxdepth, nu","boosting, ensemble, treebased",no
+C5.0,C5.0,Classification,"C50, plyr","trials, model, winnow","boosting,en, featureselect_Imp, rulesbased, treebased",no
+Cost-Sensitive C5.0,C5.0Cost,Classification,"C50, plyr","trials, model, winnow, cost","boosting, cost, ensemble, featureselect_Imp, rulesbased, treebased",no
+Single C5.0 Ruleset,C5.0Rules,Classification,C50,None,"featureselect_Imp, rulesbased",no
+Single C5.0 Tree,C5.0Tree,Classification,C50,None,"featureselect_Imp, treebased",no
+Conditional Inference Random Forest,cforest,Dual Use,party,mtry,"bagging, ensemble, featureselect_Imp, randomforest",no
+SIMCA,CSimca,Classification,rrcovHD,None,,no
+Conditional Inference Tree,ctree,Dual Use,party,mincriterion,"featureselect_Imp, treebased",no
+Conditional Inference Tree,ctree2,Dual Use,party,maxdepth,"featureselect_Imp, treebased",no
+Cubist,cubist,Regression,Cubist,"committees, neighbors"," ensemble, featureselect_Imp, linearregression, modeltree, prototype, rulesbased",no
+Multivariate Adaptive Regression Spline,earth,Dual Use,earth,"nprune, degree","featureselect_Imp, MARS",no
+Extreme Learning Machine,elm,Dual Use,elmNN,"nhid, actfun",neuralnet,no
+Elasticnet,enet,Regression,elasticnet,"fraction, lambda","featureselect_Imp, L1regularization, linearregression",no
+Tree Models from Genetic Algorithms,evtree,Dual Use,evtree,alpha,"featureselect_Imp, treebased",no
+Random Forest by Randomization,extraTrees,Dual Use,extraTrees,"mtry, numRandomCuts","bagging, ensemble, featureselect_Imp, randomforest",no
+Flexible Discriminant Analysis,fda,Classification,"earth, mda","degree, nprune","featureselect_Imp, MARS",no
+Ridge Regression with Variable Selection,foba,Regression,foba,"k, lambda","featureselect, L2regularization, linearregression, RIDGE",no
+Generalized Additive Model using Splines,gam,Dual Use,mgcv,"select, method","gam, glm",no
+Boosted Generalized Additive Model,gamboost,Dual Use,mboost,"mstop, prune","boosting, ensemble, gam, featureselect_Imp",no
+Generalized Additive Model using LOESS,gamLoess,Dual Use,gam,"span, degree","gam, glm",no
+Generalized Additive Model using Splines,gamSpline,Dual Use,gam,df,"gam, glm",no
+Gaussian Process,gaussprLinear,Dual Use,kernlab,None,"gaussian, kernel, linearclassify",no
+Gaussian Process with Polynomial Kernel,gaussprPoly,Dual Use,kernlab,"degree, scale","gaussian, kernel, polynomial",no
+Gaussian Process with Radial Basis Function Kernel,gaussprRadial,Dual Use,kernlab,sigma,"gaussian, kernel, radialbasis",no
+Stochastic Gradient Boosting,gbm,Dual Use,"gbm, plyr","n.trees, interaction.depth, shrinkage","boosting, ensemble, featureselect_Imp, treebased",no
+Multivariate Adaptive Regression Splines,gcvEarth,Dual Use,earth,degree,"featureselect_Imp, MARS",no
+Generalized Linear Model,glm,Dual Use,,None,"glm, linearclassify",no
+Boosted Generalized Linear Model,glmboost,Dual Use,mboost,"mstop, prune","boosting, ensemble, glm, linearclassify",no
+glmnet,glmnet,Dual Use,glmnet,"alpha, lambda","glm, featureselect_Imp, L1regularization, L2regularization, linearclassify, linearregression",no
+Generalized Linear Model with Stepwise Feature Selection,glmStepAIC,Dual Use,MASS,None,"featureselect, glm, featureselect_Imp, linearclassify",no
+Generalized Partial Least Squares,gpls,Classification,gpls,K.prov,"linearclassify, logisticregression, pls",no
+Heteroscedastic Discriminant Analysis,hda,Classification,hda,"gamma, lambda, newdim","discriminant, linearclassify, regularization",no
+High Dimensional Discriminant Analysis,hdda,Classification,HDclassif,"threshold, model","discriminant, linearclassify",no
+Independent Component Regression,icr,Regression,fastICA,n.comp,"featureextract, linearregression",no
+C4.5-like Trees,J48,Classification,RWeka,C,"featureselect_Imp, treebased",yes
+Rule-Based Classifier,JRip,Classification,RWeka,NumOpt,"featureselect_Imp, rulesbased",yes
+Partial Least Squares,kernelpls,Dual Use,pls,ncomp,"featureextract, kernel, linearclassify, linearregression, pls",no
+k-Nearest Neighbors,kknn,Dual Use,kknn,"kmax, distance, kernel",prototype,no
+k-Nearest Neighbors,knn,Dual Use,,k,prototype,no
+Polynomial Kernel Regularized Least Squares,krlsPoly,Regression,KRLS,"lambda, degree","kernel, L2regularization, polynomial",no
+Radial Basis Function Kernel Regularized Least Squares,krlsRadial,Regression,"KRLS, kernlab","lambda, sigma","kernel, L2regularization, radialbasis",no
+Least Angle Regression,lars,Regression,lars,fraction,"featureselect_Imp, L1regularization, linearregression",no
+Least Angle Regression,lars2,Regression,lars,step,"featureselect_Imp, L1regularization, linearregression",no
+The lasso,lasso,Regression,elasticnet,fraction,"L1regularization, linearregression",no
+Linear Discriminant Analysis,lda,Classification,MASS,None,"discriminant, linearclassify",no
+Linear Discriminant Analysis,lda2,Classification,MASS,dimen,"discriminant, linearclassify",no
+Linear Regression with Backwards Selection,leapBackward,Regression,leaps,nvmax,"featureselect, linearregression",no
+Linear Regression with Forward Selection,leapForward,Regression,leaps,nvmax,"featureselect, linearregression",no
+Linear Regression with Stepwise Selection,leapSeq,Regression,leaps,nvmax,"featureselect, linearregression",no
+Robust Linear Discriminant Analysis,Linda,Classification,rrcov,None,"discriminant, linearclassify",no
+Linear Regression,lm,Regression,,None,linearregression,no
+Linear Regression with Stepwise Selection,lmStepAIC,Regression,MASS,None,"featureselect, linearregression",no
+Logistic Model Trees,LMT,Classification,RWeka,iter,"featureselect_Imp, linearclassify, logisticregression, modeltree",yes
+Bagged Logic Regression,logicBag,Dual Use,logicFS,"nleaves, ntrees","bagging, ensemble, linearclassify, linearregression, logicregression, logisticregression",no
+Boosted Logistic Regression,LogitBoost,Classification,caTools,nIter,"boosting, featureselect_Imp, logisticregression, treebased",no
+Logic Regression,logreg,Dual Use,LogicReg,"treesize, ntrees","linearclassify, linearregression, logicregression, logisticregression",no
+Least Squares Support Vector Machine,lssvmLinear,Classification,kernlab,None,"kernel, linearclassify, SVM",no
+Least Squares Support Vector Machine with Polynomial Kernel,lssvmPoly,Classification,kernlab,"degree, scale","kernel, polynomial, SVM",no
+Least Squares Support Vector Machine with Radial Basis Function Kernel,lssvmRadial,Classification,kernlab,sigma,"kernel, radialbasis, SVM",no
+Learning Vector Quantization,lvq,Classification,class,"size, k",prototype,no
+Model Tree,M5,Regression,RWeka,"pruned, smoothed, rules","featureselect_Imp, modeltree, rulesbased, treebased",yes
+Model Rules,M5Rules,Regression,RWeka,"pruned, smoothed","featureselect_Imp, linearregression, modeltree, rulesbased",yes
+Mixture Discriminant Analysis,mda,Classification,mda,subclasses,"discriminant, mixturemodel",no
+Maximum Uncertainty Linear Discriminant Analysis,Mlda,Classification,HiDimDA,None,"discriminant , linearclassify",no
+Multi-Layer Perceptron,mlp,Dual Use,RSNNS,size,neuralnet,no
+Multi-Layer Perceptron,mlpWeightDecay,Dual Use,RSNNS,"size, decay","L2regularization, neuralnet",no
+Penalized Multinomial Regression,multinom,Classification,nnet,decay,"L2regularization, linearclassify, logisticregression, neuralnet",no
+Naive Bayes,nb,Classification,klaR,"fL, usekernel",bayesian,no
+Neural Network,neuralnet,Regression,neuralnet,"layer1, layer2, layer3",neuralnet,no
+Neural Network,nnet,Dual Use,nnet,"size, decay","L2regularization, neuralnet",no
+Tree-Based Ensembles,nodeHarvest,Dual Use,nodeHarvest,"maxinter, mode","ensemble, featureselect_Imp, treebased",no
+Oblique Trees,oblique.tree,Classification,oblique.tree,"oblique.splits, variable.selection","featureselect_Imp, obliquetree, treebased",no
+Single Rule Classification,OneR,Classification,RWeka,None,"featureselect_Imp, rulesbased",yes
+Oblique Random Forest,ORFlog,Classification,obliqueRF,mtry,"ensemble, featureselect_Imp, logisticregression, obliquetree, randomforest",no
+Oblique Random Forest,ORFpls,Classification,obliqueRF,mtry,"ensemble, featureselect_Imp, obliquetree, pls, randomforest",no
+Oblique Random Forest,ORFridge,Classification,obliqueRF,mtry,"ensemble, featureselect_Imp, L2regularization, obliquetree, randomforest, RIDGE",no
+Oblique Random Forest,ORFsvm,Classification,obliqueRF,mtry,"ensemble, featureselect_Imp, kernel, obliquetree, randomforest",no
+Nearest Shrunken Centroids,pam,Classification,pamr,threshold,"featureselect_Imp, linearclassify, prototype",no
+Rule-Based Classifier,PART,Classification,RWeka,"threshold, pruned","featureselect_Imp, rulesbased",yes
+partDSA,partDSA,Dual Use,partDSA,"cut.off.growth, MPD",,no
+Neural Networks with Feature Extraction,pcaNNet,Dual Use,nnet,"size, decay","featureextract, L2regularization, neuralnet",no
+Principal Component Analysis,pcr,Regression,pls,ncomp,"featureextract, linearregression",no
+Penalized Discriminant Analysis,pda,Classification,mda,lambda,"discriminant , polynomial",no
+Penalized Discriminant Analysis,pda2,Classification,mda,df,"discriminant, polynomial",no
+Penalized Linear Regression,penalized,Regression,penalized,"lambda1, lambda2","featureselect_Imp, L1regularization, L2regularization, linearregression",no
+Penalized Linear Discriminant Analysis,PenalizedLDA,Classification,"penalizedLDA, plyr","lambda, K","discriminant , featureselect_Imp, L1regularization, linearclassify",no
+Penalized Logistic Regression,plr,Classification,stepPlr,"lambda, cp","L2regularization, linearclassify, logisticregression",no
+Partial Least Squares,pls,Dual Use,pls,ncomp,"featureextract, linearclassify, linearregression, pls",no
+Projection Pursuit Regression,ppr,Regression,,nterms,featureextract,no
+Greedy Prototype Selection,protoclass,Classification,"proxy, protoclass","eps, Minkowski",prototype,no
+Quadratic Discriminant Analysis,qda,Classification,MASS,None,"discriminant, polynomial",no
+Robust Quadratic Discriminant Analysis,QdaCov,Classification,rrcov,None,"discriminant, polynomial",no
+Quantile Random Forest,qrf,Regression,quantregForest,mtry,"bagging, ensemble, featureselect_Imp, quantileregression, randomforest",no
+Quantile Regression Neural Network,qrnn,Regression,qrnn,"n.hidden, penalty, bag","bagging, ensemble, L2regularization, neuralnet, quantileregression",no
+Radial Basis Function Network,rbf,Classification,RSNNS,size,"L2regularization, neuralnet, radialbasis",no
+Radial Basis Function Network,rbfDDA,Dual Use,RSNNS,negativeThreshold,"L2regularization, neuralnet, radialbasis",no
+Regularized Discriminant Analysis,rda,Classification,klaR,"gamma, lambda","discriminant, linearclassify, polynomial, regularization",no
+Relaxed Lasso,relaxo,Regression,"relaxo, plyr","lambda, phi","featureselect_Imp, L1regularization, L2regularization, linearregression",no
+Random Forest,rf,Dual Use,randomForest,mtry,"bagging, ensemble, featureselect_Imp, randomforest",no
+Random Ferns,rFerns,Classification,rFerns,depth,"bagging, ensemble, featureselect_Imp, randomforest",no
+Factor-Based Linear Discriminant Analysis,RFlda,Classification,HiDimDA,q,"discriminant ,linearclassify",no
+Ridge Regression,ridge,Regression,elasticnet,lambda,"L2regularization, linearregression",no
+Random k-Nearest Neighbors,rknn,Dual Use,rknn,"k, mtry",prototype,no
+Random k-Nearest Neighbors with Feature Selection,rknnBel,Dual Use,"rknn, plyr","k, mtry, d","featureselect, prototype",no
+Robust Linear Model,rlm,Regression,MASS,None,linearregression,no
+ROC-Based Classifier,rocc,Classification,rocc,xgenes,ROCbased,no
+CART,rpart,Dual Use,rpart,cp,"featureselect_Imp, treebased",no
+CART,rpart2,Dual Use,rpart,maxdepth,"featureselect_Imp, treebased",no
+Cost-Sensitive CART,rpartCost,Classification,rpart,"cp, Cost","cost, featureselect_Imp",no
+Regularized Random Forest,RRF,Dual Use,"randomForest, RRF","mtry, coefReg, coefImp","bagging, ensemble, featureselect_Imp, randomforest, regularization",no
+Regularized Random Forest,RRFglobal,Dual Use,RRF,"mtry, coefReg","bagging, ensemble, featureselect_Imp, randomforest, regularization",no
+Robust Regularized Linear Discriminant Analysis,rrlda,Classification,rrlda,"lambda, hp, penalty","discriminant, linearclassify, regularization",no
+Robust SIMCA,RSimca,Classification,rrcovHD,None,linearclassify,no
+Relevance Vector Machines with Linear Kernel,rvmLinear,Regression,kernlab,None,"kernel, linearregression, RVM, robust",no
+Relevance Vector Machines with Polynomial Kernel,rvmPoly,Regression,kernlab,"scale, degree","kernel, polynomial, RVM, robust",no
+Relevance Vector Machines with Radial Basis Function Kernel,rvmRadial,Regression,kernlab,sigma,"kernel, radialbasis, RVM, robust",no
+Shrinkage Discriminant Analysis,sda,Classification,sda,"diagonal, lambda","discriminant, linearclassify, regularization",no
+Stepwise Diagonal Linear Discriminant Analysis,sddaLDA,Classification,SDDA,None,"discriminant, featureselect, linearclassify",no
+Stepwise Diagonal Quadratic Discriminant Analysis,sddaQDA,Classification,SDDA,None,"discriminant, featureselect, polynomial",no
+Partial Least Squares,simpls,Dual Use,pls,ncomp,"featureextract, linearclassify, linearregression, pls",no
+Stabilized Linear Discriminant Analysis,slda,Classification,ipred,None,"discriminant, linearclassify",no
+Sparse Mixture Discriminant Analysis,smda,Classification,sparseLDA,"NumVars, lambda, R","discriminant, featureselect_Imp, L1regularization, mixturemodel",no
+Sparse Linear Discriminant Analysis,sparseLDA,Classification,sparseLDA,"NumVars, lambda","discriminant, featureselect_Imp, L1regularization, linearclassify",no
+Sparse Partial Least Squares,spls,Dual Use,spls,"K, eta, kappa","featureextract, L1regularization, linearclassify, linearregression, pls",no
+Linear Discriminant Analysis with Stepwise Feature Selection,stepLDA,Classification,"klaR, MASS","maxvar, direction","discriminant, featureselect, linearclassify",no
+Quadratic Discriminant Analysis with Stepwise Feature Selection,stepQDA,Classification,"klaR, MASS","maxvar, direction","discriminant, featureselect, polynomial",no
+Supervised Principal Component Analysis,superpc,Regression,superpc,"threshold, n.components","featureextract, linearregression",no
+Support Vector Machines with Linear Kernel,svmLinear,Dual Use,kernlab,C,"kernel, linearclassify, linearregression, robust, SVM",no
+Support Vector Machines with Polynomial Kernel,svmPoly,Dual Use,kernlab,"degree, scale, C","kernel, polynomial, robust, SVM",no
+Support Vector Machines with Radial Basis Function Kernel,svmRadial,Dual Use,kernlab,"sigma, C","kernel, radialbasis, robust, SVM",no
+Support Vector Machines with Radial Basis Function Kernel,svmRadialCost,Dual Use,kernlab,C,"kernel, radialbasis, SVM",no
+Support Vector Machines with Class Weights,svmRadialWeights,Classification,kernlab,"sigma, C, Weight","cost, radialbasis, SVM",no
+Bagged CART,treebag,Dual Use,"ipred, plyr",None,"ensemble, treebased",no
+Variational Bayesian Multinomial Probit Regression,vbmpRadial,Classification,vbmp,estimateTheta,"bayesian, gaussian, radialbasis",no
+Partial Least Squares,widekernelpls,Dual Use,pls,ncomp,"featureextract, linearclassify, linearregression, pls",no
+Self-Organizing Maps,xyf,Dual Use,kohonen,"xdim, ydim, x",selforgmaps,no
