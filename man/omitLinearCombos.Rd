@@ -5,7 +5,7 @@
 omitLinearCombos(preds)
 }
 \arguments{
-  \item{A}{matrix of predictors}
+  \item{preds}{A matrix of predictors}
 }
 \value{
 A trimmed matrix

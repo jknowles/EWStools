@@ -6,13 +6,15 @@
 ##' @param data a dataframe that the user would like to split into training and sample sets
 ##' @param class character value of the name of the dependent variable 
 ##' @param p the proportion of data to be placed into a training set 
+##' @param pvalid the proportion of data to be placed into the validation set 
 ##' @return A list with the following items:
 ##' \itemize{
 ##' \item{train - a data frame of the training values}
 ##' \item{test - a data frame of the test values}
 ##' \item{indexes - the row indexes of the original data frame selected to be in the training set}
 ##' } 
-##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
+##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package. pvalid 
+##' is defined against the records remaining after holding out p for the training set.
 ##' @export
 splitData <- function(data, class, p, pvalid = NULL){
   if(missing(pvalid)){
@@ -64,6 +66,7 @@ buildModelMatrix <- function(data, predvars, na.omit = TRUE){
 ##' @param class character value of the name of the dependent variable 
 ##' @param predvars  a character vector of the names of predictor variables
 ##' @param p the proportion of data to be placed into a training set 
+##' @param ... additional arguments to be passed to assembleData
 ##' @return A list of lists with the following items:
 ##' \itemize{
 ##' \item{traindata - a list with a dataframe of the predictor matrix called preds, and the class called class}
@@ -138,7 +141,7 @@ assembleData <- function(data, class, p, predvars, ...){
 ##' combinations in the predictor matrix. This function allows the user to strip 
 ##' them out using the \code{\link{findLinearCombos}} function in the \code{caret} 
 ##' package.
-##' @param A matrix of predictors
+##' @param preds A matrix of predictors
 ##' @return A trimmed matrix
 ##' @note Built on the \code{\link{findLinearCombos}} function. To find out which 
 ##' columns will be trimmed, call \code{\link{findLinearCombos}} on the matrix 

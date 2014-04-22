@@ -16,6 +16,9 @@ assembleData(data, class, p, predvars, ...)
 
   \item{p}{the proportion of data to be placed into a
   training set}
+
+  \item{...}{additional arguments to be passed to
+  assembleData}
 }
 \value{
 A list of lists with the following items: \itemize{

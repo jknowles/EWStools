@@ -10,6 +10,7 @@
 ##' @param testdata a list of length two containing a named slot for the matrix of predictors 
 ##' (pred) and the vector of classes (class)
 ##' @param modelKeep a logical indicating whether the original model object should be stored, default is FALSE
+##' @param ... additional arguments passed to \code{\link{modSearch}}
 ##' @return a list with the following:
 ##' \itemize{
 ##' \item{method - the \code{\link{train}} method used to fit the model}
@@ -225,10 +226,7 @@ buildROCcurveFrame <- function(methods){
 ##' @description Used for generating the data to make good looking ROC curves of 
 ##' training and test data.
 ##' @param methods a list of \code{train} method names to generate the dataframe for
-##' @param timeout an integer representing when the function should quit on a method and move on
 ##' @param ... additional arguments passed to \code{\link{modSearch}}
-##' @note Timeout does not work for all model types. See documentation on \code{\link{evalWithTimeout}} for details. 
-##' Importantly it does not work for methods that call underlying C code. 
 ##' @return a \code{\link{data.frame}} with the following columns:
 ##' \itemize{
 ##' \item{sens - the sensitivities of the model at various thresholds}
