@@ -1,10 +1,4 @@
 # Test modsearch
-
-# For train objects
-# For glm objects
-# others?!?
-
-
 context("Test summaries of train objects")
 
 set.seed(442)
@@ -163,7 +157,6 @@ test_that("modTest returns the right objects", {
 context("Evaluate modSearch function ")
 
 resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"), 
-                            timeout = 10,
                             datatype = c("train", "test"), 
                             traindata = list(preds = train[, -19], class = train[, 19]), 
                             testdata = list(preds = test[, -19], class = test[, 19]), 
@@ -175,7 +168,7 @@ resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"),
                        traindata = list(preds = train[, -19], class = train[, 19]), 
                        testdata = list(preds = test[, -19], class = test[, 19]), 
                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
-                       metric = "ROC", omit = 4)
+                       metric = "ROC")
 
 test_that("modSearch returns the right objects", {
   expect_that(resultSet, is_a("data.frame"))
@@ -185,52 +178,53 @@ test_that("modSearch returns the right objects", {
                          traindata = list(preds = train[, -19], class = train[, 19]), 
                          testdata = list(preds = test[, -19], class = test[, 19]), 
                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
-                         metric = "ROC", omit = NULL))
+                         metric = "ROC", omit = 2))
 })
 
 context("Test modTest and modSearch in parallel on Windows")
 
-library(doParallel)
-CORES <- 2
+
 
 if(Sys.info()['sysname'] != "Windows"){
   print("Not running test now")
 } else{
-  testSVM <- modTest(method = "avNNet", datatype = c("train", "test"), 
+  library(doParallel)
+  CORES <- 2
+  testSVM <- modTest(method = "svmRadial", datatype = c("train", "test"), 
                      traindata = list(preds = train[, -19], class = train[, 19]), 
                      testdata = list(preds = test[, -19], class = test[, 19]), 
                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
                      metric = "ROC", cores = CORES)
   
-  resultSet2 <- modSearch(methods = c("avNNet", "knn", "lda2", "fda", "earth"), 
+  resultSet2 <- modSearch(methods = c("svmRadial", "knn", "lda2", "fda", "earth"), 
                           datatype = c("train", "test"), 
                           traindata = list(preds = train[, -19], class = train[, 19]), 
                           testdata = list(preds = test[, -19], class = test[, 19]), 
                           modelKeep = FALSE, length = 6, fitControl = ctrl, 
                           metric = "ROC", cores = CORES)
-  
-  resultSet2 <- modSearch(methods = c("avNNet"), 
-                          datatype = c("train", "test"), 
-                          traindata = list(preds = train[, -19], class = train[, 19]), 
-                          testdata = list(preds = test[, -19], class = test[, 19]), 
-                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
-                          metric = "ROC", cores = CORES)
-  
-  zed <- train(train[, -19], train[, 19], method = "mlp", 
-               trControl = ctrl, length = 6, metric = "ROC")
-  
-  testSVM <- modTest(method = "nnet", datatype = c("train", "test"), 
-                     traindata = list(preds = train[, -19], class = train[, 19]), 
-                     testdata = list(preds = test[, -19], class = test[, 19]), 
-                     modelKeep = TRUE, length = 6, fitControl = ctrl, 
-                     metric = "ROC", cores = CORES)
-  
-  resultSet3 <- modSearch(methods = c("mlp", "nnet", "lda2", "hda"), 
-                          datatype = c("train", "test"), 
-                          traindata = list(preds = train[, -19], class = train[, 19]), 
-                          testdata = list(preds = test[, -19], class = test[, 19]), 
-                          modelKeep = FALSE, length = 12, fitControl = ctrl, 
-                          metric = "ROC", cores = CORES)
+#   
+#   resultSet2 <- modSearch(methods = c("avNNet"), 
+#                           datatype = c("train", "test"), 
+#                           traindata = list(preds = train[, -19], class = train[, 19]), 
+#                           testdata = list(preds = test[, -19], class = test[, 19]), 
+#                           modelKeep = FALSE, length = 6, fitControl = ctrl, 
+#                           metric = "ROC", cores = CORES)
+#   
+#   zed <- train(train[, -19], train[, 19], method = "mlp", 
+#                trControl = ctrl, length = 6, metric = "ROC")
+#   
+#   testSVM <- modTest(method = "nnet", datatype = c("train", "test"), 
+#                      traindata = list(preds = train[, -19], class = train[, 19]), 
+#                      testdata = list(preds = test[, -19], class = test[, 19]), 
+#                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
+#                      metric = "ROC", cores = CORES)
+#   
+#   resultSet3 <- modSearch(methods = c("mlp", "nnet", "lda2", "hda"), 
+#                           datatype = c("train", "test"), 
+#                           traindata = list(preds = train[, -19], class = train[, 19]), 
+#                           testdata = list(preds = test[, -19], class = test[, 19]), 
+#                           modelKeep = FALSE, length = 12, fitControl = ctrl, 
+#                           metric = "ROC", cores = CORES)
   
 }
 
@@ -244,57 +238,57 @@ if(Sys.info()['sysname'] != "Windows"){
   })
 }
 
-
-context("Test handling of assembleData data")
-
-set.seed(442)
-full <- twoClassSim(n = 1200, intercept = -8, linearVars = 1, 
-                     noiseVars = 1, corrVars = 1, corrValue = 0.6)
-
-prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
-              "Corr1")
-
-zed <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
-
-testSVM <- modTest(method = "pda2", datatype = c("train", "test"), 
-                   traindata = zed$traindata, 
-                   testdata = zed$testdata, 
-                   modelKeep = TRUE, length = 5, fitControl = ctrl, 
-                   metric = "ROC", cores = 2+1)
-
-ctrl <- trainControl(method='cv', number=5, savePredictions = FALSE, 
-                           classProbs=TRUE, summaryFunction = twoClassSummary)
-
-fix <- preProcess(zed$testdata$preds, method = c("center", "scale"))
-zed$traindata$preds <- predict(fix, zed$traindata$preds)
-zed$testdata$preds <- predict(fix, zed$testdata$preds); rm(fix)
-zed$traindata$preds <- as.data.frame(zed$traindata$preds)
-zed$testdata$preds <- as.data.frame(zed$testdata$preds)
-
-resultSet2 <- modSearch(methods = c("C5.0"), 
-                        datatype = c("train", "test"), 
-                        traindata = zed$traindata, 
-                        testdata = zed$testdata, 
-                        length = 2, fitControl = ctrl, 
-                        metric = "ROC", cores = 2+1)
-
-
-resultSet2 <- modSearch(methods = c("sddaLDA", "LogitBoost", "C5.0"), 
-                        datatype = c("train", "test"), 
-                        traindata = zed$traindata, 
-                        testdata = zed$testdata, 
-                        length = 2, fitControl = ctrl, 
-                        metric = "ROC", cores = 2+1)
-
-mymethods <- c("bagFDA", "C5.0", "C5.0Rules", "C5.0Tree", "fda", "hda", "lda",
-               "lda2", "LogitBoost", "multinom", "pda", "pda2", "plr", "rda",
-               "sda", "sddaQDA", "sparseLDA", "stepLDA", "stepQDA")
-
-resultSet2 <- modSearch(methods = mymethods[12:17], 
-                        datatype = c("train", "test"), 
-                        traindata = zed$traindata, 
-                        testdata = zed$testdata, 
-                        length = 5, fitControl = ctrl, 
-                        metric = "ROC", cores = 2+1)
+# 
+# context("Test handling of assembleData data")
+# 
+# set.seed(442)
+# full <- twoClassSim(n = 1200, intercept = -8, linearVars = 1, 
+#                      noiseVars = 1, corrVars = 1, corrValue = 0.6)
+# 
+# prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
+#               "Corr1")
+# 
+# zed <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
+# 
+# testSVM <- modTest(method = "pda2", datatype = c("train", "test"), 
+#                    traindata = zed$traindata, 
+#                    testdata = zed$testdata, 
+#                    modelKeep = TRUE, length = 5, fitControl = ctrl, 
+#                    metric = "ROC", cores = 2+1)
+# 
+# ctrl <- trainControl(method='cv', number=5, savePredictions = FALSE, 
+#                            classProbs=TRUE, summaryFunction = twoClassSummary)
+# 
+# fix <- preProcess(zed$testdata$preds, method = c("center", "scale"))
+# zed$traindata$preds <- predict(fix, zed$traindata$preds)
+# zed$testdata$preds <- predict(fix, zed$testdata$preds); rm(fix)
+# zed$traindata$preds <- as.data.frame(zed$traindata$preds)
+# zed$testdata$preds <- as.data.frame(zed$testdata$preds)
+# 
+# resultSet2 <- modSearch(methods = c("C5.0"), 
+#                         datatype = c("train", "test"), 
+#                         traindata = zed$traindata, 
+#                         testdata = zed$testdata, 
+#                         length = 2, fitControl = ctrl, 
+#                         metric = "ROC", cores = 2+1)
+# 
+# 
+# resultSet2 <- modSearch(methods = c("sddaLDA", "LogitBoost", "C5.0"), 
+#                         datatype = c("train", "test"), 
+#                         traindata = zed$traindata, 
+#                         testdata = zed$testdata, 
+#                         length = 2, fitControl = ctrl, 
+#                         metric = "ROC", cores = 2+1)
+# 
+# mymethods <- c("bagFDA", "C5.0", "C5.0Rules", "C5.0Tree", "fda", "hda", "lda",
+#                "lda2", "LogitBoost", "multinom", "pda", "pda2", "plr", "rda",
+#                "sda", "sddaQDA", "sparseLDA", "stepLDA", "stepQDA")
+# 
+# resultSet2 <- modSearch(methods = mymethods[12:17], 
+#                         datatype = c("train", "test"), 
+#                         traindata = zed$traindata, 
+#                         testdata = zed$testdata, 
+#                         length = 5, fitControl = ctrl, 
+#                         metric = "ROC", cores = 2+1)
 # 
 # 
