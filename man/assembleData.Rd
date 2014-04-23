@@ -2,7 +2,7 @@
 \alias{assembleData}
 \title{Assemble train and test data for model building with EWStools}
 \usage{
-assembleData(data, class, predvars, p, ...)
+assembleData(data, class, p, predvars, ...)
 }
 \arguments{
   \item{data}{a dataframe that the user would like to split
@@ -16,6 +16,9 @@ assembleData(data, class, predvars, p, ...)
 
   \item{p}{the proportion of data to be placed into a
   training set}
+
+  \item{...}{additional arguments to be passed to
+  assembleData}
 }
 \value{
 A list of lists with the following items: \itemize{

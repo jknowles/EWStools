@@ -18,6 +18,9 @@ modAcc(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE, ...)
 
   \item{modelKeep}{a logical indicating whether the
   original model object should be stored, default is FALSE}
+
+  \item{...}{additional arguments passed to
+  \code{\link{modSearch}}}
 }
 \value{
 a list with the following: \itemize{ \item{method - the

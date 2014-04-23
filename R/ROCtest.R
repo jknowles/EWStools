@@ -37,7 +37,7 @@ setOldClass("roc")
 ##'
 ##' showClass("ROCit")
 ##' methods(class="ROCit")
-##' @export
+##' @exportClass
 ROCit <- setClass("ROCit", representation(thresh = "numeric", 
                                           auc = "numeric", 
                                           confusematrix = "data.frame", 

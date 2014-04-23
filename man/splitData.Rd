@@ -2,7 +2,7 @@
 \alias{splitData}
 \title{Split data into a training and a test dataset}
 \usage{
-splitData(data, class, p)
+splitData(data, class, p, pvalid = NULL)
 }
 \arguments{
   \item{data}{a dataframe that the user would like to split
@@ -13,6 +13,9 @@ splitData(data, class, p)
 
   \item{p}{the proportion of data to be placed into a
   training set}
+
+  \item{pvalid}{the proportion of data to be placed into
+  the validation set}
 }
 \value{
 A list with the following items: \itemize{ \item{train - a
@@ -26,6 +29,7 @@ Split data into a training and a test dataset
 }
 \note{
 Built on the \code{\link{createDataPartition}} function in
-the \code{caret} package.
+the \code{caret} package. pvalid is defined against the
+records remaining after holding out p for the training set.
 }
 
