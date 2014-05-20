@@ -66,6 +66,7 @@ buildModelMatrix <- function(data, predvars, na.omit = TRUE){
 ##' @param class character value of the name of the dependent variable 
 ##' @param predvars  a character vector of the names of predictor variables
 ##' @param p the proportion of data to be placed into a training set 
+##' @param classification Is the training set for a classification problem or not? Default is TRUE.
 ##' @param ... additional arguments to be passed to assembleData
 ##' @return A list of lists with the following items:
 ##' \itemize{
@@ -73,8 +74,10 @@ buildModelMatrix <- function(data, predvars, na.omit = TRUE){
 ##' \item{testdata - a list with a dataframe of the predictor matrix called preds, and the class called class}
 ##' } 
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
+##' @details If classification is set to true the "class" component of the list will be forced to a factor 
+##' for being fed into the train routine. 
 ##' @export
-assembleData <- function(data, class, p, predvars, ...){
+assembleData <- function(data, class, p, predvars, classification = TRUE, ...){
   args <- as.list(substitute(list(...)))
   if("pvalid" %in% names(args)){
     if(class(data) != "matrix"){
@@ -101,9 +104,11 @@ assembleData <- function(data, class, p, predvars, ...){
       mode(traindata$preds) <- "numeric"
       mode(testdata$preds) <- "numeric"
       mode(validdata$preds) <- "numeric"
-      traindata$class <- as.factor(traindata$class)
-      testdata$class <- as.factor(testdata$class)
-      validdata$class <- as.factor(validdata$class)
+      if(classification == TRUE){
+        traindata$class <- as.factor(traindata$class)
+        testdata$class <- as.factor(testdata$class)
+        validdata$class <- as.factor(validdata$class)
+      }
     }
     return(list(traindata = traindata, testdata = testdata, validdata = validdata))
   } else {
@@ -128,8 +133,10 @@ assembleData <- function(data, class, p, predvars, ...){
     if(class(data) == "matrix"){
       mode(traindata$preds) <- "numeric"
       mode(testdata$preds) <- "numeric"
-      traindata$class <- as.factor(traindata$class)
-      testdata$class <- as.factor(testdata$class)
+      if(classification == TRUE){
+        traindata$class <- as.factor(traindata$class)
+        testdata$class <- as.factor(testdata$class)
+      }
     }
     return(list(traindata = traindata, testdata = testdata))
   }
