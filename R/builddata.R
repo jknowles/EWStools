@@ -93,7 +93,6 @@ assembleData <- function(data, class, p, predvars, classification = TRUE, ...){
     } else {
       splits <- splitData(data = data, class = class, p = p, ...)
     }
-    
     traindata <- list(preds = splits$train[, colnames(splits$train) != class], 
                       class = splits$train[, class])
     testdata <- list(preds = splits$test[, colnames(splits$test) != class], 

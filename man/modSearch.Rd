@@ -10,7 +10,7 @@ modSearch(methods, ...)
   generate the dataframe for}
 
   \item{...}{additional arguments passed to
-  \code{\link{modSearch}}}
+  \code{\link{modTest}}}
 }
 \value{
 a \code{\link{data.frame}} with the following columns:

@@ -226,7 +226,7 @@ buildROCcurveFrame <- function(methods){
 ##' @description Used for generating the data to make good looking ROC curves of 
 ##' training and test data.
 ##' @param methods a list of \code{train} method names to generate the dataframe for
-##' @param ... additional arguments passed to \code{\link{modSearch}}
+##' @param ... additional arguments passed to \code{\link{modTest}}
 ##' @return a \code{\link{data.frame}} with the following columns:
 ##' \itemize{
 ##' \item{sens - the sensitivities of the model at various thresholds}
