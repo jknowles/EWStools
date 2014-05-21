@@ -34,20 +34,20 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
     }
   } else if(fit$metric == "RMSE"){
     if (length(datatype) > 1){
-      train <- RMSEtest(fit, ...)
+      train <- RMSEtest(fit)
       test <-  RMSEtest(fit, testdata=list(preds = testdata$preds, 
-                                             class = testdata$class), ...)    
+                                             class = testdata$class))    
     } else if(length(datatype) < 2 & datatype=="test"){
       test <- RMSEtest(fit, testdata=list(preds = testdata$preds, 
-                                            class = testdata$class), ...)
+                                            class = testdata$class))
       train <- NULL
     } else if (length(datatype) < 2 & datatype=="train"){
-      train <- RMSEtest(fit, ...)
+      train <- RMSEtest(fit)
       test <- NULL
     }
   }
   if(modelKeep == TRUE){
-    return(list(model=fit, summaryTr = ROCtr, summaryTe = ROCte, method=fit$method, 
+    return(list(model=fit, summaryTr = train, summaryTe = test, method=fit$method, 
                 time = fit$times$everything[3]))
   } else if(modelKeep == FALSE){
     return(list(method=fit$method, summaryTr = train, summaryTe = test, 

@@ -66,7 +66,7 @@ RMSEtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     RMSEt <- RMSE(pred = predict(mod), obs = rpartFit$trainingData$.outcome)
     best <- mod$results[mod$results[,"RMSE"] == min(mod$results[,"RMSE"]),]
-    myRMSE <- list(bestFit = best, RMSE = RMSEt, datatype = "train", 
+    myRMSE <- RMSEit(bestFit = best, RMSE = RMSEt, datatype = "train", 
                    modcall = paste(mod$call))
     return(myRMSE)
   } else{

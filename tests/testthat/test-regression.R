@@ -41,3 +41,7 @@ ctrl <- trainControl(method = "cv", repeats = 5)
 modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
         modelKeep = FALSE, length = 12, fitControl = ctrl, metric = "RMSE")
 
+modTest(method = "rpart", datatype = c("train", "test"), traindata = dat$traindata, 
+        testdata = dat$testdata, modelKeep = FALSE, 
+        length = 12, fitControl = ctrl, metric = "RMSE")
+
