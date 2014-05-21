@@ -7,8 +7,8 @@ objects from train}
 confuse_mat.train(x, thresh)
 }
 \description{
-An internal function for creating the confusion matrix for \code{\linkS4class{ROCit}}
-objects from train
+An internal function for creating the confusion matrix for
+\code{\linkS4class{ROCit}} objects from train
 }
 \keyword{internal}
 

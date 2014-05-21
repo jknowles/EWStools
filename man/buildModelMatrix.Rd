@@ -6,11 +6,14 @@
 buildModelMatrix(data, predvars, na.omit = TRUE)
 }
 \arguments{
-\item{data}{a dataframe that the user would like to convert to a model matrix}
+  \item{data}{a dataframe that the user would like to
+  convert to a model matrix}
 
-\item{predvars}{a character vector of the names of predictor variables}
+  \item{predvars}{a character vector of the names of
+  predictor variables}
 
-\item{na.omit}{behavior with missing values, defaults to TRUE}
+  \item{na.omit}{behavior with missing values, defaults to
+  TRUE}
 }
 \value{
 A model matrix

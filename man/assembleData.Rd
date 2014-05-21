@@ -3,33 +3,46 @@
 \alias{assembleData}
 \title{Assemble train and test data for model building with EWStools}
 \usage{
-assembleData(data, class, p, predvars, ...)
+assembleData(data, class, p, predvars, classification = TRUE, ...)
 }
 \arguments{
-\item{data}{a dataframe that the user would like to split into training and sample sets}
+  \item{data}{a dataframe that the user would like to split
+  into training and sample sets}
 
-\item{class}{character value of the name of the dependent variable}
+  \item{class}{character value of the name of the dependent
+  variable}
 
-\item{predvars}{a character vector of the names of predictor variables}
+  \item{predvars}{a character vector of the names of
+  predictor variables}
 
-\item{p}{the proportion of data to be placed into a training set}
+  \item{p}{the proportion of data to be placed into a
+  training set}
 
-\item{...}{additional arguments to be passed to assembleData}
+  \item{classification}{Is the training set for a
+  classification problem or not? Default is TRUE.}
+
+  \item{...}{additional arguments to be passed to
+  assembleData}
 }
 \value{
-A list of lists with the following items:
-\itemize{
-\item{traindata - a list with a dataframe of the predictor matrix called preds, and the class called class}
-\item{testdata - a list with a dataframe of the predictor matrix called preds, and the class called class}
-}
+A list of lists with the following items: \itemize{
+\item{traindata - a list with a dataframe of the predictor
+matrix called preds, and the class called class}
+\item{testdata - a list with a dataframe of the predictor
+matrix called preds, and the class called class} }
 }
 \description{
-Assemble train and test data for model building with EWStools
+Assemble train and test data for model building with
+EWStools
 }
 \details{
-To return a 3-way split with a validation set, use the \code{pvalid} argument.
+To return a 3-way split with a validation set, use the
+\code{pvalid} argument.If classification is set to true the
+"class" component of the list will be forced to a factor
+for being fed into the train routine.
 }
 \note{
-Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
+Built on the \code{\link{createDataPartition}} function in
+the \code{caret} package.
 }
 

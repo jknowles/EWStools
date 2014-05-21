@@ -7,8 +7,8 @@ objects}
 confuse_mat(mod, thresh, prop = FALSE, testdata)
 }
 \description{
-An internal function for creating the confusion matrix for \code{\linkS4class{ROCit}}
-objects
+An internal function for creating the confusion matrix for
+\code{\linkS4class{ROCit}} objects
 }
 \keyword{internal}
 

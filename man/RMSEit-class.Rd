@@ -5,24 +5,22 @@
 \alias{RMSEit-class}
 \title{Class "RMSEit" of RMSE statistics}
 \description{
-A \code{\link{glm}} or \code{\link{train}} object with a binary classification
-can be easily summarized using the receiver-operating characteristic statistic.
-This class provides an efficient mechanism to store and compare these results
-across models.
+A \code{\link{glm}} or \code{\link{train}} object with a
+binary classification can be easily summarized using the
+receiver-operating characteristic statistic. This class
+provides an efficient mechanism to store and compare these
+results across models.
 }
 \details{
-The object has the following items
-\itemize{
-\item{bestFit - best results from train}
-\item{RMSE - best RMSE}
-\item{datatype - whether the ROC was computed on the "train" or the "test" data}
-\item{modtype - the class of the model object}
-\item{modcall - the call to the model fitting function}
-}
+The object has the following items \itemize{ \item{bestFit
+- best results from train} \item{RMSE - best RMSE}
+\item{datatype - whether the ROC was computed on the
+"train" or the "test" data} \item{modtype - the class of
+the model object} \item{modcall - the call to the model
+fitting function} }
 }
 \section{Objects from the Class}{
- Objects are created by calls to
-\code{\link{RMSEit}}.
+  Objects are created by calls to \code{\link{RMSEit}}.
 }
 \examples{
 showClass("RMSEit")

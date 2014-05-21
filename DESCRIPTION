@@ -21,4 +21,4 @@ Suggests:
     MASS, 
     R.utils, 
     doParallel
-Roxygen: list(wrap = FALSE)
+Roxygen: list(wrap = TRUE)
