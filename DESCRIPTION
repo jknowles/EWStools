@@ -16,9 +16,9 @@ Depends:
     pROC,
     caret,
     methods
-Imports:
 Suggests:
     testthat,
     MASS, 
     R.utils, 
     doParallel
+Roxygen: list(wrap = FALSE)

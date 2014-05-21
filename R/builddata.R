@@ -73,6 +73,7 @@ buildModelMatrix <- function(data, predvars, na.omit = TRUE){
 ##' \item{testdata - a list with a dataframe of the predictor matrix called preds, and the class called class}
 ##' } 
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
+##' @details To return a 3-way split with a validation set, use the \code{pvalid} argument.
 ##' @export
 assembleData <- function(data, class, p, predvars, ...){
   args <- as.list(substitute(list(...)))
