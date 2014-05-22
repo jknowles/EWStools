@@ -19,6 +19,9 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
   if (missing(modelKeep)){
     modelKeep <- FALSE
   }
+  if(missing(datatype)){
+    datatype <- "train"
+  }
   if(fit$metric == "ROC"){
     if (length(datatype) > 1){
       train <- ROCtest(fit, ...)

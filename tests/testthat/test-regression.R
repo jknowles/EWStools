@@ -1,47 +1,83 @@
 # Tests for EWStools for regression
-
-
 # Build data
 
 library(mlbench)
 data(BostonHousing)
 
+BostonHousing <- rbind(BostonHousing, BostonHousing)
+
 #
 dat <- assembleData(BostonHousing, class = "medv", p = 0.8)
 
-length(dat) == 2
+context("Test assembling data works in the continuous case")
 
-names(dat) == c("traindata", "testdata")
+# Give tests wide tolerance, looking more for equivalence
+test_that("Data can be assembled correctly", {
+  expect_equal(length(dat), 2)
+  expect_identical(names(dat), c("traindata", "testdata"))
+  expect_equal(round(mean(dat$traindata$class), 1), 
+               round(mean(dat$testdata$class),1), tolerance = 0.5)
+  expect_equal(round(median(dat$traindata$class),1), 
+               round(median(dat$testdata$class), 1), tolerance = 0.5)
+  expect_equal(min(dat$traindata$class), 
+               min(dat$testdata$class), tolerance = 2)
+  expect_equal(max(dat$traindata$class), 
+               max(dat$testdata$class), tolerance = 2)
+})
 
-# Split works
+context("Test 3 way split")
+dat <- assembleData(BostonHousing, class = "medv", p = 0.8, pvalid = 0.3)
 
-rpartFit <- train(x = dat$traindata$preds, y = dat$traindata$class,
-                  "rpart",
-                  tuneLength = 9)
+test_that("Data is split and balanced", {
+  expect_equal(length(dat), 3)
+  expect_identical(names(dat), c("traindata", "testdata", "validdata"))
+  expect_equal(mean(dat$traindata$class), mean(dat$testdata$class), tolerance = 0.5)
+  expect_equal(median(dat$traindata$class), median(dat$testdata$class), tolerance = 0.5)
+  expect_equal(min(dat$traindata$class), min(dat$testdata$class), tolerance = 2)
+  expect_equal(max(dat$traindata$class), max(dat$testdata$class), tolerance = 2)
+  expect_equal(mean(dat$traindata$class), mean(dat$validdata$class), tolerance = 0.5)
+  expect_equal(median(dat$traindata$class), median(dat$validdata$class), tolerance = 0.5)
+  expect_equal(min(dat$traindata$class), min(dat$validdata$class), tolerance = 2)
+  expect_equal(max(dat$traindata$class), max(dat$validdata$class), tolerance = 2)
+})
 
 
-# Simple model search
+dat <- assembleData(BostonHousing, class = "medv", p = 0.7)
 
-modAcc(rpartFit)
-
-list(model = fit, summaryTr = )
-list(model=fit, summaryTr = ROCtr, summaryTe = ROCte, method=fit$method, 
-            time = fit$times$everything[3]))
-
-
-RMSEtest.train(rpartFit)
-RMSEtest.train(rpartFit, testdata = dat$testdata)
-RMSEtest(rpartFit)
-RMSEtest(rpartFit, testdata = dat$testdata)
-
-modAcc(rpartFit, datatype = c("train", "test"), testdata = dat$testdata)
+context("Extract accuracy from a regular caret object")
 
 ctrl <- trainControl(method = "cv", repeats = 5)
+myFit <- train(x = dat$traindata$preds, y = dat$traindata$class,
+                  "rpart",
+                  tuneLength = 9, trControl = ctrl)
 
-modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
-        modelKeep = FALSE, length = 12, fitControl = ctrl, metric = "RMSE")
 
-modTest(method = "rpart", datatype = c("train", "test"), traindata = dat$traindata, 
-        testdata = dat$testdata, modelKeep = FALSE, 
-        length = 12, fitControl = ctrl, metric = "RMSE")
+test_that("RMSEtest.train works as expected", {
+  expect_error(RMSEtest.train(myFit))
+  expect_is(EWStools:::RMSEtest.train(myFit), "RMSEit")
+  expect_identical(EWStools:::RMSEtest.train(myFit), RMSEtest(myFit))
+})
 
+test_that("RMSEtest accepts testdata", {
+  expect_is(RMSEtest(myFit, testdata = dat$testdata), "RMSEit")
+  
+})
+
+
+context("Testing modAcc")
+
+test_that("modAcc accepts datatype values", {
+  expect_null(modAcc(myFit)$summaryTe)
+  expect_is(modAcc(myFit, datatype = c("train", "test"), 
+                   testdata = dat$testdata)$summaryTe, "RMSEit")
+})
+
+# consider warning to modAcc when datatype is not explicit
+# 
+# modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
+#         modelKeep = FALSE, length = 12, fitControl = ctrl, metric = "RMSE")
+# 
+# modTest(method = "rpart", datatype = c("train", "test"), traindata = dat$traindata, 
+#         testdata = dat$testdata, modelKeep = FALSE, 
+#         length = 12, fitControl = ctrl, metric = "RMSE")
+# 

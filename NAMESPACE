@@ -2,6 +2,7 @@
 S3method(RMSEtest, train)
 S3method(ROCtest,glm)
 S3method(ROCtest,train)
+export(RMSEtest)
 export(ROCtest)
 export(dfExtract)
 export(modAcc)

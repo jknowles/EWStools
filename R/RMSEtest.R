@@ -30,7 +30,7 @@ RMSEit <- setClass("RMSEit", representation(bestFit = "data.frame",
                                           RMSE = "numeric", 
                                           datatype = "character",
                                           modtype = "character",
-                                          modcall = "character"),
+                                          modcall = "call"),
                   S3methods=TRUE)
 
 ##' Generic function to build RMSEtest
@@ -64,16 +64,16 @@ RMSEtest <- function(mod, testdata=NULL, ...){
 ##' @S3method RMSEtest train
 RMSEtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
-    RMSEt <- RMSE(pred = predict(mod), obs = rpartFit$trainingData$.outcome)
+    RMSEt <- RMSE(pred = predict(mod), obs = mod$trainingData$.outcome)
     best <- mod$results[mod$results[,"RMSE"] == min(mod$results[,"RMSE"]),]
     myRMSE <- RMSEit(bestFit = best, RMSE = RMSEt, datatype = "train", 
-                   modcall = paste(mod$call))
+                   modcall = mod$call)
     return(myRMSE)
   } else{
     RMSEt <- RMSE(pred = predict(mod, newdata = testdata$preds), obs = testdata$class)
     best <- mod$results[mod$results[,"RMSE"] == min(mod$results[,"RMSE"]),]
     myRMSE <- RMSEit(bestFit = best, RMSE = RMSEt, datatype = "test", modtype = class(mod), 
-                   modcall = paste(mod$call))
+                   modcall = mod$call)
     return(myRMSE)
   }
 }
