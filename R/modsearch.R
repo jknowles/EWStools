@@ -150,6 +150,9 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
                     metric = "ROC", cores = NULL){
   # Let's dump out some defaults
   # Set up cores for Windows
+  if(!missing(omit)){
+    stop("Cannot omit an index of variables. Instead see caret:::findLinearCombos")
+  }
   if(!missing(cores)){
     myOS <- Sys.info()['sysname']
     if(myOS!="Windows") stop("Only declare cores on Windows machines. On Linux 
