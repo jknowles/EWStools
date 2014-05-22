@@ -54,6 +54,7 @@ modobjE <- modAcc(fullModel, datatype = c("train", "test"), modelKeep = FALSE,
 
 test_that("modAcc passes ellipsis through correct", {
   expect_that(modobjE, is_a("list"))
+  # Threshold not the same as others
 })
 
 modobj <- modAcc(fullModel, datatype = c("train", "test"), modelKeep = TRUE, 
@@ -129,6 +130,7 @@ test1a <- modTest(method = "knn", datatype =  "test",
                  testdata = list(preds = test[, -19], class = test[, 19]), 
                  modelKeep = FALSE, length = 6, fitControl = ctrl, 
                  metric = "ROC")
+
 test1b <- modTest(method = "knn", datatype =  "train", 
                   traindata = list(preds = train[, -19], class = train[, 19]), 
                   testdata = list(preds = test[, -19], class = test[, 19]), 
@@ -152,8 +154,6 @@ test_that("modTest returns the right objects", {
   
 })
 
-
-
 context("Evaluate modSearch function ")
 
 resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"), 
@@ -170,6 +170,22 @@ resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"),
                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
                        metric = "ROC")
 
+
+resultSet2a <- modSearch(methods = c("knn", "glm", "lda2"), 
+                        datatype = c("train"), 
+                        traindata = list(preds = train[, -19], class = train[, 19]), 
+                        testdata = list(preds = test[, -19], class = test[, 19]), 
+                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                        metric = "ROC")
+
+resultSet2b <- modSearch(methods = c("knn", "glm", "lda2"), 
+                         datatype = c("test"), 
+                         traindata = list(preds = train[, -19], class = train[, 19]), 
+                         testdata = list(preds = test[, -19], class = test[, 19]), 
+                         modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                         metric = "ROC")
+
+
 test_that("modSearch returns the right objects", {
   expect_that(resultSet, is_a("data.frame"))
   expect_that(resultSet, is_a("data.frame"))
@@ -181,51 +197,63 @@ test_that("modSearch returns the right objects", {
                          metric = "ROC", omit = 2))
 })
 
+
+context("Test modTest returns reliable results")
+
+test_that("modSearch results are reliable for train and test", {
+  expect_true(identical(resultSet[resultSet$grp == "train", 5], resultSet[resultSet$grp == "test", 5]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 4], resultSet[resultSet$grp == "test", 4]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 2], resultSet[resultSet$grp == "test", 2]))
+  expect_true(identical(resultSet[resultSet$grp == "train", 1], resultSet[resultSet$grp == "test", 1]))
+  expect_true(identical(resultSet[resultSet2a$grp == "train", 5], resultSet[resultSet$grp == "test", 5]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 4], resultSet[resultSet$grp == "test", 4]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 2], resultSet[resultSet$grp == "test", 2]))
+  expect_true(identical(resultSet[resultSet$grp == "train", 1], resultSet[resultSet$grp == "test", 1]))
+})
+
 context("Test modTest and modSearch in parallel on Windows")
-
-
 
 if(Sys.info()['sysname'] != "Windows"){
   print("Not running test now")
-} else{
-  library(doParallel)
-  CORES <- 2
-  testSVM <- modTest(method = "svmRadial", datatype = c("train", "test"), 
-                     traindata = list(preds = train[, -19], class = train[, 19]), 
-                     testdata = list(preds = test[, -19], class = test[, 19]), 
-                     modelKeep = TRUE, length = 6, fitControl = ctrl, 
-                     metric = "ROC", cores = CORES)
-  
-  resultSet2 <- modSearch(methods = c("svmRadial", "knn", "lda2", "fda", "earth"), 
-                          datatype = c("train", "test"), 
-                          traindata = list(preds = train[, -19], class = train[, 19]), 
-                          testdata = list(preds = test[, -19], class = test[, 19]), 
-                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
-                          metric = "ROC", cores = CORES)
-#   
-#   resultSet2 <- modSearch(methods = c("avNNet"), 
-#                           datatype = c("train", "test"), 
-#                           traindata = list(preds = train[, -19], class = train[, 19]), 
-#                           testdata = list(preds = test[, -19], class = test[, 19]), 
-#                           modelKeep = FALSE, length = 6, fitControl = ctrl, 
-#                           metric = "ROC", cores = CORES)
-#   
-#   zed <- train(train[, -19], train[, 19], method = "mlp", 
-#                trControl = ctrl, length = 6, metric = "ROC")
-#   
-#   testSVM <- modTest(method = "nnet", datatype = c("train", "test"), 
-#                      traindata = list(preds = train[, -19], class = train[, 19]), 
-#                      testdata = list(preds = test[, -19], class = test[, 19]), 
-#                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
-#                      metric = "ROC", cores = CORES)
-#   
-#   resultSet3 <- modSearch(methods = c("mlp", "nnet", "lda2", "hda"), 
-#                           datatype = c("train", "test"), 
-#                           traindata = list(preds = train[, -19], class = train[, 19]), 
-#                           testdata = list(preds = test[, -19], class = test[, 19]), 
-#                           modelKeep = FALSE, length = 12, fitControl = ctrl, 
-#                           metric = "ROC", cores = CORES)
-  
+  } else{
+    library(doParallel)
+    CORES <- 2
+    testSVM <- modTest(method = "svmRadial", datatype = c("train", "test"), 
+                       traindata = list(preds = train[, -19], class = train[, 19]), 
+                       testdata = list(preds = test[, -19], class = test[, 19]), 
+                       modelKeep = TRUE, length = 6, fitControl = ctrl, 
+                       metric = "ROC", cores = CORES)
+    
+    resultSet2 <- modSearch(methods = c("svmRadial", "knn", "lda2", "fda", "earth"), 
+                            datatype = c("train", "test"), 
+                            traindata = list(preds = train[, -19], class = train[, 19]), 
+                            testdata = list(preds = test[, -19], class = test[, 19]), 
+                            modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                            metric = "ROC", cores = CORES)
+    #   
+    #   resultSet2 <- modSearch(methods = c("avNNet"), 
+    #                           datatype = c("train", "test"), 
+    #                           traindata = list(preds = train[, -19], class = train[, 19]), 
+    #                           testdata = list(preds = test[, -19], class = test[, 19]), 
+    #                           modelKeep = FALSE, length = 6, fitControl = ctrl, 
+    #                           metric = "ROC", cores = CORES)
+    #   
+    #   zed <- train(train[, -19], train[, 19], method = "mlp", 
+    #                trControl = ctrl, length = 6, metric = "ROC")
+    #   
+    #   testSVM <- modTest(method = "nnet", datatype = c("train", "test"), 
+    #                      traindata = list(preds = train[, -19], class = train[, 19]), 
+    #                      testdata = list(preds = test[, -19], class = test[, 19]), 
+    #                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
+    #                      metric = "ROC", cores = CORES)
+    #   
+    #   resultSet3 <- modSearch(methods = c("mlp", "nnet", "lda2", "hda"), 
+    #                           datatype = c("train", "test"), 
+    #                           traindata = list(preds = train[, -19], class = train[, 19]), 
+    #                           testdata = list(preds = test[, -19], class = test[, 19]), 
+    #                           modelKeep = FALSE, length = 12, fitControl = ctrl, 
+    #                           metric = "ROC", cores = CORES)
+
 }
 
 

@@ -1,7 +1,3 @@
-################################################################################
-# Build data
-################################################################################
-
 ##' @title Split data into a training and a test dataset
 ##' @param data a dataframe that the user would like to split into training and sample sets
 ##' @param class character value of the name of the dependent variable 
@@ -74,7 +70,7 @@ buildModelMatrix <- function(data, predvars, na.omit = TRUE){
 ##' \item{testdata - a list with a dataframe of the predictor matrix called preds, and the class called class}
 ##' } 
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
-##' @details If classification is set to true the "class" component of the list will be forced to a factor 
+##' @details To return a 3-way split with a validation set, use the \code{pvalid} argument.If classification is set to true the "class" component of the list will be forced to a factor 
 ##' for being fed into the train routine. 
 ##' @export
 assembleData <- function(data, class, p, predvars, classification = TRUE, ...){
