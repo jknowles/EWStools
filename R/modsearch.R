@@ -234,7 +234,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     if(myOS!="Windows") stop("Only declare cores on Windows machines. On Linux 
                              you can declare parallel outside of the modTest 
                              or modSearch call.")
-    myclus <- makeCluster(cores) 
+    myclus <- makeCluster(cores)
     registerDoParallel(myclus)
   }
   datD <- c('rda', 'lda2', 'hda', 'mda', 'mlp', 'mlpWeightDecay', 
