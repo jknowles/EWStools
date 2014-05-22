@@ -21,6 +21,7 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
   }
   if(missing(datatype)){
     datatype <- "train"
+    message("Training data only being used. Specify datatype = 'test' and give test data to testdata.")
   }
   if("test" %in% datatype & missing(testdata)){
     stop("Please provide testdata")
