@@ -72,6 +72,52 @@ test_that("modAcc accepts datatype values", {
                    testdata = dat$testdata)$summaryTe, "RMSEit")
 })
 
+modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
+         modelKeep = FALSE, length = 12, fitControl = ctrl, metric = "RMSE")
+
+modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
+        modelKeep = FALSE, length = 12, fitControl = ctrl, metric = "ROC")
+
+
+mod <- modAcc(myFit, datatype = c("train", "test"), testdata = dat$testdata)
+mod2 <- modAcc(myFit, datatype = c("train"), testdata = dat$testdata)
+
+out <- buildRMSEFrame(methods = "rpart")
+
+
+dfExtract(mod)
+dfExtract(mod2)
+
+resultSet1 <- modSearch(methods = c("knn", "glm", "rpart", "lm"), 
+                        datatype = c("train", "test"), 
+                        traindata = dat$traindata, 
+                        testdata = dat$testdata, 
+                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                        metric = "RMSE")
+
+
+resultSet1a <- modSearch(methods = c("knn", "glm", "rpart", "lm"), 
+                       datatype = c("train"), 
+                       traindata = dat$traindata, 
+                       testdata = dat$testdata, 
+                       modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                       metric = "RMSE")
+
+
+resultSet1b <- modSearch(methods = c("knn", "glm", "rpart", "lm"), 
+                       datatype = c("test"), 
+                       traindata = dat$traindata, 
+                       testdata = dat$testdata, 
+                       modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                       metric = "RMSE")
+# 
+# resultSet1b <- modSearch(methods = c("knn", "glm", "rpart", "lm"), 
+#                          datatype = c("test"), 
+#                          traindata = dat$traindata, 
+#                          testdata = dat$testdata, 
+#                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
+#                          metric = "MAD")
+
 # consider warning to modAcc when datatype is not explicit
 # 
 # modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 

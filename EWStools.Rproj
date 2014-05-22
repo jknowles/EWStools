@@ -13,7 +13,7 @@ RnwWeave: knitr
 LaTeX: pdfLaTeX
 
 BuildType: Package
-PackageInstallArgs: --no-multiarch --with-keep.source --R_LIBS_SITE = "C:/R/lib"
+PackageInstallArgs: --no-multiarch --with-keep.source
 PackageBuildArgs: --R_LIBS_SITE="C:/R/lib"
 PackageBuildBinaryArgs: --R_LIBS_SITE="C:/R/lib"
 PackageCheckArgs: --R_LIBS_SITE="C:/R/lib"

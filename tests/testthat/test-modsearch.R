@@ -170,6 +170,22 @@ resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"),
                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
                        metric = "ROC")
 
+
+resultSet2a <- modSearch(methods = c("knn", "glm", "lda2"), 
+                        datatype = c("train"), 
+                        traindata = list(preds = train[, -19], class = train[, 19]), 
+                        testdata = list(preds = test[, -19], class = test[, 19]), 
+                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                        metric = "ROC")
+
+resultSet2b <- modSearch(methods = c("knn", "glm", "lda2"), 
+                         datatype = c("test"), 
+                         traindata = list(preds = train[, -19], class = train[, 19]), 
+                         testdata = list(preds = test[, -19], class = test[, 19]), 
+                         modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                         metric = "ROC")
+
+
 test_that("modSearch returns the right objects", {
   expect_that(resultSet, is_a("data.frame"))
   expect_that(resultSet, is_a("data.frame"))
@@ -179,6 +195,20 @@ test_that("modSearch returns the right objects", {
                          testdata = list(preds = test[, -19], class = test[, 19]), 
                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
                          metric = "ROC", omit = 2))
+})
+
+
+context("Test modTest returns reliable results")
+
+test_that("modSearch results are reliable for train and test", {
+  expect_true(identical(resultSet[resultSet$grp == "train", 5], resultSet[resultSet$grp == "test", 5]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 4], resultSet[resultSet$grp == "test", 4]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 2], resultSet[resultSet$grp == "test", 2]))
+  expect_true(identical(resultSet[resultSet$grp == "train", 1], resultSet[resultSet$grp == "test", 1]))
+  expect_true(identical(resultSet[resultSet2a$grp == "train", 5], resultSet[resultSet$grp == "test", 5]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 4], resultSet[resultSet$grp == "test", 4]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 2], resultSet[resultSet$grp == "test", 2]))
+  expect_true(identical(resultSet[resultSet$grp == "train", 1], resultSet[resultSet$grp == "test", 1]))
 })
 
 context("Test modTest and modSearch in parallel on Windows")

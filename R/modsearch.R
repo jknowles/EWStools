@@ -22,6 +22,9 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
   if(missing(datatype)){
     datatype <- "train"
   }
+  if("test" %in% datatype & missing(testdata)){
+    stop("Please provide testdata")
+  }
   if(fit$metric == "ROC"){
     if (length(datatype) > 1){
       train <- ROCtest(fit, ...)
@@ -51,12 +54,82 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
   }
   if(modelKeep == TRUE){
     return(list(model=fit, summaryTr = train, summaryTe = test, method=fit$method, 
-                time = fit$times$everything[3]))
+                time = fit$times$everything[3], metric = fit$metric))
   } else if(modelKeep == FALSE){
     return(list(method=fit$method, summaryTr = train, summaryTe = test, 
-                time = fit$times$everything[3]))
+                time = fit$times$everything[3], metric = fit$metric))
   }
 }
+
+##' @title Generate a dataframe from \code{\link{modAcc}} lists
+##' @description Used for generating the data to make good looking RMSE plots for 
+##' training and test data simultaneously
+##' @param mod a list resulting from a call to \code{\link{modAcc}}
+##' @return a \code{\link{data.frame}} with the following columns:
+##' \itemize{
+##' \item{RMSE - the RMSE for the model on the test or training data}
+##' \item{RMSEsd - the standard deviation of the RMSE reported by training with caret}
+##' \item{Rsquare - The R squared reported for the best-fit in caret}
+##' \item{RsquareSD - the model method}
+##' \item{method - the area under the curve}
+##' \item{grp - the area under the curve}
+##' \item{elapsedTime - the time reported for the model to run}
+##' }
+##' @note The measures come from the \code{\linkS4class{RMSEit}} object
+##' @export 
+dfExtractRMSE <- function(mod){
+  if(class(mod$summaryTr) != "NULL"){
+    newdatTr <- data.frame(RMSE= mod$summaryTr@RMSE, 
+                           RMSEsd = max(mod$summaryTr@bestFit$RMSESD), 
+                           Rsquare = max(mod$summaryTr@bestFit$Rsquared), 
+                           RsquareSD = max(mod$summaryTr@bestFit$RsquaredSD), 
+                           method = mod$method, 
+                           grp = "train", 
+                           elapsedTime = ifelse(is.null(mod$time), NA, mod$time), 
+                           check.rows = FALSE, row.names = NULL)
+  }
+  if(class(mod$summaryTe) != "NULL"){
+    newdatTe <- data.frame(RMSE= mod$summaryTe@RMSE, 
+                           RMSEsd = max(mod$summaryTe@bestFit$RMSESD), 
+                           Rsquare = max(mod$summaryTe@bestFit$Rsquared), 
+                           RsquareSD = max(mod$summaryTe@bestFit$RsquaredSD), 
+                           method = mod$method, 
+                           grp = "test", 
+                           elapsedTime = ifelse(is.null(mod$time), NA, mod$time), 
+                           check.rows = FALSE, row.names = NULL)
+  }
+  if(class(mod$summaryTr) != "NULL" & class(mod$summaryTe) != "NULL"){
+    tmp <- rbind(newdatTr, newdatTe)
+  } else if(class(mod$summaryTr) != "NULL"){
+    tmp <- newdatTr
+  } else if(class(mod$summaryTe) != "NULL"){
+    tmp <- newdatTe
+  }
+  tmp$RMSE <- as.numeric(tmp$RMSE)
+  tmp$RMSEsd <- as.numeric(tmp$RMSEsd)
+  tmp$Rsquare <- as.numeric(tmp$Rsquare)
+  tmp$RsquareSD <- as.numeric(tmp$RsquareSD)
+  tmp$method <- as.character(tmp$method)
+  tmp$grp <- as.character(tmp$grp)
+  tmp$elapsedTime <- as.numeric(tmp$elapsedTime)
+  return(tmp)
+}
+
+##'@title Generate a dataframe from \code{\link{modAcc}} lists
+##'@description Generic function to extract either ROC data or RMSE data from models
+##'@param mod a list resulting from a call to \code{\link{modAcc}}
+##'@return a data.frame with columns relating to RMSE or ROC fits
+##'@note See dfExtractRMSE or dfExtractROC for details
+##'@export
+dfExtract <- function(mod){
+  if(mod$metric == "ROC"){
+    tmp <- dfExtractROC(mod)
+  } else if(mod$metric == "RMSE"){
+    tmp <- dfExtractRMSE(mod)
+  }
+  return(tmp)
+}
+
 
 ##' @title Generate a dataframe from \code{\link{modAcc}} lists
 ##' @description Used for generating the data to make good looking ROC curves of 
@@ -73,8 +146,8 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
 ##' }
 ##' @note The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
 ##' \code{\linkS4class{ROCit}} object
-##' @export 
-dfExtract <- function(mod){
+##' @export
+dfExtractROC <- function(mod){
   if(class(mod$summaryTr) != "NULL"){
       newdatB <- data.frame(sens = smooth(mod$summaryTr@rocobj)$sensitivities, 
                             spec = smooth(mod$summaryTr@rocobj)$specificities, 
@@ -148,11 +221,13 @@ dfExtract <- function(mod){
 modTest <- function(method, datatype=c("train", "test"), traindata, testdata, 
                       modelKeep=FALSE, length, fitControl = NULL, 
                     metric = "ROC", cores = NULL){
+  
+    args <- as.list(substitute(list(...)))
+    if("omit" %in% names(args)){
+      stop("Cannot omit an index of variables. Instead see caret:::findLinearCombos")
+    }
   # Let's dump out some defaults
   # Set up cores for Windows
-  if(!missing(omit)){
-    stop("Cannot omit an index of variables. Instead see caret:::findLinearCombos")
-  }
   if(!missing(cores)){
     myOS <- Sys.info()['sysname']
     if(myOS!="Windows") stop("Only declare cores on Windows machines. On Linux 
@@ -238,6 +313,36 @@ buildROCcurveFrame <- function(methods){
 }
 
 ##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
+##' @description Used for generating the data to make comparative RMSE plots.
+##' @param methods a list of \code{train} method names to generate the dataframe for
+##' @return a \code{\link{data.frame}} with the following columns:
+##' \itemize{
+##' \item{RMSE - the RMSE for the model on the test or training data}
+##' \item{RMSEsd - the standard deviation of the RMSE reported by training with caret}
+##' \item{Rsquare - The R squared reported for the best-fit in caret}
+##' \item{RsquareSD - the model method}
+##' \item{method - the area under the curve}
+##' \item{grp - the area under the curve}
+##' \item{elapsedTime - the time reported for the model to run}
+##' }
+##' @note The measures come from the \code{\linkS4class{RMSEit}} object
+buildRMSEFrame <- function(methods){
+  ModelFits <- expand.grid(RMSE = NA, RMSEsd = NA, Rsquare = NA, RsquareSD = NA, 
+                           method = rep(methods, each = 1), grp = NA, 
+                           elapsedTime = NA)
+  # Class variables correctly to avoid errors
+  ModelFits$grp <- as.character(ModelFits$grp)
+  ModelFits$method <- as.character(ModelFits$method)
+  ModelFits$RMSE <- as.numeric(ModelFits$RMSE)
+  ModelFits$RMSEsd <- as.numeric(ModelFits$RMSEsd)
+  ModelFits$Rsquare <- as.numeric(ModelFits$Rsquare)
+  ModelFits$RsquareSD <- as.numeric(ModelFits$RsquareSD)
+  return(ModelFits)
+  
+}
+
+
+##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
 ##' @description Used for generating the data to make good looking ROC curves of 
 ##' training and test data.
 ##' @param methods a list of \code{train} method names to generate the dataframe for
@@ -256,9 +361,26 @@ buildROCcurveFrame <- function(methods){
 ##' @export
 ##' 
 modSearch <- function(methods, ...){
-  ModelFits <- buildROCcurveFrame(methods)
-  pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
   args <- as.list(substitute(list(...)))[-1L]
+  metric <- args$metric
+  datatype <- args$datatype
+  if(metric == "ROC"){
+    if(length(datatype) > 1){
+      ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
+    } else{
+      ModelFits <- buildROCcurveFrame(methods)
+    }
+  } else if(metric == "RMSE"){
+    if(length(datatype) > 1){
+      ModelFits <- rbind(buildRMSEFrame(methods), buildRMSEFrame(methods))
+    } else {
+      ModelFits <- buildRMSEFrame(methods)
+    }
+    
+  } else{
+    stop("No custom performance frame defined for metric")
+  }
+  pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
   for(i in methods){
     p <- match(i, methods)
     z<-list(method = i)
@@ -274,6 +396,7 @@ modSearch <- function(methods, ...){
     }
       setTxtProgressBar(pb, p)      
   }
+  ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
   return(ModelFits)
 }
 
