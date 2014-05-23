@@ -89,7 +89,7 @@ mod <- modAcc(myFit, datatype = c("train", "test"), testdata = dat$testdata)
 mod2 <- modAcc(myFit, datatype = c("train"), testdata = dat$testdata)
 mod3 <- modAcc(myFit, datatype = c("test"), testdata = dat$testdata)
 
-out <- buildRMSEFrame(methods = "rpart")
+#out <- buildRMSEFrame(methods = "rpart")
 
 
 # buildFrame test
@@ -97,9 +97,9 @@ out <- buildRMSEFrame(methods = "rpart")
 context("Test that buildRMSEframe works")
 
 test_that("corect frame is built", {
-  expect_equal(nrow(buildRMSEFrame(methods = "rpart")), 1)
-  expect_equal(nrow(buildRMSEFrame(methods = c("rpart", "knn", "glm"))), 3)
-  expect_equal(length(buildRMSEFrame(methods = "car")), 7)
+  expect_equal(nrow(EWStools:::buildRMSEFrame(methods = "rpart")), 1)
+  expect_equal(nrow(EWStools:::buildRMSEFrame(methods = c("rpart", "knn", "glm"))), 3)
+  expect_equal(length(EWStools:::buildRMSEFrame(methods = "car")), 7)
 })
 
 # dfExtract functions

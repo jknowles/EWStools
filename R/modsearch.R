@@ -241,24 +241,24 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
             'rbf', 'rpart2', 'C5.0Rules', 'pda2', 'rda', 'glm',
             'treebag', 'rf', 'plr', 'lda', 'xyf', 'sddaLDA', 'sddaQDA', 
             'LogitBoost', 'C5.0', 'bag', 'C5.0Tree')
-  if(method %in% datD){
+  if(method %in% datD & metric == "ROC"){
     omit <- findLinearCombos(traindata$preds)$remove
     cols <- 1:ncol(traindata$preds)
     keep <- cols[!cols %in% omit]
+  } else if(metric == "RMSE"){
+    omit <- findLinearCombos(traindata$preds)$remove
+    cols <- 1:ncol(traindata$preds)
+    keep <- cols[!cols %in% omit]
+  } else{
+    keep <-  1:ncol(traindata$preds)
+  }
     fit <- tryCatch({
       train(traindata$preds[, keep], traindata$class,
             method=method,
             trControl=fitControl,
             tuneLength = length, metric= metric)}, error = function(e) 
               message(paste0("Model failed to run: ", method)))
-  } else {
-    fit <- tryCatch({
-      train(traindata$preds, traindata$class,
-            method=method,
-            trControl=fitControl,
-            tuneLength = length, metric= metric)}, error = function(e) 
-              message(paste0("Model failed to run: ", e)))
-  }
+  # multicore
   if(!missing(cores)){
     try(stopCluster(myclus))
     try(stopImplicitCluster())
