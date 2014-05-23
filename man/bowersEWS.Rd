@@ -17,9 +17,6 @@ are drawn from a literature search of over 30 separate
 studies in American public schools of early indicators of
 dropout.
 }
-\author{
-Jared Knowles
-}
 \references{
 Alex J. Bowers:
 \url{http://www.tc.columbia.edu/academics/?facid=ab3764}

@@ -13,8 +13,13 @@ Classification and Regression Training. R package version
 \description{
 Data on caret model types.
 }
-\author{
-Jared Knowles
+\details{
+A dataframe with the following fields - most binary
+indicators: \itemize{ \item{model - Name of the model}
+\item{Classification - Binary indicator of classification
+model} \item{Regression - Binary indicator of regression
+model} \item{Bagging - model does bagging}
+\item{Bayesian.Model - model is Bayesian} }
 }
 \references{
 Caret website: \url{http://caret.r-forge.r-project.org/}
