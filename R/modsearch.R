@@ -267,18 +267,10 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     message(paste0("Model failed to run: ", method))
     
   } else if(class(fit) == "train"){
-      if(method %in% datD){
-        fitSum <- modAcc(fit, datatype = datatype, 
-                         testdata=list(preds = testdata$preds[, keep], 
-                                       class = testdata$class ), 
-                         modelKeep = modelKeep)
-      } else {
-        fitSum <- modAcc(fit, datatype = datatype, 
-                         testdata = list(preds = testdata$preds, 
-                                         class = testdata$class), 
-                         modelKeep = modelKeep)
-      }
-      
+      fitSum <- modAcc(fit, datatype = datatype, 
+                     testdata=list(preds = testdata$preds[, keep], 
+                                   class = testdata$class ), 
+                     modelKeep = modelKeep)
     } 
   return(fitSum)
 }
