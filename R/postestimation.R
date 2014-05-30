@@ -1,16 +1,14 @@
-
-## Create subscores
+##' @title Calculate subscores from a dataframe of overall scores
+##' @description Create a new dataframe of subscores for individual observations 
+##' across predictor domains
+##' @param df a vector of character representing method names in caret
+##' @param VAR the number of clusters
+##' @param RISK the method used to calculate the dissimilarity
+##' @return Returns either a dataframe or a matrix with the dissimilarity values 
+##' for the methods sampled and the names of the methods. 
+##' @export
 subscores <- function(df, VAR, RISK){
-  ci <- function(x, size){
-    # x = var
-    # size = number of sds to include in ci
-    lowCI <- median(x, na.rm=T) - (size * sd(x, na.rm=T))
-    hiCI <- median(x, na.rm=T) + (size * sd(x, na.rm=T))
-    med <- median(x, na.rm=T)
-    CI <- c(lowCI, med, hiCI)
-    return(CI)
-  }
-  cis <- tapply(df[, match(VAR, colnames(df))], 
+   cis <- tapply(df[, match(VAR, colnames(df))], 
                 df[, match(RISK, colnames(df))], 
                 function(x){(ci(x, 0.5))}, simplify=TRUE)
   

@@ -1,3 +1,4 @@
+##' @title Sample caret methods to maximize dissimilarity in the algorithm
 ##' @description Create a subset of caret methods in an effort to maximize 
 ##' dissimilarity between them along the features identified in the caretTags 
 ##' dataset
@@ -7,9 +8,14 @@
 ##' @param n  number methods to sample per cluster
 ##' @param what what to return, either "tags" for the caretTags data or "matrix" 
 ##' for the dissimilarity matrix
-##' @export
 ##' @return Returns either a dataframe or a matrix with the dissimilarity values 
 ##' for the methods sampled and the names of the methods. 
+##' @export
+##' @examples
+#' require(EWStools)
+#' data(caretTags)
+#' dissimMethod(sample(caretTags$method, 30), k = 4, distancemethod = "maximum", n = 2, what = "tags") 
+
 dissimMethod <- function(methods, k, distancemethod, n, 
                          what = c("tags", "matrix")){
   data(caretTags)
@@ -77,10 +83,6 @@ dissimMethod <- function(methods, k, distancemethod, n,
     return(method.sample)
   }
 }
-#' @example
-#' data(caretTags)
-#' dissimMethod(sample(caretTags$method, 30), k = 4, distancemethod = "maximum", 
-#' n = 2, what = "tags") 
 
 
 
@@ -98,3 +100,20 @@ dissimMethod <- function(methods, k, distancemethod, n,
 # grps[caretTags[,"Classification"] == 1 & caretTags[,"Regression"] == 1] <- 4
 # grps[caretTags[,"Classification"] == 0 & caretTags[,"Regression"] == 1] <- 2
 # grps[caretTags[,"Classification"] == 1 & caretTags[,"Regression"] == 0] <- 3
+
+
+##' @title An function for creating a confidence interval from a vector
+##' @description Given a vector of numerics, x, this returns a numeric vector 
+##' of length 3, low confidence interval, high confidence interval, and the median
+##' @param x A numeric vector which contain NAs
+##' @param scale The scale factor of the standard deviation out of which to build the CI
+##' @export
+ci <- function(x, scale){
+  # x = var
+  # size = number of sds to include in ci
+  lowCI <- median(x, na.rm=T) - (scale * sd(x, na.rm=T))
+  hiCI <- median(x, na.rm=T) + (scale * sd(x, na.rm=T))
+  med <- median(x, na.rm=T)
+  CI <- c(lowCI, med, hiCI)
+  return(CI)
+}
