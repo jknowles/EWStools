@@ -80,7 +80,7 @@ ROCtest <- function(mod, testdata=NULL, ...){
 ##' @title Getting an ROCtest on a generalized linear model
 ##' @rdname ROCtest
 ##' @method ROCtest glm
-##' @S3method ROCtest glm
+##' @export
 ROCtest.glm <- function(mod, testdata, ...){
   # can pass optional values such as: 
   #best.method="closest.topleft", 
@@ -144,7 +144,7 @@ ROCtest.glm <- function(mod, testdata, ...){
 ##' @title Getting an ROCtest on a train object
 ##' @rdname ROCtest
 ##' @method ROCtest train
-##' @S3method ROCtest train
+##' @export
 ROCtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     if(is.null(mod$terms)==TRUE){

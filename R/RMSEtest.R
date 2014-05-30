@@ -61,7 +61,7 @@ RMSEtest <- function(mod, testdata=NULL, ...){
 ##' @title Getting an RMSEtest on a train object
 ##' @rdname RMSEtest
 ##' @method RMSEtest train
-##' @S3method RMSEtest train
+##' @export
 RMSEtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     RMSEt <- RMSE(pred = predict(mod), obs = mod$trainingData$.outcome)

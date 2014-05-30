@@ -17,4 +17,4 @@ PackageInstallArgs: --no-multiarch --with-keep.source
 PackageBuildArgs: --R_LIBS_SITE="C:/R/lib"
 PackageBuildBinaryArgs: --R_LIBS_SITE="C:/R/lib"
 PackageCheckArgs: --R_LIBS_SITE="C:/R/lib"
-PackageRoxygenize: rd
+PackageRoxygenize: rd,namespace
