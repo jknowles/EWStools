@@ -25,7 +25,7 @@
 ##'
 ##' showClass("RMSEit")
 ##' methods(class="RMSEit")
-##' @exportClass
+##' @export
 RMSEit <- setClass("RMSEit", representation(bestFit = "data.frame", 
                                           RMSE = "numeric", 
                                           datatype = "character",
