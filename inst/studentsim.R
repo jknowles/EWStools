@@ -1,30 +1,32 @@
-# Simulate student data
+# Generate some good fake EWS data
 
-library(devtools)
-#install_github("jknowles/datasynthR")
-library(datasynthR)
-library(eeptools)
-library(arm)
+fulldata <- twoClassSim(1000, intercept = -10, mislabel = 10)
 
-
-
-set.seed(442)
-library(caret)
-train <- twoClassSim(n = 1000, intercept = -8, linearVars = 15, 
-                     noiseVars = 4, corrVars = 4, corrValue = 0.6)
-test <- twoClassSim(n = 1000, intercept = -8, linearVars = 15, 
-                    noiseVars = 4, corrVars = 4, corrValue = 0.6)
-
-ctrl <- trainControl(method = "repeatedcv", 
-                     repeats = 3, classProbs = TRUE, 
-                     summaryFunction = twoClassSummary)
+out <- train(x=fulldata[,-16], y = fulldata[, 16], method = "knn", 
+             metric = "ROC", 
+             trControl = trainControl(classProbs = TRUE, 
+                                      summaryFunction = twoClassSummary ))
+names(fulldata) <- c("attendanceTotal", "assessmentMath", "assessmentRead", 
+                     "attendance30day", "courseGradesCore", "courseGradesAll", 
+                     "GPA", "retention", "remedialCourse", "tardies", 
+                     "majorDiscipline", "minorDiscipline", "officeReferral", 
+                     "expulsionDays", "suspensionDays", "ethnicity", "FRL", 
+                     "gender", "ELP", "schoolMoves", "districtMoves", "IEP", 
+                     "age", "graduation")
 
 
-fullModel <- train(Class ~ ., data = train, 
-                   method = "svmRadial", 
-                   preProc = c("center", "scale"), 
-                   tuneLength = 8, 
-                   metric = "ROC", 
-                   trControl = ctrl)
-
-fullModel
+Tardiesistr
+Actual Frequency of Behavioral Incident - Minor
+Actual Frequency of Behavioral Incident - Major
+Disciplinary (Office) Referrals
+Expulsions
+Suspensions
+504
+Ethnicity
+Free and Reduced Lunch
+Gender
+Low English Proficiency
+Mobility
+Special Education (IEP)
+Student Age
+Outcome
