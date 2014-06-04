@@ -43,7 +43,7 @@ nvars <- 21
 modterms <- list(coefs = rnorm(nvars), 
                  vars = sample(names(fulldat), nvars)) 
 
-y <- genBinomialDV(fulldat, form=modterms, intercept=9)
+y <- genBinomialDV(fulldat, form=modterms, intercept=-27)
 fulldat <- cbind(y, fulldat)
 table(fulldat$y)
 
