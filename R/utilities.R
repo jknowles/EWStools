@@ -122,10 +122,12 @@ ci <- function(x, scale){
 ##' @description Given a dataframe produced by modSearch, identify the top and bottom n 
 ##' models and describe their accuracy and their efficiency of fit
 ##' @param df a dataframe resulting from a call to \code{\link{modSearch}}
-##' @param n an integer specified by the user representing how many "best" and "worst" models to report
+##' @param n an integer specified by the user representing how many "best" and "worst" models to report, 
+##' defaults to 5
 ##' @return a list with a bunch of elements
+##' @details if the number of unique methods is less than n, then n defaults to the number of unique methods
 ##' @export
-modSearchResults <- function(df, n){
+modSearchResults <- function(df, n = 5){
   # sanitize n to avoid NA padding
   n <- ifelse(n < length(unique(df$method)), n, length(unique(df$method)))
   # identify type of results
