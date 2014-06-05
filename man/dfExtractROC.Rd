@@ -15,9 +15,10 @@ a \code{\link{data.frame}} with the following columns:
 various thresholds} \item{spec - the specificities of the
 model at various thresholds} \item{grp - whether the model
 is using training or test data} \item{method - the model
-method} \item{auc - the area under the curve}
-\item{elapsedTime - the time reported for the model to run}
-}
+method} \item{auc - the area under the curve} \item{aucSD -
+the standard deviation of the AUC for the best model
+reported by train} \item{elapsedTime - the time reported
+for the model to run} }
 }
 \description{
 Used for generating the data to make good looking ROC
