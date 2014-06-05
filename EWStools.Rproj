@@ -14,7 +14,11 @@ LaTeX: pdfLaTeX
 
 BuildType: Package
 PackageInstallArgs: --no-multiarch --with-keep.source
+<<<<<<< HEAD
+PackageRoxygenize: rd
+=======
 PackageBuildArgs: --R_LIBS_SITE="C:/R/lib"
 PackageBuildBinaryArgs: --R_LIBS_SITE="C:/R/lib"
 PackageCheckArgs: --R_LIBS_SITE="C:/R/lib"
 PackageRoxygenize: rd,namespace
+>>>>>>> a65a3f9943cf14cd4232196675b1e79f9b14f42e
