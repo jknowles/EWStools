@@ -49,6 +49,45 @@ confuse_mat <- function(mod, thresh, prop = FALSE, testdata){
   }
 }
 
+##' @title An internal function for creating the confusion matrix for \code{\linkS4class{ROCit}} 
+##' objects from train
+##' @keywords internal
+confuse_mat.train <- function(x, thresh){
+  x$yn <- as.character(x$obs)
+  statmod <- function(x) {
+    z <- table(as.vector(x))
+    names(z)[z == max(z)]
+  }
+  mode <- statmod(x$yn)
+  x$yn[x$yn == mode] <- "1"
+  x$yn[x$yn != "1"] <- 0
+  x$yn <- as.character(x$yn)
+  x$y <- as.numeric(x$yn)
+  
+  tp <- length(x$y[x$y > 0 & x[,1] >= thresh])
+  fp <- length(x$y[x$y < 1 & x[,1] >= thresh])
+  fn <- length(x$y[x$y > 0 & x[,1] <= thresh])
+  tn <- length(x$y[x$y < 1 & x[,1] <= thresh])
+  mat <- data.frame("Predicted NC"=c(tn, fn), "Predicted C"=c(fp, tp))
+  row.names(mat) <- c("Actual NC", "Actual C")
+  return(mat)
+}
+
+
+confuse_mat <- function(df, thresh){
+  df$yn <- as.character(df$obs)
+  statmod <- function(x) {
+    z <- table(as.vector(x))
+    names(z)[z == max(z)]
+  }
+  mode <- statmod(df$yn)
+  df$yn <- ifelse(df$yn == mode, "Common", "Rare")
+  df$yhat <- ifelse(df$common >= thresh, "Common", "Rare")
+  cm <- confusionMatrix(df$yhat, df$yn, positive = "Common")
+  return(cm)
+}
+
+
 ################################################################################
 # Title: A function to calculate the F measure of classification accuracy
 # x = an lm or glm model fit object
@@ -308,26 +347,3 @@ confuse_mat <- function(mod, thresh, prop = FALSE, testdata){
 #   }
 # }
 
-##' @title An internal function for creating the confusion matrix for \code{\linkS4class{ROCit}} 
-##' objects from train
-##' @keywords internal
-confuse_mat.train <- function(x, thresh){
-  x$yn <- as.character(x$obs)
-  statmod <- function(x) {
-    z <- table(as.vector(x))
-    names(z)[z == max(z)]
-  }
-  mode <- statmod(x$yn)
-  x$yn[x$yn == mode] <- "1"
-  x$yn[x$yn != "1"] <- 0
-  x$yn <- as.character(x$yn)
-  x$y <- as.numeric(x$yn)
-  
-  tp <- length(x$y[x$y > 0 & x[,1] >= thresh])
-  fp <- length(x$y[x$y < 1 & x[,1] >= thresh])
-  fn <- length(x$y[x$y > 0 & x[,1] <= thresh])
-  tn <- length(x$y[x$y < 1 & x[,1] <= thresh])
-  mat <- data.frame("Predicted NC"=c(tn, fn), "Predicted C"=c(fp, tp))
-  row.names(mat) <- c("Actual NC", "Actual C")
-  return(mat)
-}

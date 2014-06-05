@@ -207,6 +207,73 @@ ROCtest.train <- function(mod, testdata, ...){
   }
 }
 
+##' @title Getting an ROCtest on a train object
+##' @rdname ROCtest
+##' @method ROCtest caretEnsemble
+##' @export
+ROCtest.caretEnsemble <- function(mod, testdata, ...){
+  if(missing(testdata)){
+    if(is.null(mod$terms)==TRUE){
+      test <- extractProb(list(mod))
+      names(test)[1:3] <- c("common", "rare", "obs")
+    } else if (is.null(mod$terms)==FALSE){
+      test <- predict(mod, type="prob")
+      test <- cbind(test, mod$trainingData$.outcome)
+      names(test) <- c("common", "rare", "obs")
+    }
+    if(is.null(test)==TRUE) stop("Cannot generate probabilities")
+    #message("Generating ROC...")
+    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm=3)
+    a <- mroc$auc[1]
+    t <- coords.roc(mroc, x="best", ...)[1]
+    cm <- confuse_mat.train(test, t)
+    rc <- cm[1,1] / (cm[1,1] + cm[1,2])
+    fp <- cm[2,1] / (cm[1,1] + cm[2,1])
+    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   modtype = class(mod), 
+                   modcall = paste(mod$call), datatype="train")
+    return(myROC)
+  }
+  else if(!missing(testdata)){
+    # error handling
+    if(class(testdata) != "list"){
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    if("preds" %in% names(testdata)){
+      
+    } else {
+      stop("Please provide testdata as a named list with elements 'preds' and 'class'")
+    }
+    # end error handling
+    if(is.null(mod$terms)==TRUE){
+      test <- extractProb(list(mod), testX = testdata$preds, testY=testdata$class)
+      test <- subset(test, dataType == "Test")
+      names(test)[1:3] <- c("common", "rare", "obs")
+    } else if(is.null(mod$terms)==FALSE){
+      test <- predict(mod, newdata=cbind(testdata$class, testdata$preds), 
+                      type="prob")
+      test <- cbind(test, testdata$class)
+      names(test) <- c("common", "rare", "obs")
+    }
+    if(is.null(test)==TRUE) stop("Cannot generate probabilities")
+    #message("Generating ROC...")
+    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm = 3)
+    a <- mroc$auc[1]
+    t <- coords.roc(mroc, x="best", ...)[1]
+    cm <- confuse_mat.train(test, t)
+    rc <- cm[1,1] / (cm[1,1] + cm[1,2])
+    fp <- cm[2,1] / (cm[1,1] + cm[2,1])
+    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   modtype = class(mod), 
+                   modcall = paste(mod$call), 
+                   datatype="test")
+    return(myROC)
+  }
+}
+
+
 
 ##' @title Internal function to aide with factors in predicting new data for ROCtest
 ##' @keywords internal
