@@ -208,7 +208,7 @@ dfExtractROC <- function(mod){
 ##' argument in trainControl, the value of metric should match one of the arguments. 
 ##' If it does not, a warning is issued and the first metric given by the 
 ##' summaryFunction is used. 
-##' @param cores An integer representing the number of cores to use on Windows
+##' @param cores An integer representing the number of cores to use on Windows. If not on windows, a warning is issued. 
 ##' @return A character string with an error if unsuccessful. The result of the \code{modAcc} call if successful: 
 ##' \itemize{
 ##' \item{method - the \code{\link{train}} method used to fit the model}
@@ -231,11 +231,14 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
   # Set up cores for Windows
   if(!missing(cores)){
     myOS <- Sys.info()['sysname']
-    if(myOS!="Windows") stop("Only declare cores on Windows machines. On Linux 
+    if(myOS!="Windows"){  
+      warning("Only declare cores on Windows machines. On Linux 
                              you can declare parallel outside of the modTest 
                              or modSearch call.")
-    myclus <- makeCluster(cores)
-    registerDoParallel(myclus)
+    } else {
+      myclus <- makeCluster(cores)
+      registerDoParallel(myclus)
+    } 
   }
   datD <- c('rda', 'lda2', 'hda', 'mda', 'mlp', 'mlpWeightDecay', 
             'rbf', 'rpart2', 'C5.0Rules', 'pda2', 'rda', 'glm',
@@ -260,8 +263,10 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
               message(paste0("Model failed to run: ", method)))
   # multicore
   if(!missing(cores)){
-    try(stopCluster(myclus))
-    try(stopImplicitCluster())
+    if(myOS == "Windows"){
+      try(stopCluster(myclus))
+      try(stopImplicitCluster())
+    }
   }
   if(class(fit) == "character"){
     message(paste0("Model failed to run: ", method))

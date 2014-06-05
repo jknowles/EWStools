@@ -50,7 +50,8 @@ modTest(method, datatype = c("train", "test"), traindata, testdata,
   the first metric given by the summaryFunction is used.}
 
   \item{cores}{An integer representing the number of cores
-  to use on Windows}
+  to use on Windows. If not on windows, a warning is
+  issued.}
 }
 \value{
 A character string with an error if unsuccessful. The
