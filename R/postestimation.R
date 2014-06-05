@@ -1,4 +1,3 @@
-
 ##' @title Calculate a confidence interval for a vector
 ##' @description Given a vector, this function produces a three number summary consisting 
 ##' of the median, the median minus the standard deviation (multiplied by a scaling 

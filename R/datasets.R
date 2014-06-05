@@ -57,3 +57,22 @@ NULL
 NULL
 
 
+#' EWS test data
+#'
+#' @name EWStestData
+#' @docType data
+#' @description Sample data for testing EWStools methods.
+#' @details
+##' A list named modeldat with the following structure: 
+##' \itemize{
+##'   \item{traindata - a list of elements in training data}
+##'   \item{testdata - a list of elements in test-data}
+##'}
+##' Each list contains two elements, a dataframe called preds and a vector 
+##' called class. The preds dataframe is a numeric matrix that represents the 
+##' model matrix of the predictors. The class is a factor vector that represents 
+##' the classification of the cases to be checked. 
+##' 
+#' @source The code to build this dataset is in the inst directory
+#' @keywords data
+NULL

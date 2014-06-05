@@ -4,6 +4,8 @@
 \title{Calculate a confidence interval for a vector}
 \usage{
 ci(x, scale)
+
+ci(x, scale)
 }
 \arguments{
   \item{x}{a numeric vector, can contain missing values, if
@@ -11,6 +13,11 @@ ci(x, scale)
 
   \item{scale}{the factor to multiply the standard
   deviation by when creating the interval}
+
+  \item{x}{A numeric vector which contain NAs}
+
+  \item{scale}{The scale factor of the standard deviation
+  out of which to build the CI}
 }
 \value{
 a numeric vector with three elements, the low end of the
@@ -23,5 +30,9 @@ summary consisting of the median, the median minus the
 standard deviation (multiplied by a scaling factor), and
 the median plus the standard deviation multiplied by a
 scaling factor.
+
+Given a vector of numerics, x, this returns a numeric
+vector of length 3, low confidence interval, high
+confidence interval, and the median
 }
 
