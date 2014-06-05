@@ -317,3 +317,7 @@ test_that("modSearch results are reliable for train and test", {
 # #                         metric = "ROC", cores = 2+1)
 # # 
 # # 
+
+## n = number of models to return
+## df = result of modSearchResults
+

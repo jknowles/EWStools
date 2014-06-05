@@ -117,3 +117,55 @@ ci <- function(x, scale){
   CI <- c(lowCI, med, hiCI)
   return(CI)
 }
+
+##' @title Summarize the results of modSearch
+##' @description Given a dataframe produced by modSearch, identify the top and bottom n 
+##' models and describe their accuracy and their efficiency of fit
+##' @param df a dataframe resulting from a call to \code{\link{modSearch}}
+##' @param n an integer specified by the user representing how many "best" and "worst" models to report
+##' @return a list with a bunch of elements
+##' @export
+modSearchResults <- function(df, n){
+  # sanitize n to avoid NA padding
+  n <- ifelse(n < length(unique(df$method)), n, length(unique(df$method)))
+  # identify type of results
+  if(names(df)[1] == "RMSE"){
+    dv  <- "RMSE"
+    df$sort <- 1 - df[, dv]
+  } else if(names(df[1]) == "sens"){
+    dv <- "auc"
+    df$sort <- df[, dv]
+  }
+  modSuc <- unique(df$method[!is.na(df[, dv])])
+  modFail <- unique(df$method[is.na(df[, dv])])
+  # look at test performance
+  if(!"test" %in% df$grp == TRUE){ # awkward negation checking for test results
+    warning("Rerun modSearch with option to return test data statistics using datatype = 'test'")
+  } 
+  teststats <- df[df$grp == "test", ]
+  topMetric <- unique(teststats[, dv])[order(-unique(teststats[, "sort"]))][1:n]
+  badMetric <- unique(teststats[, dv])[order(unique(teststats[, "sort"]))][1:n]
+  bestMethod <- unique(df$method[df[, dv] %in% topMetric])
+  worstMethod <- unique(df$method[df[, dv] %in% badMetric])
+  effDF <- df[df$grp == "test", c(dv, names(df)[4:7], "sort")]
+  effDF <- effDF[!duplicated(effDF), ]
+  if(dv == "RMSE"){
+    effDF$efficiency <- round(10/(effDF$elapsedTime + effDF[, dv]^2), digits = 3)
+  } else{
+    effDF$efficiency <- effDF[, "sort"] / effDF$elapsedTime
+  }
+  fastMethods <-effDF$method[order(-effDF$efficiency)][1:n]
+  slowMethods <-effDF$method[order(effDF$efficiency)][1:n]
+  effDF[, "sort"] <- NULL
+  row.names(effDF) <- NULL
+  #
+  TrainResults <- list(modSuc = modSuc, modFail = modFail, 
+                       topMetric = topMetric, badMetric = badMetric,
+                       worstMethod = worstMethod, 
+                       bestMethod = bestMethod,
+                       fastMethods = fastMethods,
+                       slowMethods = slowMethods,
+                       efficiencyResults = effDF)
+  return(TrainResults)
+}
+
