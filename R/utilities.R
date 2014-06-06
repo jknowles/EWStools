@@ -15,7 +15,6 @@
 #' require(EWStools)
 #' data(caretTags)
 #' dissimMethod(sample(caretTags$method, 30), k = 4, distancemethod = "maximum", n = 2, what = "tags") 
-
 dissimMethod <- function(methods, k, distancemethod, n, 
                          what = c("tags", "matrix")){
   data(caretTags)
@@ -171,8 +170,13 @@ modSearchResults <- function(df, n = 5){
   return(TrainResults)
 }
 
-###
-
+##' @title Extract probabilities from various types of R models used for classification
+##' @description Extracts probabilities consistently for using in confusion matrix calculations
+##' @param mod an R model object either of glm, caret, or caretEnsemble class
+##' @param testdata a list with two elements, a preds dataframe and a factor called class
+##' @return a dataframe with yhat, the inverse of yhat, and the outcome as a factor
+##' @details Only works for caretEnsemble, train, and glm objects currently. 
+##' @export
 probExtract <- function(mod, testdata = NULL){
   if(class(mod)[1] == "caretEnsemble"){
     if(missing(testdata)){
@@ -222,6 +226,16 @@ probExtract <- function(mod, testdata = NULL){
   }
 }
 
+##' @title Convert probabilities to classifications 
+##' @description For building confusion matrices
+##' @param yhats a dataframe resulting from a call to \code{\link{probExtract}}
+##' @param thresh a numeric from 0 to 1 representing the cutpoint for the probability
+##' @return a vector the length of rows in yhats representing the conversion from a numeric 
+##' probability to a factor using the threshold thresh
+##' @details Only works for caretEnsemble, train, and glm objects currently. Corrects for 
+##' the differential ordering in what the predicted probability is with respect to. 
+##' @note If you find errors, it is likely that the probabilities are inverted. Please report this. 
+##' @keywords internal
 reclassProb <- function(yhats, thresh){
   if(class(yhats$.outcome) != "factor"){
     yhats$.outcome <- as.factor(yhats$.outcome)
@@ -240,3 +254,45 @@ reclassProb <- function(yhats, thresh){
   yclass <- ifelse(yhats$yhat >= thresh, predLvl, levels(yhats$.outcome)[2])
   return(yclass)
 }
+
+
+
+
+##' @title Internal function to aide with factors in predicting new data for ROCtest
+##' @keywords internal
+factor_norm <- function(mod, testdata, impute=FALSE, ...){
+  facnames <- names(mod$xlevels)
+  if(impute==FALSE){
+    for(i in facnames){
+      x <- as.character(testdata[,i])
+      levels <- c(unlist(mod$xlevels[i]))
+      chk <- unique(x) %in% levels
+      if(length(chk[isTRUE(chk)]) > 0){
+        testdata[, i] <- as.character(testdata[, i])
+        id <- which(!(testdata[, i] %in% levels))
+        testdata[id, i] <- NA
+        testdata[,i] <- factor(testdata[,i])
+      }
+    }
+    return(testdata)
+  } else if(impute==TRUE){
+    for(i in facnames){
+      x <- as.character(testdata[,i])
+      levels <- c(unlist(mod$xlevels[i]))
+      chk <- unique(x) %in% levels
+      if(length(chk[!is.na(chk)]) > 0){
+        testdata[, i] <- as.character(testdata[, i])
+        id <- which(!(testdata[, i] %in% levels))
+        a <- as.data.frame(mod$coefficients)
+        a$name <- row.names(a)
+        a <- a[grepl(i, row.names(a)), ]
+        a <- a[order(a[1]) ,]
+        newlevel <- a$name[nrow(a) %/% 2]
+        testdata[id, i] <- gsub(i,"",newlevel)
+        testdata[, i] <- as.factor(testdata[, i])
+      }
+    }
+    return(testdata)
+  }
+}
+
