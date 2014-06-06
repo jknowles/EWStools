@@ -19,6 +19,5 @@ Depends:
 Suggests:
     testthat,
     MASS, 
-    R.utils, 
     doParallel
 Roxygen: list(wrap = TRUE)

@@ -174,16 +174,32 @@ modSearchResults <- function(df, n = 5){
 ###
 
 probExtract <- function(mod, testdata = NULL){
-  if(missing(testdata)){
-    yhats <- predict(mod, keepNA = TRUE)
-    yhats <- data.frame(yhat = yhats, 
-                        .outcome = mod$models[[1]]$trainingData$.outcome)
-    return(yhats)
-  } else {
-    yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds)
-    yhats <- data.frame(yhat = yhats, 
-                        .outcome = testdata$class)
-    return(yhats)
+  if(class(mod) == "caretEnsemble"){
+    if(missing(testdata)){
+      yhats <- predict(mod, keepNA = TRUE)
+      yhats <- data.frame(yhat = yhats, 
+                          .outcome = mod$models[[1]]$trainingData$.outcome)
+      return(yhats)
+    } else {
+      yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds)
+      yhats <- data.frame(yhat = yhats, 
+                          .outcome = testdata$class)
+      return(yhats)
+    }
+  } else if(class(mod) == "train"){
+    if(missing(testdata)){
+      yhats <- predict(mod, type = "prob")
+      yhats <- data.frame(yhats, 
+                          .outcome = mod$trainingData$.outcome)
+      names(yhats) <- c("yhat", "yhatInv", ".outcome")
+      return(yhats)
+    } else {
+      yhats <- predict(mod, newdata = testdata$preds, type = "prob")
+      yhats <- data.frame(yhats, 
+                          .outcome = testdata$class)
+      names(yhats) <- c("yhat", "yhatInv", ".outcome")
+      return(yhats)
+    }
   }
 }
 

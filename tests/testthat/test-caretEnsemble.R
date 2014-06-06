@@ -20,6 +20,8 @@ out <- buildModels(methodList = c("knn", "glm", "nb", "lda", "ctree"),
 out.ens <- caretEnsemble(out)
 
 
+# check functions with different types of levels
+
 ROCtest(out.ens)
 
 confusionMatrix(reclassProb(yhats = yhats, thresh =0.1), 
