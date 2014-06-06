@@ -83,22 +83,15 @@ ROCtest <- function(mod, testdata=NULL, ...){
 ##' @method ROCtest glm
 ##' @export
 ROCtest.glm <- function(mod, testdata, ...){
-  # can pass optional values such as: 
-  #best.method="closest.topleft", 
-  #best.weights=c(100, .11)
   if(missing(testdata)){
-    #z <- terms(mod)
-    #     test <- mod$data[, colnames(mod$data) %in% attr(z, "term.labels")]
-    #     test <- na.omit(test)
-    yhat <- mod$fitted.values
-    y <- mod$y
+    yhats <- probExtract(mod)
    # message("Generating ROC...")
-    mroc <- roc(y~yhat, percent=TRUE)
+    mroc <- roc(.outcome ~ yhat, percent=TRUE, data = yhats)
     a <- mroc$auc[1]
     thresh <- coords(mroc, x="best", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhat, thresh = t), 
-                         reference = y, positive = levels(y)[1])
-    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
+                         reference = yhats$.outcome, positive = levels(y)[1])
+    myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
                   rarepercent=cm$byClass["Neg Pred Value"], 
                   falsepositive=1 - cm$byClass["Neg Pred Value"], 
                   rocobj=mroc,
@@ -117,23 +110,20 @@ ROCtest.glm <- function(mod, testdata, ...){
       stop("Please provide testdata as a named list with elements 'preds' and 'class'")
     }
     # end error handling
-    dv <- as.character(mod$formula[[2]])
-    testdata2 <- cbind(testdata$preds, testdata$class)
-    names(testdata2) <- c(names(testdata$preds), dv)
-    testdata <- testdata2; rm(testdata2)
-    # end hack
-    if(!exists("impute")){impute <- FALSE}
-    testdata <- factor_norm(mod, testdata, ...)
-    testdata$fitted <- predict(mod, newdata=testdata, type="response")
-    rocS <- testdata[, c(dv, "fitted")]
-    names(rocS) <- c("y", "fitted")
+#     dv <- as.character(mod$formula[[2]])
+#     testdata2 <- cbind(testdata$preds, testdata$class)
+#     names(testdata2) <- c(names(testdata$preds), dv)
+#     testdata <- testdata2; rm(testdata2)
+#     # end hack
+#     testdata <- factor_norm(mod, testdata, ...)
+    yhats <- probExtract(mod, testdata = testdata)
     #message("Generating ROC...")
-    mroc <- roc(y~fitted, percent=TRUE, data=rocS)
+    mroc <- roc(.outcome ~ yhat, percent=TRUE, data=yhats)
     a <- mroc$auc[1]
     thresh <- coords(mroc, x="best", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = rocS$fitted, thresh = t), 
-                          reference = rocS$y, positive = levels(rocS$y)[1])
-    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
+                          reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
+    myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
                    rocobj=mroc,
@@ -155,8 +145,8 @@ ROCtest.train <- function(mod, testdata, ...){
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
     mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=3)
     a <- mroc$auc[1]
-    t <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = t), 
+    thresh <- coords.roc(mroc, x="best", ...)[1]
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
@@ -181,8 +171,8 @@ ROCtest.train <- function(mod, testdata, ...){
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
     mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=3)
     a <- mroc$auc[1]
-    t <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh =t), 
+    thresh <- coords.roc(mroc, x="best", ...)[1]
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
@@ -204,8 +194,8 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
     mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=3)
     a <- mroc$auc[1]
-    t <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = t), 
+    thresh <- coords.roc(mroc, x="best", ...)[1]
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
@@ -230,8 +220,8 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
     mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=3)
     a <- mroc$auc[1]
-    t <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh =t), 
+    thresh <- coords.roc(mroc, x="best", ...)[1]
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 

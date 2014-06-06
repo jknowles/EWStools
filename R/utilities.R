@@ -187,7 +187,6 @@ probExtract <- function(mod, testdata = NULL){
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
                           .outcome = mod$models[[1]]$trainingData$.outcome)
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
-      # proper class
       return(yhats)
     }
   } else if(class(mod)[1]== "train"){
@@ -204,7 +203,21 @@ probExtract <- function(mod, testdata = NULL){
       names(yhats) <- c("yhat", "yhatInv", ".outcome")
       return(yhats)
     }
-  } else {
+  } else if(class(mod)[1] == "glm"){
+    if(missing(testdata)){
+      yhats <- predict(mod, type = "response")
+      yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
+                          .outcome = mod$y)
+      names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
+      return(yhats)
+    } else {
+      yhats <- predict(mod, newdata = testdata$preds, type = "response")
+      yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
+                          .outcome =  testdata$class)
+      names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
+      return(yhats)
+    }
+    } else {
     stop("Please provide either a caretEnsemble or train object")
   }
 }
