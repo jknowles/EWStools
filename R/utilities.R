@@ -171,3 +171,37 @@ modSearchResults <- function(df, n = 5){
   return(TrainResults)
 }
 
+###
+
+probExtract <- function(mod, testdata = NULL){
+  if(missing(testdata)){
+    yhats <- predict(mod, keepNA = TRUE)
+    yhats <- data.frame(yhat = yhats, 
+                        .outcome = mod$models[[1]]$trainingData$.outcome)
+    return(yhats)
+  } else {
+    yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds)
+    yhats <- data.frame(yhat = yhats, 
+                        .outcome = testdata$class)
+    return(yhats)
+  }
+}
+
+reclassProb <- function(yhats, thresh){
+  if(class(yhats$.outcome) != "factor"){
+    yhats$.outcome <- as.factor(yhats$.outcome)
+    warning("attempting to force outcome to factor")
+    if(length(levels(yhats$.outcome)) != 2){
+      stop("Please ensure that .outcome is a two-class factor")
+    }
+  }
+  if(class(yhats) != "data.frame"){
+    yhats <- as.data.frame(yhats)
+  }
+  if(class(yhats$yhat) != "numeric"){
+    stop("Check predictions, yhat must be numeric")
+  }
+  predLvl <- levels(yhats$.outcome)[2]
+  yclass <- ifelse(yhats$yhat >= thresh, predLvl, levels(yhats$.outcome)[1])
+  return(yclass)
+}

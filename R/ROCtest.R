@@ -40,7 +40,7 @@ setOldClass("roc")
 ##' @export
 ROCit <- setClass("ROCit", representation(thresh = "numeric", 
                                           auc = "numeric", 
-                                          confusematrix = "data.frame", 
+                                          confusematrix = "list", 
                                           rarepercent = "numeric",
                                           falsepositive = "numeric", 
                                           rocobj = "roc",
@@ -157,7 +157,7 @@ ROCtest.train <- function(mod, testdata, ...){
     }
     if(is.null(test)==TRUE) stop("Cannot generate probabilities")
     #message("Generating ROC...")
-    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm=3)
+    mroc <- roc(obs ~ common, data=test, percent=TRUE, algorithm=3)
     a <- mroc$auc[1]
     t <- coords.roc(mroc, x="best", ...)[1]
     cm <- confuse_mat.train(test, t)
@@ -213,24 +213,17 @@ ROCtest.train <- function(mod, testdata, ...){
 ##' @export
 ROCtest.caretEnsemble <- function(mod, testdata, ...){
   if(missing(testdata)){
-    if(is.null(mod$terms)==TRUE){
-      test <- extractProb(list(mod))
-      names(test)[1:3] <- c("common", "rare", "obs")
-    } else if (is.null(mod$terms)==FALSE){
-      test <- predict(mod, type="prob")
-      test <- cbind(test, mod$trainingData$.outcome)
-      names(test) <- c("common", "rare", "obs")
-    }
-    if(is.null(test)==TRUE) stop("Cannot generate probabilities")
-    #message("Generating ROC...")
-    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm=3)
+    yhats <- probExtract(mod)
+    if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
+    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=3)
     a <- mroc$auc[1]
     t <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confuse_mat.train(test, t)
-    rc <- cm[1,1] / (cm[1,1] + cm[1,2])
-    fp <- cm[2,1] / (cm[1,1] + cm[2,1])
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = t), 
+                          reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
-                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   rarepercent=cm$byClass["Neg Pred Value"], 
+                   falsepositive=1 - cm$byClass["Neg Pred Value"], 
+                   rocobj=mroc,
                    modtype = class(mod), 
                    modcall = paste(mod$call), datatype="train")
     return(myROC)
@@ -246,32 +239,23 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
       stop("Please provide testdata as a named list with elements 'preds' and 'class'")
     }
     # end error handling
-    if(is.null(mod$terms)==TRUE){
-      test <- extractProb(list(mod), testX = testdata$preds, testY=testdata$class)
-      test <- subset(test, dataType == "Test")
-      names(test)[1:3] <- c("common", "rare", "obs")
-    } else if(is.null(mod$terms)==FALSE){
-      test <- predict(mod, newdata=cbind(testdata$class, testdata$preds), 
-                      type="prob")
-      test <- cbind(test, testdata$class)
-      names(test) <- c("common", "rare", "obs")
-    }
-    if(is.null(test)==TRUE) stop("Cannot generate probabilities")
-    #message("Generating ROC...")
-    mroc <- roc(obs ~ common, data=test, precent=TRUE, algorithm = 3)
+    yhats <- probExtract(mod, testdata = testdata)
+    if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
+    mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=3)
     a <- mroc$auc[1]
     t <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confuse_mat.train(test, t)
-    rc <- cm[1,1] / (cm[1,1] + cm[1,2])
-    fp <- cm[2,1] / (cm[1,1] + cm[2,1])
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh =t), 
+                          reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
-                   rarepercent=rc, falsepositive=fp, rocobj=mroc,
+                   rarepercent=cm$byClass["Neg Pred Value"], 
+                   falsepositive=1 - cm$byClass["Neg Pred Value"], 
+                   rocobj=mroc,
                    modtype = class(mod), 
-                   modcall = paste(mod$call), 
-                   datatype="test")
+                   modcall = paste(mod$call), datatype="test")
     return(myROC)
   }
 }
+
 
 
 
