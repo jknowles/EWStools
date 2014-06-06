@@ -6,7 +6,7 @@
 ################################################################################
 
 setOldClass("roc")
-
+setOldClass("confusionMatrix")
 ##' Class "ROCit" of ROC classification statistics
 ##'
 ##' A \code{\link{glm}} or \code{\link{train}} object with a binary classification 
@@ -40,7 +40,7 @@ setOldClass("roc")
 ##' @export
 ROCit <- setClass("ROCit", representation(thresh = "numeric", 
                                           auc = "numeric", 
-                                          confusematrix = "list", 
+                                          confusematrix = "confusionMatrix", 
                                           rarepercent = "numeric",
                                           falsepositive = "numeric", 
                                           rocobj = "roc",
@@ -207,7 +207,7 @@ ROCtest.train <- function(mod, testdata, ...){
   }
 }
 
-##' @title Getting an ROCtest on a train object
+##' @title Getting an ROCtest on a caretEnsemble object
 ##' @rdname ROCtest
 ##' @method ROCtest caretEnsemble
 ##' @export

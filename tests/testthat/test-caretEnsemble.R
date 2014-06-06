@@ -19,6 +19,9 @@ out <- buildModels(methodList = c("knn", "glm", "nb", "lda", "ctree"),
 
 out.ens <- caretEnsemble(out)
 
+
+ROCtest(out.ens)
+
 confusionMatrix(reclassProb(yhats = yhats, thresh =0.1), 
                 reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
 

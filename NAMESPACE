@@ -3,6 +3,7 @@
 S3method(RMSEtest,train)
 S3method(ROCtest,glm)
 S3method(ROCtest,train)
+S3method(ROCtest, caretEnsemble)
 export(RMSEtest)
 export(ROCtest)
 export(assembleData)
