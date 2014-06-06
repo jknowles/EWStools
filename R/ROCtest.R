@@ -148,7 +148,7 @@ ROCtest.train <- function(mod, testdata, ...){
     thresh <- coords.roc(mroc, x="best", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+    myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
                    rocobj=mroc,
@@ -174,7 +174,7 @@ ROCtest.train <- function(mod, testdata, ...){
     thresh <- coords.roc(mroc, x="best", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+    myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
                    rocobj=mroc,
@@ -223,7 +223,7 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     thresh <- coords.roc(mroc, x="best", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+    myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
                    rocobj=mroc,
