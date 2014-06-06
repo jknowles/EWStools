@@ -12,7 +12,7 @@
   \item{...}{optional additional parameters.}
 }
 \value{
-A
+Values to the screen.
 }
 \description{
 Print a summary of an \code{\linkS4class{ROCit}} object

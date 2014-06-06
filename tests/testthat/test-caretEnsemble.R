@@ -22,7 +22,7 @@ out.ens <- caretEnsemble(out)
 
 # check functions with different types of levels
 
-ROCtest(out.ens)
+ROCtest(out.ens)@confusematrix
 
 confusionMatrix(reclassProb(yhats = yhats, thresh =0.1), 
                 reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])

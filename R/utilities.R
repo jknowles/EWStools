@@ -174,19 +174,23 @@ modSearchResults <- function(df, n = 5){
 ###
 
 probExtract <- function(mod, testdata = NULL){
-  if(class(mod) == "caretEnsemble"){
+  if(class(mod)[1] == "caretEnsemble"){
     if(missing(testdata)){
-      yhats <- predict(mod, keepNA = TRUE)
-      yhats <- data.frame(yhat = yhats, 
+      yhats <- predict(mod, keepNA = TRUE) # caretEnsemble seems to predict non-reference class
+      yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
                           .outcome = mod$models[[1]]$trainingData$.outcome)
+      names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
+                                                        # proper class
       return(yhats)
     } else {
       yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds)
-      yhats <- data.frame(yhat = yhats, 
-                          .outcome = testdata$class)
+      yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
+                          .outcome = mod$models[[1]]$trainingData$.outcome)
+      names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
+      # proper class
       return(yhats)
     }
-  } else if(class(mod) == "train"){
+  } else if(class(mod)[1]== "train"){
     if(missing(testdata)){
       yhats <- predict(mod, type = "prob")
       yhats <- data.frame(yhats, 
@@ -200,6 +204,8 @@ probExtract <- function(mod, testdata = NULL){
       names(yhats) <- c("yhat", "yhatInv", ".outcome")
       return(yhats)
     }
+  } else {
+    stop("Please provide either a caretEnsemble or train object")
   }
 }
 
@@ -217,7 +223,7 @@ reclassProb <- function(yhats, thresh){
   if(class(yhats$yhat) != "numeric"){
     stop("Check predictions, yhat must be numeric")
   }
-  predLvl <- levels(yhats$.outcome)[2]
-  yclass <- ifelse(yhats$yhat >= thresh, predLvl, levels(yhats$.outcome)[1])
+  predLvl <- levels(yhats$.outcome)[1]
+  yclass <- ifelse(yhats$yhat >= thresh, predLvl, levels(yhats$.outcome)[2])
   return(yclass)
 }

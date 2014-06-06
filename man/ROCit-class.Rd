@@ -15,7 +15,8 @@ results across models.
 The object has the following items \itemize{ \item{thresh -
 the threshold for the ROC} \item{auc - the area under the
 curve} \item{confusematrix - the confusion matrix for the
-ROC fit} \item{rarepercent - percent of rare class correct}
+ROC fit, as provided by \code{\link{confusionMatrix}}}
+\item{rarepercent - percent of rare class correct}
 \item{falsepositive - percent of false rare class
 identifications} \item{modtype - the class of the model
 object} \item{modcall - the call to the model fitting
