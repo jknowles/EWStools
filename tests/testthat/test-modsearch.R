@@ -76,7 +76,7 @@ test_that("modAcc keeps the model correctly", {
 test_that("modAcc subobjects have correct slots for train data", {
   expect_that(modobj$summaryTr@thresh, is_a("numeric"))
   expect_that(modobj$summaryTr@auc, is_a("numeric"))
-  expect_that(modobj$summaryTr@confusematrix, is_a("data.frame"))
+  expect_that(modobj$summaryTr@confusematrix, is_a("confusionMatrix"))
   expect_that(modobj$summaryTr@rarepercent, is_a("numeric"))
   expect_that(modobj$summaryTr@falsepositive, is_a("numeric"))
   expect_that(modobj$summaryTr@rocobj, is_a("roc"))
@@ -86,7 +86,7 @@ test_that("modAcc subobjects have correct slots for train data", {
   expect_identical(modobj$summaryTr@datatype, "train")  
   expect_that(modobj$summaryTe@thresh, is_a("numeric"))
   expect_that(modobj$summaryTe@auc, is_a("numeric"))
-  expect_that(modobj$summaryTe@confusematrix, is_a("data.frame"))
+  expect_that(modobj$summaryTe@confusematrix, is_a("confusionMatrix"))
   expect_that(modobj$summaryTe@rarepercent, is_a("numeric"))
   expect_that(modobj$summaryTe@falsepositive, is_a("numeric"))
   expect_that(modobj$summaryTe@rocobj, is_a("roc"))
@@ -317,3 +317,7 @@ test_that("modSearch results are reliable for train and test", {
 # #                         metric = "ROC", cores = 2+1)
 # # 
 # # 
+
+## n = number of models to return
+## df = result of modSearchResults
+

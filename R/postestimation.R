@@ -1,14 +1,38 @@
-##' @title Calculate subscores from a dataframe of overall scores
-##' @description Create a new dataframe of subscores for individual observations 
-##' across predictor domains
-##' @param df a vector of character representing method names in caret
-##' @param VAR the number of clusters
-##' @param RISK the method used to calculate the dissimilarity
-##' @return Returns either a dataframe or a matrix with the dissimilarity values 
-##' for the methods sampled and the names of the methods. 
+##' @title Calculate a confidence interval for a vector
+##' @description Given a vector, this function produces a three number summary consisting 
+##' of the median, the median minus the standard deviation (multiplied by a scaling 
+##' factor), and the median plus the standard deviation multiplied by a scaling factor. 
+##' @param x a numeric vector, can contain missing values, if so, they are ignored
+##' @param scale the factor to multiply the standard deviation by when creating the 
+##' interval
+##' @return a numeric vector with three elements, the low end of the confidence 
+##' interval, the median, and the high end of the confidence interval
+##' @export
+ci <- function(x, scale){
+  lowCI <- median(x, na.rm=T) - (scale * sd(x, na.rm=T))
+  hiCI <- median(x, na.rm=T) + (scale * sd(x, na.rm=T))
+  med <- median(x, na.rm=T)
+  CI <- c(lowCI, med, hiCI)
+  if(hiCI > max(x)){
+    warning("High value of confidence interval greater than max(x), check scale")
+  }
+  if(lowCI < min(x)){
+    warning("Low value of confidence interval less than min(x), check scale")
+  }
+  return(CI)
+}
+
+
+##' @title Calculate subscores from an overall score in a dataframe
+##' @description Given a dataframe, specify a variable to be the overall risk field and 
+##' loop through all other fields and score them on whether the observation is closest to 
+##' the others on the overall risk 
+##' @param df a dataframe
+##' @param VAR a character representing the name of a variable in DF
+##' @return RISK a character representing the name of a variable in DF
 ##' @export
 subscores <- function(df, VAR, RISK){
-   cis <- tapply(df[, match(VAR, colnames(df))], 
+  cis <- tapply(df[, match(VAR, colnames(df))], 
                 df[, match(RISK, colnames(df))], 
                 function(x){(ci(x, 0.5))}, simplify=TRUE)
   

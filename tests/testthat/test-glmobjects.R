@@ -37,7 +37,7 @@ test_that("ROCtest produces correct objects", {
 test_that("ROCit object has correct slots", {
   expect_that(res1@thresh, is_a("numeric"))
   expect_that(res1@auc, is_a("numeric"))
-  expect_that(res1@confusematrix, is_a("data.frame"))
+  expect_that(res1@confusematrix, is_a("confusionMatrix"))
   expect_that(res1@rarepercent, is_a("numeric"))
   expect_that(res1@falsepositive, is_a("numeric"))
   expect_that(res1@rocobj, is_a("roc"))
@@ -84,7 +84,7 @@ test_that("ROCtest produces correct objects", {
 test_that("ROCit object has correct slots", {
   expect_that(res1t@thresh, is_a("numeric"))
   expect_that(res1t@auc, is_a("numeric"))
-  expect_that(res1t@confusematrix, is_a("data.frame"))
+  expect_that(res1t@confusematrix, is_a("confusionMatrix"))
   expect_that(res1t@rarepercent, is_a("numeric"))
   expect_that(res1t@falsepositive, is_a("numeric"))
   expect_that(res1t@rocobj, is_a("roc"))

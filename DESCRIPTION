@@ -19,8 +19,8 @@ Depends:
 Suggests:
     testthat,
     MASS, 
-    R.utils, 
     doParallel, 
     knitr
 Roxygen: list(wrap = TRUE)
 VignetteBuilder: knitr
+Roxygen: list(wrap = TRUE)
