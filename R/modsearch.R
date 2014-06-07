@@ -19,6 +19,15 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
   if (missing(modelKeep)){
     modelKeep <- FALSE
   }
+  if(!exists("metric", where = fit)){
+    if(class(fit)[1] == "glm" | class(fit[1]) == "lm"){
+      if(length(unique(fit$y)) == 2){
+        fit$metric <- "ROC"
+      } else{
+        fit$metric <- "RMSE"
+      }
+    }
+  }
   if(missing(datatype)){
     datatype <- "train"
     message("Training data only being used. Specify datatype = 'test' and give test data to testdata.")
@@ -26,7 +35,7 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
   if("test" %in% datatype & missing(testdata)){
     stop("Please provide testdata")
   }
-  if(fit$metric == "ROC"){
+  if(class(fit)[1] == "glm" | fit$metric == "ROC"){
     if (length(datatype) > 1){
       train <- ROCtest(fit, ...)
       test <-  ROCtest(fit, testdata=list(preds = testdata$preds, 

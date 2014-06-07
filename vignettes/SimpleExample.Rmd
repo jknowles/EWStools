@@ -1,9 +1,10 @@
 <!--
-%\VignetteEngine{knitr}
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{Simulated Data}
 -->
 
 ```{r, echo = FALSE, message = FALSE}
+library(knitr)
 knitr::opts_chunk$set(
   comment = "#>",
   error = FALSE,
@@ -74,6 +75,8 @@ A key piece of an analysis is seeing how a model type performs on both training
 and test data. `EWStools` makes this easy:
 
 ```{r}
+library(EWStools)
+
 mod.out <- modTest("knn", datatype=c("train", "test"),
                      traindata = list(preds = train[, -23], class = train[, 23]),
                      testdata = list(preds = test[, -23], class = test[, 23]), 
@@ -96,8 +99,6 @@ a few easy easy functions. For example, to compare multiple models (without
 storing them), the user may:
 
 ```{r}
-library(EWStools)
-
 mod.out <- modSearch(methods = c("glm", "knn"), datatype=c("train", "test"),
                      traindata = list(preds = train[, -23], class = train[, 23]),
                      testdata = list(preds = test[, -23], class = test[, 23]), 
@@ -186,7 +187,8 @@ And, we can extract results and generate dataframes of the performance profiles 
 `glm` objects just as we can with `train` objects:
 
 ```{r glmmodacc}
-testGLM3 <- modAcc(glmModel, datatype =c("train", "test"), testdata = list(preds = test[, 1:22], 
+testGLM3 <- modAcc(glmModel, datatype =c("train", "test"), 
+                   testdata = list(preds = test[, 1:22], 
                                                      class = test[, 23]))
 
 summary(dfExtract(testGLM3))

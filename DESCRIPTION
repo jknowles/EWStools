@@ -20,5 +20,7 @@ Suggests:
     testthat,
     MASS, 
     R.utils, 
-    doParallel
+    doParallel, 
+    knitr
 Roxygen: list(wrap = TRUE)
+VignetteBuilder: knitr
