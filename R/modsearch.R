@@ -21,7 +21,7 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
     modelKeep <- FALSE
   }
   if(!exists("metric", where = fit)){
-    if(class(fit)[1] == "glm" | class(fit[1]) == "lm"){
+    if(class(fit)[1] == "glm" | class(fit)[1] == "lm"){
       if(length(unique(fit$y)) == 2){
         fit$metric <- "ROC"
       } else{
@@ -37,7 +37,12 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
     stop("Please provide testdata")
   }
   if(fit$metric == "ROC"){
-    SD <- fit$results$ROCSD[fit$results$ROC == max(fit$results$ROC)]
+    if(class(fit)[1] == "train"){
+      SD <- fit$results$ROCSD[fit$results$ROC == max(fit$results$ROC)]
+    } else{
+      message("Metric SD not available for glm fit by glm. Try fitting by train")
+      SD <- NA
+    }
     if (length(datatype) > 1){
       train <- ROCtest(fit, ...)
       test <-  ROCtest(fit, testdata=list(preds = testdata$preds, 
@@ -51,7 +56,12 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
       test <- NULL
     }
   } else if(fit$metric == "RMSE"){
-    SD <- fit$results$"RMSE SD"[fit$results$RMSE == min(fit$results$RMSE)]
+    if(class(fit)[1] == "train"){
+      SD <- fit$results$"RMSE SD"[fit$results$RMSE == max(fit$results$RMSE)]
+    } else{
+      message("Metric SD not available for glm fit by glm. Try fitting by train")
+      SD <- NA
+    }
     if (length(datatype) > 1){
       train <- RMSEtest(fit)
       test <-  RMSEtest(fit, testdata=list(preds = testdata$preds, 
