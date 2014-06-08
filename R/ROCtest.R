@@ -90,7 +90,7 @@ ROCtest.glm <- function(mod, testdata, ...){
     a <- mroc$auc[1]
     thresh <- coords(mroc, x="best", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
-                         reference = yhats$.outcome, positive = levels(y)[1])
+                         reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
                   rarepercent=cm$byClass["Neg Pred Value"], 
                   falsepositive=1 - cm$byClass["Neg Pred Value"], 
