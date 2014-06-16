@@ -1,9 +1,9 @@
 ##' Class "RMSEit" of RMSE statistics
 ##'
-##' A \code{\link{glm}} or \code{\link{train}} object with a binary classification 
-##' can be easily summarized using the receiver-operating characteristic statistic. 
+##' A \code{\link{glm}} or \code{\link{train}} regression object 
+##' can be easily summarized using RMSE statistic. 
 ##' This class provides an efficient mechanism to store and compare these results 
-##' across models. 
+##' across models and across test, train, and validation datasets. 
 ##'
 ##' @name RMSEit-class
 ##' @aliases RMSEit-class
