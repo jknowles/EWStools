@@ -21,6 +21,18 @@ ctrl <- trainControl(method = "cv",
                      number = 3, classProbs = TRUE, 
                      summaryFunction = fourStats)
 
+fullModel <- train(Class ~ ., data = train, 
+                   method = "knn", 
+                   preProc = c("center", "scale"), 
+                   tuneLength = 8, 
+                   metric = "Dist", maximize = FALSE,
+                   trControl = ctrl)
+
+
+
+
+
+
 
 fullModel <- train(Class ~ ., data = train, 
                    method = glmDist, 

@@ -52,7 +52,7 @@ ROCit <- setClass("ROCit", representation(thresh = "numeric",
 
 ##' Generic function to build ROCtest
 ##'
-##' Allow the user to specify a formula for generating a binomial dependent variable
+##' Explore the accuracy of classifiers using ROC as the metric
 ##' @usage ROCtest(mod, testdata, ...)
 ##' @param mod A model object to generate an \code{\linkS4class{ROCit}} for
 ##' @param testdata A dataframe to generate the ROC for the mode on
