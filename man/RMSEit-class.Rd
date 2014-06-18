@@ -5,11 +5,11 @@
 \alias{RMSEit-class}
 \title{Class "RMSEit" of RMSE statistics}
 \description{
-A \code{\link{glm}} or \code{\link{train}} object with a
-binary classification can be easily summarized using the
-receiver-operating characteristic statistic. This class
-provides an efficient mechanism to store and compare these
-results across models.
+A \code{\link{glm}} or \code{\link{train}} regression
+object can be easily summarized using RMSE statistic. This
+class provides an efficient mechanism to store and compare
+these results across models and across test, train, and
+validation datasets.
 }
 \details{
 The object has the following items \itemize{ \item{bestFit

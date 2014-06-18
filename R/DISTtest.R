@@ -1,8 +1,14 @@
-# Dist test
-
-#http://appliedpredictivemodeling.com/blog/?offset=1393611546982
-
-fourStats <- function (data, lev = levels(data$obs), model = NULL) {
+##' @title Calculate distance from perfect prediction on resamples
+##' @rdname fourStatsSummary
+##' @param data a data frame or matrix with columns obs and pred for the observed 
+##' and predicted outcomes. For twoClassSummary, columns should also include 
+##' predicted probabilities for each class. See the classProbs argument to \code{\link{trainControl}}
+##' @param lev a character vector of factors levels for the response
+##' @param model a character string for the model name
+##' @author Max Kuhn
+##' @references \url{http://appliedpredictivemodeling.com/blog/?offset=1393611546982}
+##' @export
+fourStatsSummary <- function (data, lev = levels(data$obs), model = NULL) {
   ## This code will get use the area under the ROC curve and the
   ## sensitivity and specificity values using the current candidate
   ## value of the probability threshold.
@@ -77,7 +83,7 @@ DIStest.train <- function(mod, testdata, ...){
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     # create a distance matrix
-    coords <- matrix(c(1, 1, 1 - cm$byClass["Specificity"], 
+    coords <- matrix(c(1, 1, cm$byClass["Specificity"], 
                        cm$byClass["Sensitivity"]), 
                      ncol = 2, 
                      byrow = TRUE)
@@ -93,7 +99,7 @@ DIStest.train <- function(mod, testdata, ...){
     return(myDIS)
   }
   else if(!missing(testdata)){
-    # error handling
+    # input checking
     if(class(testdata) != "list"){
       stop("Please provide testdata as a named list with elements 'preds' and 'class'")
     }
@@ -111,7 +117,7 @@ DIStest.train <- function(mod, testdata, ...){
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     # create a distance matrix
-    coords <- matrix(c(1, 1, 1 - cm$byClass["Specificity"], 
+    coords <- matrix(c(1, 1, cm$byClass["Specificity"], 
                        cm$byClass["Sensitivity"]), 
                      ncol = 2, 
                      byrow = TRUE)

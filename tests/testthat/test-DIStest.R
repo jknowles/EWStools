@@ -30,9 +30,23 @@ fullModel <- train(Class ~ ., data = train,
 
 
 
+DIStest(fullModel)@confusematrix
+dist(DIStest(fullModel)@coords)
 
+fullModel <- train(x = train[, 1:18], y = train[, 19], 
+                   method = "lda2", 
+                  # preProc = c("center", "scale"), 
+                   tuneLength = 8, 
+                   metric = "Dist", maximize = FALSE,
+                   trControl = ctrl)
 
+DIStest(fullModel, testdata = list(preds = test[, 1:18], class = test[, 19]))
 
+dfExtract(modAcc(fullModel, datatype = c("test", "train"), 
+       testdata = list(preds = test[, 1:18], class = test[, 19])))
+
+EWStools:::probExtract(fullModel, testdata = list(preds = test[, 1:18], class = test[, 19]))
+yhats <- predict(fullModel, newdata = test, type = "prob")
 
 fullModel <- train(Class ~ ., data = train, 
                    method = glmDist, 
@@ -40,3 +54,22 @@ fullModel <- train(Class ~ ., data = train,
                    tuneLength = 8, 
                    metric = "Dist", maximize = FALSE,
                    trControl = ctrl)
+
+
+
+
+test1 <- modTest(method = "svmRadial", datatype = c("train", "test"), 
+                 traindata = list(preds = train[, -19], class = train[, 19]), 
+                 testdata = list(preds = test[, -19], class = test[, 19]), 
+                 modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                 metric = "Dist")
+
+
+dfExtract(test1)
+
+resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"), 
+                       datatype = c("train", "test"), 
+                       traindata = list(preds = train[, -19], class = train[, 19]), 
+                       testdata = list(preds = test[, -19], class = test[, 19]), 
+                       modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                       metric = "Dist")

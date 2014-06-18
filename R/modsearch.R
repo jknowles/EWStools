@@ -24,6 +24,7 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
     if(class(fit)[1] == "glm" | class(fit)[1] == "lm"){
       if(length(unique(fit$y)) == 2){
         fit$metric <- "ROC"
+        warning("ROC selected by default. To use another, refit model with train")
       } else{
         fit$metric <- "RMSE"
       }
@@ -53,6 +54,25 @@ modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FAL
       train <- NULL
     } else if (length(datatype) < 2 & datatype=="train"){
       train <- ROCtest(fit, ...)
+      test <- NULL
+    }
+  } else if(fit$metric == "Dist"){
+    if(class(fit)[1] == "train"){
+      SD <- fit$results$DistSD[fit$results$Dist == min(fit$results$Dist)]
+    } else{
+      message("Metric SD not available for glm fit by glm. Try fitting by train")
+      SD <- NA
+    }
+    if (length(datatype) > 1){
+      train <- DIStest(fit, ...)
+      test <-  DIStest(fit, testdata=list(preds = testdata$preds, 
+                                          class = testdata$class), ...)    
+    } else if(length(datatype) < 2 & datatype=="test"){
+      test <- DIStest(fit, testdata=list(preds = testdata$preds, 
+                                         class = testdata$class), ...)
+      train <- NULL
+    } else if (length(datatype) < 2 & datatype=="train"){
+      train <- DIStest(fit, ...)
       test <- NULL
     }
   } else if(fit$metric == "RMSE"){
@@ -138,6 +158,61 @@ dfExtractRMSE <- function(mod){
   return(tmp)
 }
 
+##' @title Generate a dataframe from \code{\link{modAcc}} lists
+##' @description Used for generating dataframes of distance fits for binary 
+##' classification models on training and test data
+##' @param mod a list resulting from a call to \code{\link{modAcc}}
+##' @return a \code{\link{data.frame}} with the following columns:
+##' \itemize{
+##' \item{DIST - the distance from perfect classification}
+##' \item{DISTSD - the standard deviation of the distance}
+##' \item{SENS - The sensitivity of the classifier}
+##' \item{SPEC - The specificity of the classifier}
+##' \item{method - the area under the curve}
+##' \item{grp - the area under the curve}
+##' \item{elapsedTime - the time reported for the model to run}
+##' }
+##' @note The measures come from the \code{\linkS4class{DISit}} object
+##' @export 
+dfExtractDIS <- function(mod){
+  if(class(mod$summaryTr) != "NULL"){
+    newdatTr <- data.frame(DIST= mod$summaryTr@dist, 
+                           DISTSD = mod$metricSD, 
+                           SENS = mod$summaryTr@confusematrix$byClass[["Sensitivity"]], 
+                           SPEC = mod$summaryTr@confusematrix$byClass[["Specificity"]], 
+                           method = mod$method, 
+                           grp = "train", 
+                           elapsedTime = ifelse(is.null(mod$time), NA, mod$time), 
+                           check.rows = FALSE, row.names = NULL)
+  }
+  if(class(mod$summaryTe) != "NULL"){
+    newdatTe <- data.frame(DIST= mod$summaryTe@dist, 
+                           DISTSD = mod$metricSD, 
+                           SENS = mod$summaryTe@confusematrix$byClass[["Sensitivity"]], 
+                           SPEC = mod$summaryTe@confusematrix$byClass[["Specificity"]], 
+                           method = mod$method, 
+                           grp = "test", 
+                           elapsedTime = ifelse(is.null(mod$time), NA, mod$time), 
+                           check.rows = FALSE, row.names = NULL)
+  }
+  if(class(mod$summaryTr) != "NULL" & class(mod$summaryTe) != "NULL"){
+    tmp <- rbind(newdatTr, newdatTe)
+  } else if(class(mod$summaryTr) != "NULL"){
+    tmp <- newdatTr
+  } else if(class(mod$summaryTe) != "NULL"){
+    tmp <- newdatTe
+  }
+  tmp$DIST <- as.numeric(tmp$DIST)
+  tmp$DISTSD <- as.numeric(tmp$DISTSD)
+  tmp$SENS <- as.numeric(tmp$SENS)
+  tmp$SPEC <- as.numeric(tmp$SPEC)
+  tmp$method <- as.character(tmp$method)
+  tmp$grp <- as.character(tmp$grp)
+  tmp$elapsedTime <- as.numeric(tmp$elapsedTime)
+  tmp <- tmp[!duplicated(tmp)]
+  return(tmp)
+}
+
 ##'@title Generate a dataframe from \code{\link{modAcc}} lists
 ##'@description Generic function to extract either ROC data or RMSE data from models
 ##'@param mod a list resulting from a call to \code{\link{modAcc}}
@@ -149,6 +224,8 @@ dfExtract <- function(mod){
     tmp <- dfExtractROC(mod)
   } else if(mod$metric == "RMSE"){
     tmp <- dfExtractRMSE(mod)
+  } else if(mod$metric == "Dist"){
+    tmp <- dfExtractDIS(mod)
   }
   return(tmp)
 }
@@ -271,7 +348,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
             'rbf', 'rpart2', 'C5.0Rules', 'pda2', 'rda', 'glm',
             'treebag', 'rf', 'plr', 'lda', 'xyf', 'sddaLDA', 'sddaQDA', 
             'LogitBoost', 'C5.0', 'bag', 'C5.0Tree')
-  if(method %in% datD & metric == "ROC"){
+  if(method %in% datD & metric %in% c("ROC", "Dist")){
     omit <- findLinearCombos(traindata$preds)$remove
     cols <- 1:ncol(traindata$preds)
     keep <- cols[!cols %in% omit]
@@ -368,6 +445,34 @@ buildRMSEFrame <- function(methods){
   
 }
 
+##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
+##' @description Used for generating the data to make comparative distance statistics of binary classifiers.
+##' @param methods a list of \code{train} method names to generate the dataframe for
+##' @return a \code{\link{data.frame}} with the following columns:
+##' \itemize{
+##' \item{DIST - the distance from perfect classification}
+##' \item{DISTSD - the standard deviation of the distance}
+##' \item{SENS - The sensitivity of the classifier}
+##' \item{SPEC - The specificity of the classifier}
+##' \item{method - the area under the curve}
+##' \item{grp - the area under the curve}
+##' \item{elapsedTime - the time reported for the model to run}
+##' }
+##' @note The measures come from the \code{\linkS4class{DISit}} object
+buildDISFrame <- function(methods){
+  ModelFits <- expand.grid(DIST = NA, DISTSD = NA, SENS = NA, SPEC = NA, 
+                           method = rep(methods, each = 1), grp = NA, 
+                           elapsedTime = NA)
+  # Class variables correctly to avoid errors
+  ModelFits$grp <- as.character(ModelFits$grp)
+  ModelFits$method <- as.character(ModelFits$method)
+  ModelFits$DIST <- as.numeric(ModelFits$DIST)
+  ModelFits$DISTSD <- as.numeric(ModelFits$DISTSD)
+  ModelFits$SENS <- as.numeric(ModelFits$SENS)
+  ModelFits$SPEC <- as.numeric(ModelFits$SPEC)
+  return(ModelFits)
+  
+}
 
 ##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
 ##' @description Used for generating the data to make good looking ROC curves of 
@@ -404,6 +509,12 @@ modSearch <- function(methods, ...){
       ModelFits <- buildRMSEFrame(methods)
     }
     
+  } else if(metric == "Dist"){
+    if(length(datatype) > 1){
+      ModelFits <- rbind(buildDISFrame(methods), buildDISFrame(methods))
+    } else {
+      ModelFits <- buildDISFrame(methods)
+    }
   } else{
     stop("No custom performance frame defined for metric")
   }
