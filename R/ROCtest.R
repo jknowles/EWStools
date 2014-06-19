@@ -143,7 +143,7 @@ ROCtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=3)
+    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2)
     a <- mroc$auc[1]
     thresh <- coords.roc(mroc, x="best", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
@@ -169,7 +169,7 @@ ROCtest.train <- function(mod, testdata, ...){
     # end error handling
     yhats <- probExtract(mod, testdata = testdata)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=3)
+    mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
     a <- mroc$auc[1]
     thresh <- coords.roc(mroc, x="best", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
@@ -192,7 +192,7 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=3)
+    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2)
     a <- mroc$auc[1]
     thresh <- coords.roc(mroc, x="best", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
@@ -218,7 +218,7 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     # end error handling
     yhats <- probExtract(mod, testdata = testdata)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=3)
+    mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
     a <- mroc$auc[1]
     thresh <- coords.roc(mroc, x="best", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 

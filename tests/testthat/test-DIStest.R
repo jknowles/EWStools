@@ -7,19 +7,9 @@ test <- twoClassSim(n = 1000, intercept = -7, linearVars = 1,
                     noiseVars = 10, corrVars = 2, corrValue = 0.6)
 
 
-fourStats <- function (data, lev = levels(data$obs), model = NULL) {
-  out <- c(twoClassSummary(data, lev = levels(data$obs), model = NULL))
-  coords <- matrix(c(1, 1, out["Spec"], out["Sens"]), 
-                   ncol = 2, 
-                   byrow = TRUE)
-  colnames(coords) <- c("Spec", "Sens")
-  rownames(coords) <- c("Best", "Current")
-  c(out, Dist = dist(coords)[1])
-}
-
 ctrl <- trainControl(method = "cv", 
                      number = 3, classProbs = TRUE, 
-                     summaryFunction = fourStats)
+                     summaryFunction = fourStatsSummary)
 
 fullModel <- train(Class ~ ., data = train, 
                    method = "knn", 
@@ -73,3 +63,34 @@ resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"),
                        testdata = list(preds = test[, -19], class = test[, 19]), 
                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
                        metric = "Dist")
+
+########################
+# 
+library(microbenchmark)
+
+train <- twoClassSim(n = 200000, intercept = -8, linearVars = 1, 
+                     noiseVars = 10, corrVars = 2, corrValue = 0.6)
+test <- twoClassSim(n = 1000, intercept = -7, linearVars = 1, 
+                    noiseVars = 10, corrVars = 2, corrValue = 0.6)
+
+
+ctrl <- trainControl(method = "cv", 
+                     number = 3, classProbs = TRUE, 
+                     summaryFunction = fourStatsSummary)
+
+fullModel <- train(x = train[, -19], y = train[, 19],
+                   method = "glm", 
+                   preProc = c("center", "scale"), 
+                   tuneLength = 8, 
+                   metric = "Dist", maximize = FALSE,
+                   trControl = ctrl)
+
+yhats <- EWStools:::probExtract(fullModel)
+
+mroc <- roc(yhats$.outcome, yhats$yhat, percent=TRUE, algorithm=0)
+
+
+mroc <- roc(yhats$.outcome, round(yhats$yhat, digits = 2), percent=TRUE, algorithm=0)
+
+
+

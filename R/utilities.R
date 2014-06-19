@@ -201,8 +201,6 @@ probExtract <- function(mod, testdata = NULL){
       names(yhats) <- c("yhat", "yhatInv", ".outcome")
       return(yhats)
     } else {
-      newdata <- cbind(testdata$preds, testdata$class)
-      names(newdata) <- c(names(testdata$preds), names(testdata$class))
       yhats <- predict(mod, newdata = testdata$preds, type = "prob")
       yhats <- data.frame(yhats, 
                           .outcome = testdata$class)
