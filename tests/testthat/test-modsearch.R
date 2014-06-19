@@ -203,7 +203,8 @@ context("Test modTest returns reliable results")
 
 test_that("modSearch results are reliable for train and test", {
   expect_true(identical(resultSet[resultSet$grp == "train", 5], resultSet[resultSet$grp == "test", 5]))
-  expect_false(identical(resultSet[resultSet$grp == "train", 4], resultSet[resultSet$grp == "test", 4]))
+  expect_true(identical(resultSet[resultSet$grp == "train", 4], resultSet[resultSet$grp == "test", 4]))
+  expect_false(identical(resultSet[resultSet$grp == "train", 3], resultSet[resultSet$grp == "test", 3]))
   expect_false(identical(resultSet[resultSet$grp == "train", 2], resultSet[resultSet$grp == "test", 2]))
   expect_true(identical(resultSet[resultSet$grp == "train", 1], resultSet[resultSet$grp == "test", 1]))
 })

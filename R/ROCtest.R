@@ -240,6 +240,7 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
 ##' @return Values to the screen.
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' @method print ROCit
+##' @export
 print.ROCit <- function(x, ...){
   cat("Model Classification Statistics \n")
   cat("Performance on", x@datatype, "data \n")
@@ -269,6 +270,7 @@ print.ROCit <- function(x, ...){
 ##' } 
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' @method summary ROCit
+##' @export
 summary.ROCit <- function(object, ...){
   summary <- list(
     datatype = object@datatype, 

@@ -66,8 +66,8 @@ test_that("ROCit object has correct slots", {
 
 test_that("ROCit objects pass best threshold parameters through", {
   expect_more_than(res3@thresh, res2@thresh)
-  expect_more_than(res3@rarepercent, res2@rarepercent)
-  expect_more_than(res3@falsepositive, res2@falsepositive)
+  expect_more_than(res3@rarepercent, res3@falsepositive)
+  expect_more_than(res2@rarepercent, res2@falsepositive)
   expect_equal(res2@auc, res3@auc)
 })
 
@@ -108,7 +108,7 @@ test_that("ROCit object has correct slots", {
 
 test_that("ROCit objects pass best threshold parameters through", {
   expect_more_than(res3t@thresh, res2t@thresh)
-  expect_more_than(res3t@rarepercent, res2t@rarepercent)
+  expect_more_than(res2t@rarepercent, res3t@rarepercent)
   expect_more_than(res3t@falsepositive, res2t@falsepositive)
   expect_equal(res2t@auc, res3t@auc)
 })
@@ -128,8 +128,8 @@ test_that("ROCtest generic functions correctly", {
 context("Test the summary method for the ROCtest")
 
 test_that("ROCtest summaries function correctly", {
-  expect_that(summary(res1), is_a("list"))
-  expect_that(summary(res1t), is_a("list"))
+  expect_that(summary(res1), is_a("summaryDefault"))
+  expect_that(summary(res1t), is_a("summaryDefault"))
   
 })
 

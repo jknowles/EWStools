@@ -134,6 +134,7 @@ test_that("Train and test metrics not identical", {
 context("Test that modSearch functions for metric RMSE")
 
 ctrl <- trainControl(method = "cv", repeats = 5)
+dat <- assembleData(BostonHousing, class = "medv", p = 0.7)
 
 resultSet1 <- modSearch(methods = c("knn", "glm", "rpart", "lm"), 
                         datatype = c("train", "test"), 
