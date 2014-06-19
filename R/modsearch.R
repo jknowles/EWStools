@@ -313,6 +313,7 @@ dfExtractROC <- function(mod){
 ##' If it does not, a warning is issued and the first metric given by the 
 ##' summaryFunction is used. 
 ##' @param cores An integer representing the number of cores to use on Windows. If not on windows, a warning is issued. 
+##' @param ... Additional arguments to be passed to \code{\link{train}}
 ##' @return A character string with an error if unsuccessful. The result of the \code{modAcc} call if successful: 
 ##' \itemize{
 ##' \item{method - the \code{\link{train}} method used to fit the model}
@@ -325,7 +326,7 @@ dfExtractROC <- function(mod){
 ##' @export
 modTest <- function(method, datatype=c("train", "test"), traindata, testdata, 
                       modelKeep=FALSE, length, fitControl = NULL, 
-                    metric = "ROC", cores = NULL){
+                    metric = "ROC", cores = NULL, ...){
   
     args <- as.list(substitute(list(...)))
     if("omit" %in% names(args)){
@@ -363,7 +364,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
       train(traindata$preds[, keep], traindata$class,
             method=method,
             trControl=fitControl,
-            tuneLength = length, metric= metric)}, error = function(e) 
+            tuneLength = length, metric= metric, ...)}, error = function(e) 
               message(paste0("Model failed to run: ", method)))
   # multicore
   if(!missing(cores)){

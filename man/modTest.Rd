@@ -5,7 +5,7 @@
 \usage{
 modTest(method, datatype = c("train", "test"), traindata, testdata,
   modelKeep = FALSE, length, fitControl = NULL, metric = "ROC",
-  cores = NULL)
+  cores = NULL, ...)
 }
 \arguments{
   \item{method}{a a string specifying which classification
@@ -52,6 +52,9 @@ modTest(method, datatype = c("train", "test"), traindata, testdata,
   \item{cores}{An integer representing the number of cores
   to use on Windows. If not on windows, a warning is
   issued.}
+
+  \item{...}{Additional arguments to be passed to
+  \code{\link{train}}}
 }
 \value{
 A character string with an error if unsuccessful. The
