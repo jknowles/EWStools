@@ -496,10 +496,8 @@ buildDISFrame <- function(methods){
 modSearch <- function(methods, ...){
   # parse ellipsis for modTest
   args <- as.list(substitute(list(...)))[-1L]
-  # parse ellipsis for rest of this function
-  args2 <- list(...) # hack to fix this error
-  metric <- args2$metric
-  datatype <- args2$datatype
+  metric <- args$metric
+  datatype <- args$datatype
   if(metric == "ROC"){
     if(length(datatype) > 1){
       ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
@@ -527,7 +525,7 @@ modSearch <- function(methods, ...){
     p <- match(i, methods)
     z<-list(method = i)
     z<-c(z,args)
-    fit <- try(do.call(modTest, z), silent = TRUE)
+    fit <- try(do.call(modTest, z, quote = FALSE, envir = .GlobalEnv), silent = TRUE)
     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
     if(class(tmp) == "data.frame"){
