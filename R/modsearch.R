@@ -494,9 +494,12 @@ buildDISFrame <- function(methods){
 ##' @export
 ##' 
 modSearch <- function(methods, ...){
+  # parse ellipsis for modTest
   args <- as.list(substitute(list(...)))[-1L]
-  metric <- args$metric
-  datatype <- args$datatype
+  # parse ellipsis for rest of this function
+  args2 <- list(...) # hack to fix this error
+  metric <- args2$metric
+  datatype <- args2$datatype
   if(metric == "ROC"){
     if(length(datatype) > 1){
       ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
