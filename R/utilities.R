@@ -302,7 +302,6 @@ factor_norm <- function(mod, testdata, impute=FALSE, ...){
 ##' @description Reevaluates the ... arguments in the global environment to extract 
 ##' the proper values
 ##' @param args a list extracted from ...
-##' @internal
 cleanArg <- function(args){
   for(i in names(args)){
     if(is.symbol(args[[i]])){ # consider using paste instead of print

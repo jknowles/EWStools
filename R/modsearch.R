@@ -489,7 +489,12 @@ buildDISFrame <- function(methods){
 ##' \item{method - the model method}
 ##' \item{elapsedTime - the time reported for the model to run}
 ##' }
-##' @note The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
+##' @note Currently the arguments passed to modSearch are evaluated in the parent frame. 
+##' This means that you cannot pass list elements or data.frame elements to the parameters 
+##' of modSearch that get passed along to \code{\link{modTest}} via \code{...}. 
+##' Instead, you need to declare them as separate variables in the parent 
+##' environment and save them there. 
+##' @details The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
 ##' 
