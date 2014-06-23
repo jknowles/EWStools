@@ -169,12 +169,27 @@ resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"),
 mymet <- "ROC"
 mylen <- 6
 
-resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"), 
+resultSetNSE1 <- modSearch(methods = c("knn", "glm", "svmRadial"), 
                        datatype = c("train", "test"), 
                        traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                        testdata = list(preds = test[, -19], class = test[, 19]), 
                        modelKeep = FALSE, length = mylen, fitControl = ctrl, 
                        metric = mymet)
+
+
+mydt <- "train"
+mypar <- list(metric = mymet, length = mylen, datatype = mydt)
+
+# todo -- check on unpacking the list elmeent
+## check reference for parameters
+## check out if it is just easier to parse in PRES_EWS upfront
+
+resultSetNSE2 <- modSearch(methods = c("knn", "glm", "svmRadial"), 
+                       datatype = mydt, 
+                       traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
+                       testdata = list(preds = test[, -19], class = test[, 19]), 
+                       modelKeep = FALSE, length = mypar$mylen, fitControl = ctrl, 
+                       metric = mypar$metric)
 
 
 resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"), 

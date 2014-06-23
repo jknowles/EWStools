@@ -493,11 +493,30 @@ buildDISFrame <- function(methods){
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
 ##' 
-modSearch <- function(methods, ...){
+modSearch <- function(methods, debug = TRUE, ...){
   # parse ellipsis for modTest
   args <- as.list(substitute(list(...)))[-1L]
-  metric <- args$metric
-  datatype <- args$datatype
+  # sanitize arguments
+  if(!is.character(args$metric)){ # consider using paste instead of print
+    metric <- do.call(paste, list(args$metric), envir = .GlobalEnv)
+    args$metric <- do.call(paste, list(args$metric), envir = .GlobalEnv)
+  } else {
+    metric <- args$metric
+  }
+  if(!is.character(args$datatype)){
+    datatype <- do.call(paste, list(args$datatype), envir = .GlobalEnv)
+    args$datatype <- do.call(paste, list(args$datatype), envir = .GlobalEnv)
+  } else {
+    datatype <- args$datatype
+  }
+  if(!is.character(args$length)){
+    length <- do.call(paste, list(args$length), envir = .GlobalEnv)
+    args$length <- do.call(paste, list(args$length), envir = .GlobalEnv)
+    length <- as.numeric(length)
+    args$length <- as.numeric(args$length)
+  } else {
+    length <- args$length
+  }
   if(metric == "ROC"){
     if(length(datatype) > 1){
       ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
@@ -525,7 +544,7 @@ modSearch <- function(methods, ...){
     p <- match(i, methods)
     z<-list(method = i)
     z<-c(z,args)
-    fit <- try(do.call(modTest, z, quote = FALSE, envir = .GlobalEnv), silent = TRUE)
+    fit <- try(do.call(modTest, z), silent = TRUE)
     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
     if(class(tmp) == "data.frame"){
