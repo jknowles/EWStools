@@ -489,17 +489,39 @@ buildDISFrame <- function(methods){
 ##' \item{method - the model method}
 ##' \item{elapsedTime - the time reported for the model to run}
 ##' }
-##' @note The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
+##' @note Currently the arguments passed to modSearch are evaluated in the parent frame. 
+##' This means that you cannot pass list elements or data.frame elements to the parameters 
+##' of modSearch that get passed along to \code{\link{modTest}} via \code{...}. 
+##' Instead, you need to declare them as separate variables in the parent 
+##' environment and save them there. 
+##' @details The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
 ##' 
-modSearch <- function(methods, ...){
+modSearch <- function(methods, debug = TRUE, ...){
   # parse ellipsis for modTest
   args <- as.list(substitute(list(...)))[-1L]
-  # parse ellipsis for rest of this function
-  args2 <- list(...) # hack to fix this error
-  metric <- args2$metric
-  datatype <- args2$datatype
+  # sanitize arguments
+  if(!is.character(args$metric)){ # consider using paste instead of print
+    metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
+    args$metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
+  } else {
+    metric <- args$metric
+  }
+  if(!is.character(args$datatype)){
+    datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
+    args$datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
+  } else {
+    datatype <- args$datatype
+  }
+  if(!is.character(args$length)){
+    length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
+    args$length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
+    length <- as.numeric(length)
+    args$length <- as.numeric(args$length)
+  } else {
+    length <- args$length
+  }
   if(metric == "ROC"){
     if(length(datatype) > 1){
       ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))

@@ -296,3 +296,18 @@ factor_norm <- function(mod, testdata, impute=FALSE, ...){
   }
 }
 
+
+##' @title An internal function to ensure all parameters passed through \code{\link{modSearch}} 
+##' are passed properly
+##' @description Reevaluates the ... arguments in the global environment to extract 
+##' the proper values
+##' @param args a list extracted from ...
+cleanArg <- function(args){
+  for(i in names(args)){
+    if(is.symbol(args[[i]])){ # consider using paste instead of print
+      metric <- do.call(paste, list(args[[i]]), envir = .GlobalEnv)
+      args[[i]] <- do.call(paste, list(args[[i]]), envir = .GlobalEnv)
+    } 
+    return(args)
+  }
+}
