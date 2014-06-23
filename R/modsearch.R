@@ -498,20 +498,20 @@ modSearch <- function(methods, debug = TRUE, ...){
   args <- as.list(substitute(list(...)))[-1L]
   # sanitize arguments
   if(!is.character(args$metric)){ # consider using paste instead of print
-    metric <- do.call(paste, list(args$metric), envir = .GlobalEnv)
-    args$metric <- do.call(paste, list(args$metric), envir = .GlobalEnv)
+    metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
+    args$metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
   } else {
     metric <- args$metric
   }
   if(!is.character(args$datatype)){
-    datatype <- do.call(paste, list(args$datatype), envir = .GlobalEnv)
-    args$datatype <- do.call(paste, list(args$datatype), envir = .GlobalEnv)
+    datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
+    args$datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
   } else {
     datatype <- args$datatype
   }
   if(!is.character(args$length)){
-    length <- do.call(paste, list(args$length), envir = .GlobalEnv)
-    args$length <- do.call(paste, list(args$length), envir = .GlobalEnv)
+    length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
+    args$length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
     length <- as.numeric(length)
     args$length <- as.numeric(args$length)
   } else {
