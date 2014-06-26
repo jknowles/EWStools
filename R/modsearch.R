@@ -498,7 +498,7 @@ buildDISFrame <- function(methods){
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
 ##' 
-modSearch <- function(methods, debug = TRUE, ...){
+modSearch <- function(methods, ...){
   # parse ellipsis for modTest
   args <- as.list(substitute(list(...)))[-1L]
   # sanitize arguments
@@ -521,6 +521,14 @@ modSearch <- function(methods, debug = TRUE, ...){
     args$length <- as.numeric(args$length)
   } else {
     length <- args$length
+  }
+  if(!is.character(args$cores)){
+    cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 1))
+    args$cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 1))
+    cores <- as.numeric(cores)
+    args$cores <- as.numeric(args$cores)
+  } else {
+    cores <- args$cores
   }
   if(metric == "ROC"){
     if(length(datatype) > 1){
