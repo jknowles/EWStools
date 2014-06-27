@@ -128,6 +128,38 @@ test_that("buildModelMatrix is correct dimensions", {
   expect_is(mat3, "matrix")
 })
 
+MCARx <- function(x, p){
+  class <- class(x) 
+  z <- rbinom(length(x), 1, prob=p)
+  x[z==1] <- NA
+  return(x)
+}
+
+MCAR.df <- function(df, p){
+  if(length(p) == 1){
+    df <- apply(df, 2, MCARx, p)
+  } else if(length(p) > 1) {
+    df <- apply(df, 2, MCARx, sample(p, 1))
+  }
+  df <- as.data.frame(df)
+  return(df)
+}
+
+full2 <- MCAR.df(full, p = 0.14)
+full2[, 1:8] <- lapply(full2[, 1:8], as.numeric)
+prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
+               "Corr1", "Factor1", "Factor2")
+
+mat1 <- buildModelMatrix(data = full2[, -9], na.omit = TRUE)
+mat2 <- buildModelMatrix(data = full2, predvars = prednames, na.omit = TRUE)
+mat3 <- buildModelMatrix(data = full2, predvars = prednames, na.omit = TRUE)
+
+
+mat1a <- buildModelMatrix(data = full2[, -9], na.omit = FALSE)
+mat2a <- buildModelMatrix(data = full2, predvars = prednames, na.omit = FALSE)
+mat3a <- buildModelMatrix(data = full2, predvars = prednames, na.omit = FALSE)
+
+
 test_that("buildModelMatrix handles NA correctly", {
   
 })

@@ -57,10 +57,12 @@ buildModelMatrix <- function(data, predvars = NULL, na.omit = TRUE){
   if(missing(predvars)){
     predvars <- colnames(data)
   }
+  oldNaAction <- getOption("na.action") 
+  on.exit(options(na.action = oldNaAction)) 
   if(na.omit == TRUE){
-    data <- na.omit(data[, predvars])
+    options(na.action=na.omit)
   } else {
-    data <- data[, predvars]
+    options(na.action=na.pass)
   }
   findFac <- function(x) !is.numeric(x) # quick function to find non-numeric columns
   # convert non-numeric columns to factors
