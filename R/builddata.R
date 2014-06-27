@@ -13,17 +13,22 @@
 ##' is defined against the records remaining after holding out p for the training set.
 ##' @export
 splitData <- function(data, class, p, pvalid = NULL){
-  if(missing(pvalid)){
-    type <- "two"
-  } else if(!missing(pvalid)){
-    type <- "three"
+  if(p == 1){
+    warning("Extreme value of p selected and may result in NULL test data set")
+  } else if(p == 0){
+    stop("Training data partition set to 0. Did you mean p = 1?")
   }
-  if(type == "two"){
+  if(missing(pvalid)){
     idx <- createDataPartition(data[, class], times = 1, p = p)
     train <- data[idx[[1]], ]
     test <- data[-idx[[1]], ]
     return(list(train = train, test = test, indexes = idx))
-    } else if(type == "three") {
+    } else if(!missing(pvalid)) {
+      if(pvalid == 1){
+        warning("Extreme value of pvalid selected and may result in NULL test data set")
+      } else if(pvalid == 0){
+        stop("Validation data partition set to 0. Did you mean pvalid = 1?")
+      }
       idx <- createDataPartition(data[, class], times = 3, p = p)
       train <- data[idx[[1]], ]
       rest <- data[-idx[[1]], ]
@@ -42,18 +47,30 @@ splitData <- function(data, class, p, pvalid = NULL){
 ##' @param predvars  a character vector of the names of predictor variables
 ##' @param na.omit  behavior with missing values, defaults to TRUE
 ##' @return A model matrix
-##' @note Built on the \code{\link{model.matrix}} function 
+##' @note Built on the \code{\link{model.matrix}} function. Does not produce an 
+##' intercept term. Does not drop collinear factor levels. 
 ##' @export
-buildModelMatrix <- function(data, predvars, na.omit = TRUE){
+buildModelMatrix <- function(data, predvars = NULL, na.omit = TRUE){
+  if(class(data) != "data.frame"){
+    stop("Please supply a data.frame with column names")
+  }
+  if(missing(predvars)){
+    predvars <- colnames(data)
+  }
   if(na.omit == TRUE){
     data <- na.omit(data[, predvars])
   } else {
     data <- data[, predvars]
   }
-  
+  findFac <- function(x) !is.numeric(x) # quick function to find non-numeric columns
+  # convert non-numeric columns to factors
+  data[, sapply(data, findFac)] <- lapply(data[, sapply(data, findFac)], factor)
+  #
   FORM <-  paste0("~ 0 + ", paste0(predvars, collapse = " + "))
   FORM <- as.formula(FORM)
-  out <- model.matrix(FORM, data = data)
+  out <- model.matrix(FORM, data = data, 
+                      contrasts.arg = lapply(data[,sapply(data, findFac)], 
+                                             contrasts, contrasts=FALSE))
   return(out)
 }
 

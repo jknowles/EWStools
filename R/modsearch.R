@@ -502,33 +502,56 @@ modSearch <- function(methods, ...){
   # parse ellipsis for modTest
   args <- as.list(substitute(list(...)))[-1L]
   # sanitize arguments
-  if(!is.character(args$metric)){ # consider using paste instead of print
-    metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
-    args$metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
+  if(exists("metric", args)){
+    if(!is.character(args$metric)){ # consider using paste instead of print
+      metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
+      args$metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
+    } else {
+      metric <- args$metric
+    }
   } else {
-    metric <- args$metric
+    warning("No metric defined, default will be ROC")
+    args$metric <- "ROC"
+    metric <- "ROC"
   }
-  if(!is.character(args$datatype)){
-    datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
-    args$datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
+  if(exists("datatype", args)){
+    if(!is.character(args$datatype)){
+      datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
+      args$datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
+    } else {
+      datatype <- args$datatype
+    }
   } else {
-    datatype <- args$datatype
+    warning("Parameter datatype is undefined, default is training")
+    args$datatype <- "train"
+    datatype <- "train"
   }
-  if(!is.character(args$length)){
-    length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
-    args$length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
-    length <- as.numeric(length)
-    args$length <- as.numeric(args$length)
+  if(exists("length", args)){
+    if(!is.character(args$length)){
+      length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
+      args$length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
+      length <- as.numeric(length)
+      args$length <- as.numeric(args$length)
+    } else {
+      length <- args$length
+    }    
   } else {
-    length <- args$length
+    warning("Parameter length is undefined, default is 6 for tuneLength")
+    args$length <- 6
+    length <- 6
   }
-  if(!is.character(args$cores)){
-    cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 1))
-    args$cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 1))
-    cores <- as.numeric(cores)
-    args$cores <- as.numeric(args$cores)
+  if(exists("cores", args)){
+    if(!is.character(args$cores)){
+      cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 1))
+      args$cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 1))
+      cores <- as.numeric(cores)
+      args$cores <- as.numeric(args$cores)
+    } else {
+      cores <- args$cores
+    }
   } else {
-    cores <- args$cores
+    message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
+    cores <- NULL
   }
   if(metric == "ROC"){
     if(length(datatype) > 1){

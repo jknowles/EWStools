@@ -1,38 +1,140 @@
-# # 
-# # context("Test building of data")
-# # 
-# set.seed(442)
-# library(caret)
-# full <- twoClassSim(n = 1500, intercept = -8, linearVars = 1, 
-#                      noiseVars = 1, corrVars = 1, corrValue = 0.6)
-# test <- twoClassSim(n = 1000, intercept = -7, linearVars = 1, 
-#                     noiseVars = 1, corrVars = 1, corrValue = 0.6)
 # 
-# idx <- createDataPartition(full[, "Class"], 1, p = .25)
-# train <- full[idx[[1]], ]
-# test <- full[-idx[[1]], ]
+# context("Test building of data")
 # 
-# 
-# split1 <- splitData(full, class = "Class", p = 0.25)
-# split2 <- splitData(full, class = "Class", p = 0.5)
-# 
-# splitVAL <- splitData(full, class = "Class", p = 0.5, pvalid = 0.75, type = "three")
-# 
-# # 
-# full$Factor1 <- sample(letters[1:5], nrow(full), replace=TRUE)
-# full$Factor2 <- sample(letters[9:14], nrow(full), replace=TRUE)
-# 
-# prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
-#               "Corr1", "Factor1", "Factor2")
-# 
-# 
-# 
-# head(buildModelMatrix(data = full, predvars = prednames, na.omit=TRUE))
-# 
-# context("Test building of data on matrices")
-# make a matrix
-# test it
-# 
+
+## Test splitData
+## Test buildModelMatrix
+## Test assembleData
+## Test omitLinearCombos
+
+set.seed(442)
+library(caret)
+full <- twoClassSim(n = 1500, intercept = -8, linearVars = 1, 
+                     noiseVars = 1, corrVars = 1, corrValue = 0.6)
+
+
+idx <- createDataPartition(full[, "Class"], 1, p = .25)
+train <- full[idx[[1]], ]
+test <- full[-idx[[1]], ]
+
+splits <- list(train = train, test = test, 
+            indexes = idx)
+
+splits.tmp <- splitData(full, class = "Class", p = .25)
+
+context("Test that splitData produces correct objects")
+
+test_that("Two way split dimensions are correct", {
+  expect_equal(nrow(splits$train), nrow(splits.tmp$train))
+  expect_equal(ncol(splits$train), ncol(splits.tmp$train))
+  expect_equal(nrow(splits$test), nrow(splits.tmp$test))
+  expect_equal(ncol(splits$test), ncol(splits.tmp$test))
+  expect_identical(class(splits$indexes), class(splits.tmp$indexes))
+  expect_equal(length(splits$indexes), length(splits.tmp$indexes))
+
+})
+
+# test three way split
+
+idx <- createDataPartition(full[, "Class"], 1, p = .25)
+train <- full[idx[[1]], ]
+test <- full[-idx[[1]], ]
+
+idx2 <- createDataPartition(test[, "Class"], 1, p = 0.1)
+valid <- test[idx2[[1]], ]
+test <- test[-idx2[[1]], ]
+
+
+splits <- list(train = train, test = test, valid = valid, 
+               indexes = list(idx, idx2))
+
+splits.tmp <- splitData(full, class = "Class", p = .25, pvalid = 0.1)
+
+test_that("Two way split dimensions are correct", {
+  expect_equal(nrow(splits$train), nrow(splits.tmp$train), tolerance = 0.01)
+  expect_equal(ncol(splits$train), ncol(splits.tmp$train))
+  expect_equal(nrow(splits$test), nrow(splits.tmp$test), tolerance = 0.01)
+  expect_equal(ncol(splits$test), ncol(splits.tmp$test))
+  expect_equal(nrow(splits$valid), nrow(splits.tmp$valid), tolerance = 0.01)
+  expect_equal(ncol(splits$valid), ncol(splits.tmp$valid))
+  expect_identical(class(splits$indexes), class(splits.tmp$indexes))
+  expect_equal(length(splits$indexes), length(splits.tmp$indexes))
+})
+ 
+# splits1 <- splitData(full, class = "Class", p = 0)
+# splits2 <- splitData(full, class = "Class", p = 1)
+# splits3 <- splitData(full, class = "Class", p = 0, pvalid = 0.1)
+# splits4 <- splitData(full, class = "Class", p = .5, pvalid = 0)
+# splits5 <- splitData(full, class = "Class", p = .5, pvalid = 1)
+
+test_that("splitData handles extreme values", {
+  expect_warning(splitData(full, class = "Class", p = 1))
+  expect_error(splitData(full, class = "Class", p = 0))
+  expect_error(splitData(full, class = "Class", p = 0, pvalid = 0.1))
+  expect_error(splitData(full, class = "Class", p = .5, pvalid = 0))
+  expect_warning(splitData(full, class = "Class", p = .5, pvalid = 1))
+})
+
+split1 <- splitData(full, class = "Class", p = 0.1)
+split2 <- splitData(full, class = "Class", p = 0.9)
+
+splitVAL1 <- splitData(full, class = "Class", p = 0.5, pvalid = 0.75)
+splitVAL2 <- splitData(full, class = "Class", p = 0.25, pvalid = 0.2)
+splitVAL3 <- splitData(full, class = "Class", p = 0.1, pvalid = 0.1)
+
+
+test_that("splitData gets proportions right",{
+  expect_equal(nrow(split1$train), nrow(full) * 0.1, tolerance = 0.01)
+  expect_equal(nrow(split2$train), nrow(full) * 0.9, tolerance = 0.01)
+  expect_equal(nrow(splitVAL1$train), nrow(full) * 0.5, tolerance = 0.01)
+  expect_equal(nrow(splitVAL2$train), nrow(full) * 0.25, tolerance = 0.01)
+  expect_equal(nrow(splitVAL3$train), nrow(full) * 0.1, tolerance = 0.01)
+  expect_equal(nrow(split1$test), nrow(full) * 0.9, tolerance = 0.01)
+  expect_equal(nrow(split2$test), nrow(full) * 0.1, tolerance = 0.01)
+  expect_equal(nrow(splitVAL1$test), nrow(full) * 0.125, tolerance = 0.01)
+  expect_equal(nrow(splitVAL2$test), nrow(full) * 0.6, tolerance = 0.01)
+  expect_equal(nrow(splitVAL3$test), nrow(full) * 0.81, tolerance = 0.01)
+  expect_equal(nrow(splitVAL1$valid), nrow(full) * 0.375, tolerance = 0.01)
+  expect_equal(nrow(splitVAL2$valid), nrow(full) * 0.15, tolerance = 0.01)
+  expect_equal(nrow(splitVAL3$valid), nrow(full) * 0.09, tolerance = 0.01)
+})
+
+
+######################
+## Test modelMatrix
+######################
+
+context("Test building of data on matrices")
+
+full$Factor1 <- sample(letters[1:5], nrow(full), replace=TRUE)
+full$Factor2 <- sample(letters[9:14], nrow(full), replace=TRUE)
+
+mat1 <- buildModelMatrix(data = full[, -9])
+
+prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
+               "Corr1", "Factor1", "Factor2")
+ 
+mat2 <- buildModelMatrix(data = full, predvars = prednames)
+mat3 <- buildModelMatrix(data = full, predvars = prednames, na.omit = TRUE)
+
+test_that("buildModelMatrix is correct dimensions", {
+  expect_identical(mat2, mat3)
+  expect_equal(ncol(mat1), ncol(full) + 11)
+  expect_equal(nrow(mat1), nrow(mat2))
+  expect_equal(nrow(mat2), nrow(mat3))
+  expect_equal(nrow(mat2), nrow(full))
+  expect_is(mat1, "matrix")
+  expect_is(mat2, "matrix")
+  expect_is(mat3, "matrix")
+})
+
+test_that("buildModelMatrix handles NA correctly", {
+  
+})
+
+# ################
+# # Test assembleData
+# ###############
 # 
 # table(split1$test$Class)
 # table(split1$train$Class)
@@ -63,7 +165,49 @@
 # testdata <- list(preds = splits$test[, names(splits$test) != class], 
 #                  class = splits$test[, class])
 # 
-
+# 
 # findLinearCombos(testData1)
 # 
 # omitLinearCombos(testData1)
+# 
+# 
+# 
+# library(mlbench); library(rpart)
+# data(BostonHousing)
+# 
+# BostonHousing <- rbind(BostonHousing, BostonHousing)
+# 
+# dat <- assembleData(BostonHousing, class = "medv", p = 0.8)
+# 
+# context("Test assembling data works in the continuous case")
+# 
+# # Give tests wide tolerance, looking more for equivalence
+# test_that("Data can be assembled correctly", {
+#   expect_equal(length(dat), 2)
+#   expect_identical(names(dat), c("traindata", "testdata"))
+#   expect_equal(round(mean(dat$traindata$class), 1), 
+#                round(mean(dat$testdata$class),1), tolerance = 0.5)
+#   expect_equal(round(median(dat$traindata$class),1), 
+#                round(median(dat$testdata$class), 1), tolerance = 0.5)
+#   expect_equal(min(dat$traindata$class), 
+#                min(dat$testdata$class), tolerance = 2)
+#   expect_equal(max(dat$traindata$class), 
+#                max(dat$testdata$class), tolerance = 2)
+# })
+# 
+# context("Test 3 way split")
+# dat <- assembleData(BostonHousing, class = "medv", p = 0.8, pvalid = 0.3)
+# 
+# test_that("Data is split and balanced", {
+#   expect_equal(length(dat), 3)
+#   expect_identical(names(dat), c("traindata", "testdata", "validdata"))
+#   expect_equal(mean(dat$traindata$class), mean(dat$testdata$class), tolerance = 0.5)
+#   expect_equal(median(dat$traindata$class), median(dat$testdata$class), tolerance = 0.5)
+#   expect_equal(min(dat$traindata$class), min(dat$testdata$class), tolerance = 2)
+#   expect_equal(max(dat$traindata$class), max(dat$testdata$class), tolerance = 2)
+#   expect_equal(mean(dat$traindata$class), mean(dat$validdata$class), tolerance = 0.5)
+#   expect_equal(median(dat$traindata$class), median(dat$validdata$class), tolerance = 0.5)
+#   expect_equal(min(dat$traindata$class), min(dat$validdata$class), tolerance = 2)
+#   expect_equal(max(dat$traindata$class), max(dat$validdata$class), tolerance = 2)
+# })
+# 
