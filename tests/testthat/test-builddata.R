@@ -150,14 +150,14 @@ full2[, 1:8] <- lapply(full2[, 1:8], as.numeric)
 prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
                "Corr1", "Factor1", "Factor2")
 
-mat1 <- buildModelMatrix(data = full2[, -9], na.omit = TRUE)
-mat2 <- buildModelMatrix(data = full2, predvars = prednames, na.omit = TRUE)
-mat3 <- buildModelMatrix(data = full2, predvars = prednames, na.omit = TRUE)
+mat1 <- buildModelMatrix(data = full2[, -9], keepNA = TRUE)
+mat2 <- buildModelMatrix(data = full2, predvars = prednames, keepNA = TRUE)
+mat3 <- buildModelMatrix(data = full2, predvars = prednames, keepNA = TRUE)
 
 
-mat1a <- buildModelMatrix(data = full2[, -9], na.omit = FALSE)
-mat2a <- buildModelMatrix(data = full2, predvars = prednames, na.omit = FALSE)
-mat3a <- buildModelMatrix(data = full2, predvars = prednames, na.omit = FALSE)
+mat1a <- buildModelMatrix(data = full2[, -9], keepNA = FALSE)
+mat2a <- buildModelMatrix(data = full2, predvars = prednames, keepNA = FALSE)
+mat3a <- buildModelMatrix(data = full2, predvars = prednames, keepNA = FALSE)
 
 
 test_that("buildModelMatrix handles NA correctly", {

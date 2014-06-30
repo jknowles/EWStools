@@ -50,30 +50,30 @@ splitData <- function(data, class, p, pvalid = NULL){
 ##' @note Built on the \code{\link{model.matrix}} function. Does not produce an 
 ##' intercept term. Does not drop collinear factor levels. 
 ##' @export
-buildModelMatrix <- function(data, predvars = NULL, na.omit = TRUE){
+buildModelMatrix <- function(data, predvars = NULL, keepNA = FALSE){
   if(class(data) != "data.frame"){
     stop("Please supply a data.frame with column names")
   }
   if(missing(predvars)){
     predvars <- colnames(data)
   }
-  oldNaAction <- getOption("na.action") 
-  on.exit(options(na.action = oldNaAction)) 
-  if(na.omit == TRUE){
-    options(na.action=na.omit)
-  } else {
-    options(na.action=na.pass)
-  }
   findFac <- function(x) !is.numeric(x) # quick function to find non-numeric columns
   # convert non-numeric columns to factors
   data[, sapply(data, findFac)] <- lapply(data[, sapply(data, findFac)], factor)
-  #
   FORM <-  paste0("~ 0 + ", paste0(predvars, collapse = " + "))
   FORM <- as.formula(FORM)
-  out <- model.matrix(FORM, data = data, 
-                      contrasts.arg = lapply(data[,sapply(data, findFac)], 
-                                             contrasts, contrasts=FALSE))
-  return(out)
+  if(keepNA == FALSE){
+    data <- model.frame(FORM, data = data, na.action = na.omit)
+    out <- model.matrix(FORM, data, 
+                        contrasts.arg = lapply(data[,sapply(data, findFac)], 
+                                               contrasts, contrasts=FALSE))
+  } else {
+    data <- model.frame(FORM, data = data, na.action = na.pass)
+    out <- model.matrix(FORM, data, 
+                        contrasts.arg = lapply(data[,sapply(data, findFac)], 
+                                               contrasts, contrasts=FALSE))
+  }
+   return(out)
 }
 
 ##' @title Assemble train and test data for model building with EWStools
