@@ -234,9 +234,9 @@ test_that("assembleData objects are correct size", {
   expect_less_than(nrow(zed3$traindata$preds), nrow(zed3$testdata$preds))
   expect_equal(nrow(zed3$traindata$preds), length(zed3$traindata$class))
   expect_equal(nrow(zed3$testdata$preds), length(zed3$testdata$class))
-  expect_equal(ncol(zed1$traindata$preds), ncol(zed3$traindata$preds))
+  expect_more_than(ncol(zed1$traindata$preds), ncol(zed3$traindata$preds))
   expect_equal(ncol(zed1$traindata$preds), ncol(zed1$testdata$preds))
-  expect_less_than(ncol(zed1$traindata$preds), ncol(zed2$traindata$preds))
+  expect_more_than(ncol(zed1$traindata$preds), ncol(zed2$traindata$preds))
   expect_equal(ncol(zed3$traindata$preds), ncol(zed3$testdata$preds))
 })
 
@@ -248,31 +248,35 @@ zed1a <- assembleData(full2, class = "Class", p = 0.25, predvars = prednames,
 zed2 <- assembleData(full2, class = "Class", p = 0.8)
 zed2a <- assembleData(full2, class = "Class", p = 0.8, keepNA = TRUE)
 
-
-zed3 <- assembleData(full[full$Factor1 == "e" | 
-                            full$Factor1 == "d",], 
+zed3 <- assembleData(full2[full2$Factor1 == "e" | 
+                            full2$Factor1 == "d",], 
                      class = "Class", p = 0.25, pvalid = 0.1, predvars = prednames)
 
-zed3a <- assembleData(full[full$Factor1 == "e" | 
-                            full$Factor1 == "d",], 
+zed3a <- assembleData(full2[full2$Factor1 == "e" | 
+                            full2$Factor1 == "d",], 
                      class = "Class", p = 0.25, pvalid = 0.1, 
                      predvars = prednames, keepNA = TRUE)
 
-
-
-# 
-# test_that("assembleData handles NA correctly", {
-#   expect_identical(mat2, mat3)
-#   expect_equal(nrow(mat1), nrow(full2))
-#   expect_equal(nrow(mat2), nrow(full2))
-#   expect_equal(nrow(mat3), nrow(full2))
-#   expect_less_than(nrow(mat1a), nrow(mat1))
-#   expect_less_than(nrow(mat2a), nrow(mat2))
-#   expect_less_than(nrow(mat1a), nrow(mat2a))
-#   expect_equal(ncol(mat1), ncol(mat1a))
-#   expect_equal(ncol(mat2), ncol(mat2a))
-# })
-# 
+test_that("assembleData handles NA correctly", {
+  expect_less_than(nrow(zed1$traindata$preds), nrow(zed1$testdata$preds))
+  expect_less_than(nrow(zed1$traindata$preds), nrow(zed1a$traindata$preds))
+  expect_equal(nrow(zed1$traindata$preds), length(zed1$traindata$class))
+  expect_equal(nrow(zed1$testdata$preds), length(zed1$testdata$class))
+  expect_less_than(nrow(zed2$testdata$preds), nrow(zed2$traindata$preds))
+  expect_less_than(nrow(zed2$traindata$preds), nrow(zed2a$traindata$preds))
+  expect_equal(nrow(zed2$traindata$preds), length(zed2$traindata$class))
+  expect_equal(nrow(zed2$testdata$preds), length(zed2$testdata$class))
+  expect_less_than(nrow(zed3$validdata$preds), nrow(zed3$traindata$preds))
+  expect_less_than(nrow(zed3$validdata$preds), nrow(zed3a$validdata$preds))
+  expect_equal(nrow(zed3$validdata$preds), length(zed3$validdata$class))
+  expect_less_than(nrow(zed3$traindata$preds), nrow(zed3$testdata$preds))
+  expect_equal(nrow(zed3$traindata$preds), length(zed3$traindata$class))
+  expect_equal(nrow(zed3$testdata$preds), length(zed3$testdata$class))
+  expect_equal(ncol(zed1$traindata$preds), ncol(zed1$testdata$preds))
+  expect_less_than(ncol(zed2$traindata$preds), ncol(zed1$traindata$preds))
+  expect_equal(ncol(zed3$traindata$preds), ncol(zed3$testdata$preds))
+  expect_less_than(nrow(zed3$traindata$preds), nrow(zed3a$traindata$preds))
+})
 
 
 # table(split1$test$Class)

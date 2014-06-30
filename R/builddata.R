@@ -113,6 +113,9 @@ assembleData <- function(data, class, p, predvars, classification = TRUE, keepNA
         names(full.p)[ncol(full.p)] <- class
         splits <- splitData(data = full.p, class = class, p = p, ...)
       } else {
+        if(keepNA == FALSE){
+          data <- na.omit(data)
+        } 
         splits <- splitData(data = data, class = class, p = p, ...)
       }
     } else {
@@ -149,12 +152,14 @@ assembleData <- function(data, class, p, predvars, classification = TRUE, keepNA
          names(full.p)[ncol(full.p)] <- class
         splits <- splitData(data = full.p, class = class, p = p)
       } else {
+        if(keepNA == FALSE){
+          data <- na.omit(data)
+        } 
         splits <- splitData(data = data, class = class, p = p)
       }
     } else {
       splits <- splitData(data = data, class = class, p = p)
     }
-    
     traindata <- list(preds = splits$train[, colnames(splits$train) != class], 
                       class = splits$train[, class])
     testdata <- list(preds = splits$test[, colnames(splits$test) != class], 
