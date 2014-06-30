@@ -45,7 +45,7 @@ splitData <- function(data, class, p, pvalid = NULL){
 ##' @title Turn a dataframe into a model matrix for caret functions
 ##' @param data a dataframe that the user would like to convert to a model matrix
 ##' @param predvars  a character vector of the names of predictor variables
-##' @param na.omit  behavior with missing values, defaults to TRUE
+##' @param keepNA  behavior with missing values, defaults to FALSE
 ##' @return A model matrix
 ##' @note Built on the \code{\link{model.matrix}} function. Does not produce an 
 ##' intercept term. Does not drop collinear factor levels. 
@@ -82,6 +82,7 @@ buildModelMatrix <- function(data, predvars = NULL, keepNA = FALSE){
 ##' @param predvars  a character vector of the names of predictor variables
 ##' @param p the proportion of data to be placed into a training set 
 ##' @param classification Is the training set for a classification problem or not? Default is TRUE.
+##' @param keepNA Should missing values be preserved in the data sets? Logical. Default is FALSE.
 ##' @param ... additional arguments to be passed to assembleData
 ##' @return A list of lists with the following items:
 ##' \itemize{
@@ -92,14 +93,23 @@ buildModelMatrix <- function(data, predvars = NULL, keepNA = FALSE){
 ##' @details To return a 3-way split with a validation set, use the \code{pvalid} argument.If classification is set to true the "class" component of the list will be forced to a factor 
 ##' for being fed into the train routine. 
 ##' @export
-assembleData <- function(data, class, p, predvars, classification = TRUE, ...){
+assembleData <- function(data, class, p, predvars, classification = TRUE, keepNA = FALSE, ...){
   args <- as.list(substitute(list(...)))
+  completeFun <- function(data, desiredCols) {
+    completeVec <- complete.cases(data[, desiredCols])
+    return(data[completeVec, ])
+  }
   if("pvalid" %in% names(args)){
     if(class(data) != "matrix"){
       if(!missing(predvars)){
-        full.p <- buildModelMatrix(data, predvars)
+        full.p <- buildModelMatrix(data, predvars, keepNA = keepNA)
         full.p <- as.data.frame(full.p)
-        full.p <- cbind(full.p, data[, class])
+        if(keepNA == FALSE){
+          tmp <- completeFun(data, names(data) %in% predvars)
+          full.p <- cbind(full.p, tmp[, class])
+        } else{
+          full.p <- cbind(full.p, data[, class])
+        }
         names(full.p)[ncol(full.p)] <- class
         splits <- splitData(data = full.p, class = class, p = p, ...)
       } else {
@@ -128,10 +138,15 @@ assembleData <- function(data, class, p, predvars, classification = TRUE, ...){
   } else {
     if(class(data) != "matrix"){
       if(!missing(predvars)){
-        full.p <- buildModelMatrix(data, predvars)
+        full.p <- buildModelMatrix(data, predvars, keepNA = keepNA)
         full.p <- as.data.frame(full.p)
-        full.p <- cbind(full.p, data[, class])
-        names(full.p)[ncol(full.p)] <- class
+        if(keepNA == FALSE){
+          tmp <- completeFun(data, names(data) %in% predvars)
+          full.p <- cbind(full.p, tmp[, class])
+        } else{
+          full.p <- cbind(full.p, data[, class])
+        }
+         names(full.p)[ncol(full.p)] <- class
         splits <- splitData(data = full.p, class = class, p = p)
       } else {
         splits <- splitData(data = data, class = class, p = p)

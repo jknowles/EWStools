@@ -3,7 +3,7 @@
 \alias{buildModelMatrix}
 \title{Turn a dataframe into a model matrix for caret functions}
 \usage{
-buildModelMatrix(data, predvars = NULL, na.omit = TRUE)
+buildModelMatrix(data, predvars = NULL, keepNA = FALSE)
 }
 \arguments{
   \item{data}{a dataframe that the user would like to
@@ -12,8 +12,8 @@ buildModelMatrix(data, predvars = NULL, na.omit = TRUE)
   \item{predvars}{a character vector of the names of
   predictor variables}
 
-  \item{na.omit}{behavior with missing values, defaults to
-  TRUE}
+  \item{keepNA}{behavior with missing values, defaults to
+  FALSE}
 }
 \value{
 A model matrix

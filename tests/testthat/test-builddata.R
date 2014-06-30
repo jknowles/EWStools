@@ -99,7 +99,8 @@ test_that("splitData gets proportions right",{
   expect_equal(nrow(splitVAL3$valid), nrow(full) * 0.09, tolerance = 0.01)
 })
 
-
+rm(split1, split2, splitVAL1, splitVAL2, test, train, valid, splitVAL3, 
+   idx, idx2, splits, splits.tmp)
 ######################
 ## Test modelMatrix
 ######################
@@ -115,11 +116,11 @@ prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3"
                "Corr1", "Factor1", "Factor2")
  
 mat2 <- buildModelMatrix(data = full, predvars = prednames)
-mat3 <- buildModelMatrix(data = full, predvars = prednames, na.omit = TRUE)
+mat3 <- buildModelMatrix(data = full, predvars = prednames, keepNA = TRUE)
 
 test_that("buildModelMatrix is correct dimensions", {
   expect_identical(mat2, mat3)
-  expect_equal(ncol(mat1), ncol(full) + 11)
+  expect_equal(ncol(mat1), ncol(full) -1 + 9)
   expect_equal(nrow(mat1), nrow(mat2))
   expect_equal(nrow(mat2), nrow(mat3))
   expect_equal(nrow(mat2), nrow(full))
@@ -152,31 +153,132 @@ prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3"
 
 mat1 <- buildModelMatrix(data = full2[, -9], keepNA = TRUE)
 mat2 <- buildModelMatrix(data = full2, predvars = prednames, keepNA = TRUE)
-mat3 <- buildModelMatrix(data = full2, predvars = prednames, keepNA = TRUE)
+mat3 <- buildModelMatrix(data = full2, predvars = prednames)
 
 
 mat1a <- buildModelMatrix(data = full2[, -9], keepNA = FALSE)
 mat2a <- buildModelMatrix(data = full2, predvars = prednames, keepNA = FALSE)
-mat3a <- buildModelMatrix(data = full2, predvars = prednames, keepNA = FALSE)
+mat3a <- buildModelMatrix(data = full2, predvars = prednames)
 
 
 test_that("buildModelMatrix handles NA correctly", {
-  
+  expect_identical(mat2a, mat3a)
+  expect_equal(nrow(mat1), nrow(full2))
+  expect_equal(nrow(mat2), nrow(full2))
+  expect_equal(nrow(mat3), nrow(mat2a))
+  expect_less_than(nrow(mat1a), nrow(mat1))
+  expect_less_than(nrow(mat2a), nrow(mat2))
+  expect_less_than(nrow(mat1a), nrow(mat2a))
+  expect_equal(ncol(mat1), ncol(mat1a))
+  expect_equal(ncol(mat2), ncol(mat2a))
 })
 
-# ################
-# # Test assembleData
-# ###############
+rm(mat1, mat1a, mat2, mat2a)
+
+################
+# Test assembleData
+###############
+context("Test that assembleData functions as expected")
+
+zed1 <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
+zed2 <- assembleData(full, class = "Class", p = 0.1,  pvalid = .75)
+zed3 <- assembleData(full[full$Factor1 == "e" | 
+                           full$Factor1 == "d",], 
+                    class = "Class", p = 0.25, predvars = prednames)
+
+
+test_that("assembleData objects are correct class and dimensions", {
+  expect_equal(length(zed1), 2)
+  expect_equal(length(zed2), 3)
+  expect_equal(length(zed3), 2)
+  expect_is(zed1[[1]], "list")
+  expect_is(zed1[[2]], "list")
+  expect_is(zed2[[1]], "list")
+  expect_is(zed2[[2]], "list")
+  expect_is(zed2[[3]], "list")
+  expect_is(zed3[[1]], "list")
+  expect_is(zed3[[2]], "list")
+  expect_equal(names(zed1), names(zed3))
+  expect_equal(names(zed2), c("traindata", "testdata", "validdata"))
+  expect_equal(names(zed1[[1]]), c("preds", "class"))
+  expect_equal(names(zed1[[1]]), names(zed1[[2]]))
+  expect_equal(names(zed2[[1]]), c("preds", "class"))
+  expect_equal(names(zed2[[1]]), names(zed2[[2]]))
+  expect_equal(names(zed2[[1]]), names(zed2[[3]]))
+  expect_equal(names(zed3[[1]]), c("preds", "class"))
+  expect_equal(names(zed3[[1]]), names(zed3[[2]]))
+  expect_is(zed1$traindata$preds, "data.frame")
+  expect_is(zed2$traindata$preds, "data.frame")
+  expect_is(zed3$traindata$preds, "data.frame")
+  expect_is(zed1$testdata$preds, "data.frame")
+  expect_is(zed2$testdata$preds, "data.frame")
+  expect_is(zed3$testdata$preds, "data.frame")
+  expect_is(zed1$traindata$class, "factor")
+  expect_is(zed2$traindata$class, "factor")
+  expect_is(zed3$traindata$class, "factor")
+  expect_is(zed1$testdata$class, "factor")
+  expect_is(zed2$testdata$class, "factor")
+  expect_is(zed3$testdata$class, "factor")
+})
+
+
+test_that("assembleData objects are correct size", {
+  expect_less_than(nrow(zed1$traindata$preds), nrow(zed1$testdata$preds))
+  expect_equal(nrow(zed1$traindata$preds), length(zed1$traindata$class))
+  expect_equal(nrow(zed1$testdata$preds), length(zed1$testdata$class))
+  expect_less_than(nrow(zed2$traindata$preds), nrow(zed2$testdata$preds))
+  expect_equal(nrow(zed2$traindata$preds), length(zed2$traindata$class))
+  expect_equal(nrow(zed2$testdata$preds), length(zed2$testdata$class))
+  expect_less_than(nrow(zed2$traindata$preds), nrow(zed2$validdata$preds))
+  expect_equal(nrow(zed2$validdata$preds), length(zed2$validdata$class))
+  expect_less_than(nrow(zed3$traindata$preds), nrow(zed3$testdata$preds))
+  expect_equal(nrow(zed3$traindata$preds), length(zed3$traindata$class))
+  expect_equal(nrow(zed3$testdata$preds), length(zed3$testdata$class))
+  expect_equal(ncol(zed1$traindata$preds), ncol(zed3$traindata$preds))
+  expect_equal(ncol(zed1$traindata$preds), ncol(zed1$testdata$preds))
+  expect_less_than(ncol(zed1$traindata$preds), ncol(zed2$traindata$preds))
+  expect_equal(ncol(zed3$traindata$preds), ncol(zed3$testdata$preds))
+})
+
+
+zed1 <- assembleData(full2, class = "Class", p = 0.25, predvars = prednames)
+zed1a <- assembleData(full2, class = "Class", p = 0.25, predvars = prednames, 
+                      keepNA = TRUE)
+
+zed2 <- assembleData(full2, class = "Class", p = 0.8)
+zed2a <- assembleData(full2, class = "Class", p = 0.8, keepNA = TRUE)
+
+
+zed3 <- assembleData(full[full$Factor1 == "e" | 
+                            full$Factor1 == "d",], 
+                     class = "Class", p = 0.25, pvalid = 0.1, predvars = prednames)
+
+zed3a <- assembleData(full[full$Factor1 == "e" | 
+                            full$Factor1 == "d",], 
+                     class = "Class", p = 0.25, pvalid = 0.1, 
+                     predvars = prednames, keepNA = TRUE)
+
+
+
 # 
+# test_that("assembleData handles NA correctly", {
+#   expect_identical(mat2, mat3)
+#   expect_equal(nrow(mat1), nrow(full2))
+#   expect_equal(nrow(mat2), nrow(full2))
+#   expect_equal(nrow(mat3), nrow(full2))
+#   expect_less_than(nrow(mat1a), nrow(mat1))
+#   expect_less_than(nrow(mat2a), nrow(mat2))
+#   expect_less_than(nrow(mat1a), nrow(mat2a))
+#   expect_equal(ncol(mat1), ncol(mat1a))
+#   expect_equal(ncol(mat2), ncol(mat2a))
+# })
+# 
+
+
 # table(split1$test$Class)
 # table(split1$train$Class)
 # 
-# zed <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
-# zed <- assembleData(full, class = "Class", p = 0.1,  pvalid = .75)
-# zed <- assembleData(full[full$Factor1 == "e" | 
-#                            full$Factor1 == "d",], 
-#                     class = "Class", p = 0.25, predvars = prednames)
-# 
+
 # context("Test linear combos omission")
 # # 
 # testData1 <- matrix(0, nrow=20, ncol=8)
