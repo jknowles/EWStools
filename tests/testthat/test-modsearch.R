@@ -162,7 +162,7 @@ resultSet <- modSearch2(methods = c("knn", "glm", "rpart"),
                             traindata = list(preds = trainT[1:500, -19], class = trainT[1:500, 19]), 
                             testdata = list(preds = test[1:200, -19], class = test[1:200, 19]), 
                             modelKeep = FALSE, length = 6, fitControl = ctrl, 
-                            metric = "ROC", debug = FALSE)
+                            metric = "ROC")
 
 resultSet2 <- modSearch2(methods = c("knn", "glm", "lda2"), 
                        datatype = c("train", "test"), 

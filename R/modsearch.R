@@ -580,7 +580,7 @@ modSearch <- function(methods, ...){
     p <- match(i, methods)
     z<-list(method = i)
     z<-c(z,args)
-    fit <- try(do.call(modTest, mget(z)), silent = TRUE)
+    fit <- try(do.call(modTest, z), silent = TRUE)
     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
     if(class(tmp) == "data.frame"){
@@ -619,7 +619,7 @@ modSearch <- function(methods, ...){
 ##' @export
 modSearch2 <- function(methods, datatype = c("train", "test"), traindata, 
                        testdata = NULL, modelKeep = FALSE, length = 6, 
-                       fitControl, metric, cores = NULL, debug = TRUE, ...){
+                       fitControl, metric, cores = NULL, ...){
   # parse ellipsis for modTest
   args <- as.list(substitute(list(...)))[-1L]
   if(!missing(cores)){
@@ -659,7 +659,7 @@ modSearch2 <- function(methods, datatype = c("train", "test"), traindata,
                   length = length, fitControl = fitControl, 
                   metric = metric, cores = cores)
     p <- match(i, methods)
-    fit <- try(do.call(modTest, mget(z, envir = parent.frame(n =3), inherits = TRUE), quote = FALSE), silent = TRUE)
+    fit <- try(do.call(modTest, mget(z, envir=globalenv(), ifnotfound = z), quote = TRUE), silent = TRUE)
     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
     if(class(tmp) == "data.frame"){
