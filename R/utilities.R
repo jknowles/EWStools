@@ -149,11 +149,13 @@ modSearchResults <- function(df, n = 5){
   }
   teststats <- df[df$grp == grpvar, ]
   topMetric <- unique(teststats[, dv])[order(-unique(teststats[, "sort"]))][1:n]
+  topMetric <- topMetric[!is.na(topMetric)]
   badMetric <- unique(teststats[, dv])[order(unique(teststats[, "sort"]))][1:n]
   bestMethod <- unique(df$method[df[, dv] %in% topMetric])
   worstMethod <- unique(df$method[df[, dv] %in% badMetric])
   effDF <- df[df$grp == grpvar, c(dv, names(df)[4:7], "sort")]
   effDF <- effDF[!duplicated(effDF), ]
+  effDF <- na.omit(effDF)
   if(dv == "RMSE"){
     effDF$efficiency <- round(10/(effDF$elapsedTime + effDF[, dv]^2), digits = 3)
   } else{
