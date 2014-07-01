@@ -141,14 +141,18 @@ modSearchResults <- function(df, n = 5){
   modFail <- unique(df$method[is.na(df[, dv])])
   # look at test performance
   if(!"test" %in% df$grp == TRUE){ # awkward negation checking for test results
-    warning("Rerun modSearch with option to return test data statistics using datatype = 'test'")
-  } 
-  teststats <- df[df$grp == "test", ]
+    message("Rerun modSearch with option to return test data statistics using datatype = 'test'")
+    message("Presenting results on training data only")
+    grpvar <- "train"
+  } else{
+    grpvar <- "test"
+  }
+  teststats <- df[df$grp == grpvar, ]
   topMetric <- unique(teststats[, dv])[order(-unique(teststats[, "sort"]))][1:n]
   badMetric <- unique(teststats[, dv])[order(unique(teststats[, "sort"]))][1:n]
   bestMethod <- unique(df$method[df[, dv] %in% topMetric])
   worstMethod <- unique(df$method[df[, dv] %in% badMetric])
-  effDF <- df[df$grp == "test", c(dv, names(df)[4:7], "sort")]
+  effDF <- df[df$grp == grpvar, c(dv, names(df)[4:7], "sort")]
   effDF <- effDF[!duplicated(effDF), ]
   if(dv == "RMSE"){
     effDF$efficiency <- round(10/(effDF$elapsedTime + effDF[, dv]^2), digits = 3)

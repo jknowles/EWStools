@@ -325,8 +325,8 @@ dfExtractROC <- function(mod){
 ##' For some model types linear combos of predictors may be omitted.
 ##' @export
 modTest <- function(method, datatype=c("train", "test"), traindata, testdata, 
-                      modelKeep=FALSE, length, fitControl = NULL, 
-                    metric = "ROC", cores = NULL, ...){
+                      modelKeep=FALSE, length, fitControl = NA, 
+                    metric = "ROC", cores = NA, ...){
   
     args <- as.list(substitute(list(...)))
     if("omit" %in% names(args)){
