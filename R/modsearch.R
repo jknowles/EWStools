@@ -595,81 +595,81 @@ modSearch <- function(methods, ...){
   return(ModelFits)
 }
 
-##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
-##' @description Used for generating the data to make good looking ROC curves of 
-##' training and test data.
-##' @param methods a list of \code{train} method names to generate the dataframe for
-##' @param ... additional arguments passed to \code{\link{modTest}}
-##' @return a \code{\link{data.frame}} with the following columns:
-##' \itemize{
-##' \item{sens - the sensitivities of the model at various thresholds}
-##' \item{spec - the specificities of the model at various thresholds}
-##' \item{grp - whether the model is using training or test data}
-##' \item{auc - the area under the curve}
-##' \item{method - the model method}
-##' \item{elapsedTime - the time reported for the model to run}
-##' }
-##' @note Currently the arguments passed to modSearch are evaluated in the parent frame. 
-##' This means that you cannot pass list elements or data.frame elements to the parameters 
-##' of modSearch that get passed along to \code{\link{modTest}} via \code{...}. 
-##' Instead, you need to declare them as separate variables in the parent 
-##' environment and save them there. 
-##' @details The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
-##' \code{\linkS4class{ROCit}} object
-##' @export
-modSearch2 <- function(methods, datatype = c("train", "test"), traindata, 
-                       testdata = NULL, modelKeep = FALSE, length = 6, 
-                       fitControl, metric, cores = NULL, ...){
-  # parse ellipsis for modTest
-  args <- as.list(substitute(list(...)))[-1L]
-  if(!missing(cores)){
-    if(!is.numeric(cores)){
-      stop("Cores must be numeric.")
-    }
-  } else {
-    message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
-    cores <- NULL
-  }
-  if(metric == "ROC"){
-    if(length(datatype) > 1){
-      ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
-    } else{
-      ModelFits <- buildROCcurveFrame(methods)
-    }
-  } else if(metric == "RMSE"){
-    if(length(datatype) > 1){
-      ModelFits <- rbind(buildRMSEFrame(methods), buildRMSEFrame(methods))
-    } else {
-      ModelFits <- buildRMSEFrame(methods)
-    }
-    
-  } else if(metric == "Dist"){
-    if(length(datatype) > 1){
-      ModelFits <- rbind(buildDISFrame(methods), buildDISFrame(methods))
-    } else {
-      ModelFits <- buildDISFrame(methods)
-    }
-  } else{
-    stop("No custom performance frame defined for metric")
-  }
-  pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
-  for(i in methods){
-    z <- list(method = i, datatype = datatype, traindata = traindata, 
-                  testdata = testdata, modelKeep = modelKeep, 
-                  length = length, fitControl = fitControl, 
-                  metric = metric, cores = cores)
-    p <- match(i, methods)
-    fit <- try(do.call(modTest, mget(z, envir=globalenv(), ifnotfound = z), quote = TRUE), silent = TRUE)
-    tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
-    #
-    if(class(tmp) == "data.frame"){
-      ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
-    } else{
-      ModelFits <- ModelFits
-      message(paste(tmp, "failure for model type:", i, sep=" "))
-    }
-    setTxtProgressBar(pb, p)      
-  }
-  ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
-  return(ModelFits)
-}
+# ##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
+# ##' @description Used for generating the data to make good looking ROC curves of 
+# ##' training and test data.
+# ##' @param methods a list of \code{train} method names to generate the dataframe for
+# ##' @param ... additional arguments passed to \code{\link{modTest}}
+# ##' @return a \code{\link{data.frame}} with the following columns:
+# ##' \itemize{
+# ##' \item{sens - the sensitivities of the model at various thresholds}
+# ##' \item{spec - the specificities of the model at various thresholds}
+# ##' \item{grp - whether the model is using training or test data}
+# ##' \item{auc - the area under the curve}
+# ##' \item{method - the model method}
+# ##' \item{elapsedTime - the time reported for the model to run}
+# ##' }
+# ##' @note Currently the arguments passed to modSearch are evaluated in the parent frame. 
+# ##' This means that you cannot pass list elements or data.frame elements to the parameters 
+# ##' of modSearch that get passed along to \code{\link{modTest}} via \code{...}. 
+# ##' Instead, you need to declare them as separate variables in the parent 
+# ##' environment and save them there. 
+# ##' @details The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
+# ##' \code{\linkS4class{ROCit}} object
+# ##' @export
+# modSearch2 <- function(methods, datatype = c("train", "test"), traindata, 
+#                        testdata = NULL, modelKeep = FALSE, length = 6, 
+#                        fitControl, metric, cores = NULL, ...){
+#   # parse ellipsis for modTest
+#   args <- as.list(substitute(list(...)))[-1L]
+#   if(!missing(cores)){
+#     if(!is.numeric(cores)){
+#       stop("Cores must be numeric.")
+#     }
+#   } else {
+#     message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
+#     cores <- NULL
+#   }
+#   if(metric == "ROC"){
+#     if(length(datatype) > 1){
+#       ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
+#     } else{
+#       ModelFits <- buildROCcurveFrame(methods)
+#     }
+#   } else if(metric == "RMSE"){
+#     if(length(datatype) > 1){
+#       ModelFits <- rbind(buildRMSEFrame(methods), buildRMSEFrame(methods))
+#     } else {
+#       ModelFits <- buildRMSEFrame(methods)
+#     }
+#     
+#   } else if(metric == "Dist"){
+#     if(length(datatype) > 1){
+#       ModelFits <- rbind(buildDISFrame(methods), buildDISFrame(methods))
+#     } else {
+#       ModelFits <- buildDISFrame(methods)
+#     }
+#   } else{
+#     stop("No custom performance frame defined for metric")
+#   }
+#   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
+#   for(i in methods){
+#     z <- list(method = i, datatype = datatype, traindata = traindata, 
+#                   testdata = testdata, modelKeep = modelKeep, 
+#                   length = length, fitControl = fitControl, 
+#                   metric = metric, cores = cores)
+#     p <- match(i, methods)
+#     fit <- try(do.call(modTest, mget(z, envir=globalenv(), ifnotfound = z), quote = TRUE), silent = TRUE)
+#     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
+#     #
+#     if(class(tmp) == "data.frame"){
+#       ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
+#     } else{
+#       ModelFits <- ModelFits
+#       message(paste(tmp, "failure for model type:", i, sep=" "))
+#     }
+#     setTxtProgressBar(pb, p)      
+#   }
+#   ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
+#   return(ModelFits)
+# }
