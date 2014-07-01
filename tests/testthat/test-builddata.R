@@ -279,6 +279,72 @@ test_that("assembleData handles NA correctly", {
 })
 
 
+context("Test that classification data and regression data works")
+
+full$Class <- as.character(full$Class)
+
+zed1 <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
+zed1a <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
+
+zed2 <- assembleData(full, class = "Class", p = 0.25, pvalid = 0.25, 
+                     predvars = prednames)
+zed2a <- assembleData(full, class = "Class", p = 0.25, pvalid = 0.25, 
+                      predvars = prednames)
+
+
+
+zed3 <- assembleData(full, class = "Class", p = 0.25, predvars = prednames, 
+                     classification = FALSE)
+zed3a <- assembleData(full, class = "Class", p = 0.25, predvars = prednames, 
+                      classification = FALSE)
+
+##
+test_that("All class elements are factors", {
+  expect_is(zed1$traindata$class, "factor")
+  expect_is(zed1a$traindata$class, "factor")
+  expect_is(zed2$traindata$class, "factor")
+  expect_is(zed2a$traindata$class, "factor")
+  expect_is(zed3$traindata$class, "factor")
+  expect_is(zed3a$traindata$class, "factor")
+  expect_is(zed1$testdata$class, "factor")
+  expect_is(zed1a$testdata$class, "factor")
+  expect_is(zed2$testdata$class, "factor")
+  expect_is(zed2a$testdata$class, "factor")
+  expect_is(zed3$testdata$class, "factor")
+  expect_is(zed3a$testdata$class, "factor")
+  expect_is(zed2$validdata$class, "factor")
+  expect_is(zed2a$validdata$class, "factor")
+})
+
+
+
+##
+
+zed1 <- assembleData(full, class = "Linear1", p = 0.25, predvars = prednames, 
+                     classification = FALSE)
+zed1a <- assembleData(full, class = "Linear1", p = 0.25, predvars = prednames, 
+                      classification = FALSE)
+
+zed2 <- assembleData(full, class = "Linear1", p = 0.25, predvars = prednames, 
+                     classification = TRUE)
+zed2a <- assembleData(full, class = "Linear1", p = 0.25, predvars = prednames, 
+                      classification = TRUE)
+
+zed3 <- assembleData(full, class = "Linear1", p = 0.25, pvalid = 0.2, 
+                     predvars = prednames, classification = TRUE)
+zed3a <- assembleData(full, class = "Linear1", p = 0.25, 
+                      pvalid = 0.2, predvars = prednames, 
+                      classification = FALSE)
+
+test_that("All class elements are factors", {
+  expect_is(zed1$traindata$class, "numeric")
+  expect_is(zed1a$traindata$class, "numeric")
+  expect_is(zed2$traindata$class, "factor")
+  expect_is(zed2a$traindata$class, "factor")
+  expect_is(zed3$traindata$class, "factor")
+  expect_is(zed3a$traindata$class, "numeric")
+})
+
 # table(split1$test$Class)
 # table(split1$train$Class)
 # 

@@ -131,11 +131,11 @@ assembleData <- function(data, class, p, predvars, classification = TRUE, keepNA
       mode(traindata$preds) <- "numeric"
       mode(testdata$preds) <- "numeric"
       mode(validdata$preds) <- "numeric"
-      if(classification == TRUE){
-        traindata$class <- as.factor(traindata$class)
-        testdata$class <- as.factor(testdata$class)
-        validdata$class <- as.factor(validdata$class)
-      }
+     }
+    if(classification == TRUE){
+      traindata$class <- as.factor(traindata$class)
+      testdata$class <- as.factor(testdata$class)
+      validdata$class <- as.factor(validdata$class)
     }
     return(list(traindata = traindata, testdata = testdata, validdata = validdata))
   } else {
@@ -167,10 +167,10 @@ assembleData <- function(data, class, p, predvars, classification = TRUE, keepNA
     if(class(data) == "matrix"){
       mode(traindata$preds) <- "numeric"
       mode(testdata$preds) <- "numeric"
-      if(classification == TRUE){
-        traindata$class <- as.factor(traindata$class)
-        testdata$class <- as.factor(testdata$class)
-      }
+     }
+    if(classification == TRUE){
+      traindata$class <- as.factor(traindata$class)
+      testdata$class <- as.factor(testdata$class)
     }
     return(list(traindata = traindata, testdata = testdata))
   }
