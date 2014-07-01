@@ -117,7 +117,7 @@ test_that("dfExtract functions when only test or training data present", {
   expect_identical(nrow(dfExtract(modobj2)), nrow(dfExtract(modobj3)))
 })
 
-context("Evaluate modSearch function ")
+context("Evaluate modTest function ")
  
 
 test1 <- modTest(method = "svmRadial", datatype = c("train", "test"), 
@@ -157,14 +157,14 @@ test_that("modTest returns the right objects", {
 
 context("Evaluate modSearch function ")
 
-resultSet <- modSearch(methods = c("knn", "glm", "rpart"), 
+resultSet <- modSearch2(methods = c("knn", "glm", "rpart"), 
                             datatype = c("train", "test"), 
-                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
-                            testdata = list(preds = test[, -19], class = test[, 19]), 
+                            traindata = list(preds = trainT[1:500, -19], class = trainT[1:500, 19]), 
+                            testdata = list(preds = test[1:200, -19], class = test[1:200, 19]), 
                             modelKeep = FALSE, length = 6, fitControl = ctrl, 
                             metric = "ROC")
 
-resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"), 
+resultSet2 <- modSearch2(methods = c("knn", "glm", "lda2"), 
                        datatype = c("train", "test"), 
                        traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                        testdata = list(preds = test[, -19], class = test[, 19]), 
@@ -172,14 +172,14 @@ resultSet2 <- modSearch(methods = c("knn", "glm", "lda2"),
                        metric = "ROC")
 
 
-resultSet2a <- modSearch(methods = c("knn", "glm", "lda2"), 
+resultSet2a <- modSearch2(methods = c("knn", "glm", "lda2"), 
                         datatype = c("train"), 
                         traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                         testdata = list(preds = test[, -19], class = test[, 19]), 
                         modelKeep = FALSE, length = 6, fitControl = ctrl, 
                         metric = "ROC")
 
-resultSet2b <- modSearch(methods = c("knn", "glm", "lda2"), 
+resultSet2b <- modSearch2(methods = c("knn", "glm", "lda2"), 
                          datatype = c("test"), 
                          traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                          testdata = list(preds = test[, -19], class = test[, 19]), 
@@ -189,7 +189,15 @@ resultSet2b <- modSearch(methods = c("knn", "glm", "lda2"),
 
 test_that("modSearch returns the right objects", {
   expect_that(resultSet, is_a("data.frame"))
-  expect_that(resultSet, is_a("data.frame"))
+  expect_that(resultSet2, is_a("data.frame"))
+  expect_that(resultSet2a, is_a("data.frame"))
+  expect_that(resultSet2b, is_a("data.frame"))
+  expect_more_than(nrow(resultSet2), nrow(resultSet2a))
+  expect_equal(nrow(resultSet2b), nrow(resultSet2a))
+  expect_equal(nrow(resultSet), nrow(resultSet2))
+  expect_equal(ncol(resultSet), ncol(resultSet2))
+  expect_equal(ncol(resultSet), ncol(resultSet2a))
+  expect_equal(ncol(resultSet), ncol(resultSet2b))
 })
 
 context("Check functioning of non standard evaluation")
@@ -198,33 +206,33 @@ context("Check functioning of non standard evaluation")
 mymet <- "ROC"
 mylen <- 6
 
-resultSetNSE1 <- modSearch(methods = c("knn", "glm", "rpart"), 
+resultSetNSE1 <- modSearch2(methods = c("knn", "glm", "rpart"), 
                            datatype = c("train", "test"), 
                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                            testdata = list(preds = test[, -19], class = test[, 19]), 
                            modelKeep = FALSE, length = mylen, fitControl = ctrl, 
                            metric = mymet)
 
-# 
-# mydt <- "train"
-# mypar <- list(metric = mymet, length = mylen, datatype = mydt)
-# 
-# # todo -- check on unpacking the list elmeent
-# ## check reference for parameters
-# ## check out if it is just easier to parse in PRES_EWS upfront
-# 
-# resultSetNSE2 <- modSearch(methods = c("knn", "glm", "rpart"), 
-#                            datatype = mydt, 
-#                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
-#                            testdata = list(preds = test[, -19], class = test[, 19]), 
-#                            modelKeep = FALSE, length = mypar$mylen, fitControl = ctrl, 
-#                            metric = mypar$metric)
-# 
+
+mydt <- "train"
+mypar <- list(metric = mymet, length = mylen, datatype = mydt)
+
+# todo -- check on unpacking the list elmeent
+## check reference for parameters
+## check out if it is just easier to parse in PRES_EWS upfront
+
+resultSetNSE2 <- modSearch2(methods = c("knn", "glm", "rpart"), 
+                           datatype = mypar$mydt, 
+                           traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
+                           testdata = list(preds = test[, -19], class = test[, 19]), 
+                           modelKeep = FALSE, length = mypar$mylen, fitControl = ctrl, 
+                           metric = mypar$metric)
+
 
 test_that("modSearch returns the right objects", {
   expect_that(resultSetNSE1, is_a("data.frame"))
-#  expect_that(resultSetNSE2, is_a("data.frame"))
   expect_true(nrow(resultSetNSE1) > 2000)
+  expect_equal(ncol(resultSetNSE1), ncol(resultSet))
 })
 
 mymet <- "Dist"
@@ -233,7 +241,7 @@ ctrl <- trainControl(method = "repeatedcv",
                      summaryFunction = fourStatsSummary)
 
 
-resultSetNSE3 <- modSearch(methods = c("knn", "glm", "rpart"), 
+resultSetNSE3 <- modSearch2(methods = c("knn", "glm", "rpart"), 
                            datatype = c("train", "test"), 
                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                            testdata = list(preds = test[, -19], class = test[, 19]), 
@@ -243,7 +251,8 @@ resultSetNSE3 <- modSearch(methods = c("knn", "glm", "rpart"),
 
 test_that("modSearch returns the right objects", {
   expect_that(resultSetNSE3, is_a("data.frame"))
-  expect_true(nrow(resultSetNSE3) < 2000)
+  expect_true(nrow(resultSetNSE3) < 20)
+  expect_equal(ncol(resultSetNSE3), ncol(resultSet))
 })
 
 

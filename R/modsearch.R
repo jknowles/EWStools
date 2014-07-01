@@ -334,7 +334,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     }
   # Let's dump out some defaults
   # Set up cores for Windows
-  if(!missing(cores)){
+  if(!missing(cores) & !is.null(cores)){
     myOS <- Sys.info()['sysname']
     if(myOS!="Windows"){  
       warning("Only declare cores on Windows machines. On Linux 
@@ -367,7 +367,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
             tuneLength = length, metric= metric, ...)}, error = function(e) 
               message(paste0("Model failed to run: ", method)))
   # multicore
-  if(!missing(cores)){
+  if(!missing(cores) & !is.null(cores)){
     if(myOS == "Windows"){
       try(stopCluster(myclus))
       try(stopImplicitCluster())
@@ -502,33 +502,56 @@ modSearch <- function(methods, ...){
   # parse ellipsis for modTest
   args <- as.list(substitute(list(...)))[-1L]
   # sanitize arguments
-  if(!is.character(args$metric)){ # consider using paste instead of print
-    metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
-    args$metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 1))
+  if(exists("metric", args)){
+    if(!is.character(args$metric)){ # consider using paste instead of print
+      metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 2))
+      args$metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 2))
+    } else {
+      metric <- args$metric
+    }
   } else {
-    metric <- args$metric
+    warning("No metric defined, default will be ROC")
+    args$metric <- "ROC"
+    metric <- "ROC"
   }
-  if(!is.character(args$datatype)){
-    datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
-    args$datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 1))
+  if(exists("datatype", args)){
+    if(!is.character(args$datatype)){
+      datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 2))
+      args$datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 2))
+    } else {
+      datatype <- args$datatype
+    }
   } else {
-    datatype <- args$datatype
+    warning("Parameter datatype is undefined, default is training")
+    args$datatype <- "train"
+    datatype <- "train"
   }
-  if(!is.character(args$length)){
-    length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
-    args$length <- do.call(paste, list(args$length), envir = parent.frame(n = 1))
-    length <- as.numeric(length)
-    args$length <- as.numeric(args$length)
+  if(exists("length", args)){
+    if(!is.character(args$length)){
+      length <- do.call(paste, list(args$length), envir = parent.frame(n = 2))
+      args$length <- do.call(paste, list(args$length), envir = parent.frame(n = 2))
+      length <- as.numeric(length)
+      args$length <- as.numeric(args$length)
+    } else {
+      length <- args$length
+    }    
   } else {
-    length <- args$length
+    warning("Parameter length is undefined, default is 6 for tuneLength")
+    args$length <- 6
+    length <- 6
   }
-  if(!is.character(args$cores)){
-    cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 1))
-    args$cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 1))
-    cores <- as.numeric(cores)
-    args$cores <- as.numeric(args$cores)
+  if(exists("cores", args)){
+    if(!is.character(args$cores)){
+      cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 2))
+      args$cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 2))
+      cores <- as.numeric(cores)
+      args$cores <- as.numeric(args$cores)
+    } else {
+      cores <- args$cores
+    }
   } else {
-    cores <- args$cores
+    message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
+    cores <- NULL
   }
   if(metric == "ROC"){
     if(length(datatype) > 1){
@@ -572,17 +595,81 @@ modSearch <- function(methods, ...){
   return(ModelFits)
 }
 
-# old block for timeout
-# 
-# if(!missing(timeout)){
-#   timeout <- timeout
-#   fit <- tryCatch({
-#     evalWithTimeout({
-#       do.call(modTest, z);
-#     }, timeout = timeout, elapsed = timeout, onTimeout = "warning")},
-#     TimeoutException = function(ex) {
-#       print("Timeout. Skip")
-#     }, error = function(e) {paste0("Failure of model: ", i, 
-#                                    "\n", " For: ",e)})
-#   
-# } else if(missing(timeout)){
+# ##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
+# ##' @description Used for generating the data to make good looking ROC curves of 
+# ##' training and test data.
+# ##' @param methods a list of \code{train} method names to generate the dataframe for
+# ##' @param ... additional arguments passed to \code{\link{modTest}}
+# ##' @return a \code{\link{data.frame}} with the following columns:
+# ##' \itemize{
+# ##' \item{sens - the sensitivities of the model at various thresholds}
+# ##' \item{spec - the specificities of the model at various thresholds}
+# ##' \item{grp - whether the model is using training or test data}
+# ##' \item{auc - the area under the curve}
+# ##' \item{method - the model method}
+# ##' \item{elapsedTime - the time reported for the model to run}
+# ##' }
+# ##' @note Currently the arguments passed to modSearch are evaluated in the parent frame. 
+# ##' This means that you cannot pass list elements or data.frame elements to the parameters 
+# ##' of modSearch that get passed along to \code{\link{modTest}} via \code{...}. 
+# ##' Instead, you need to declare them as separate variables in the parent 
+# ##' environment and save them there. 
+# ##' @details The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
+# ##' \code{\linkS4class{ROCit}} object
+# ##' @export
+# modSearch2 <- function(methods, datatype = c("train", "test"), traindata, 
+#                        testdata = NULL, modelKeep = FALSE, length = 6, 
+#                        fitControl, metric, cores = NULL, ...){
+#   # parse ellipsis for modTest
+#   args <- as.list(substitute(list(...)))[-1L]
+#   if(!missing(cores)){
+#     if(!is.numeric(cores)){
+#       stop("Cores must be numeric.")
+#     }
+#   } else {
+#     message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
+#     cores <- NULL
+#   }
+#   if(metric == "ROC"){
+#     if(length(datatype) > 1){
+#       ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
+#     } else{
+#       ModelFits <- buildROCcurveFrame(methods)
+#     }
+#   } else if(metric == "RMSE"){
+#     if(length(datatype) > 1){
+#       ModelFits <- rbind(buildRMSEFrame(methods), buildRMSEFrame(methods))
+#     } else {
+#       ModelFits <- buildRMSEFrame(methods)
+#     }
+#     
+#   } else if(metric == "Dist"){
+#     if(length(datatype) > 1){
+#       ModelFits <- rbind(buildDISFrame(methods), buildDISFrame(methods))
+#     } else {
+#       ModelFits <- buildDISFrame(methods)
+#     }
+#   } else{
+#     stop("No custom performance frame defined for metric")
+#   }
+#   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
+#   for(i in methods){
+#     z <- list(method = i, datatype = datatype, traindata = traindata, 
+#                   testdata = testdata, modelKeep = modelKeep, 
+#                   length = length, fitControl = fitControl, 
+#                   metric = metric, cores = cores)
+#     p <- match(i, methods)
+#     fit <- try(do.call(modTest, mget(z, envir=globalenv(), ifnotfound = z), quote = TRUE), silent = TRUE)
+#     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
+#     #
+#     if(class(tmp) == "data.frame"){
+#       ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
+#     } else{
+#       ModelFits <- ModelFits
+#       message(paste(tmp, "failure for model type:", i, sep=" "))
+#     }
+#     setTxtProgressBar(pb, p)      
+#   }
+#   ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
+#   return(ModelFits)
+# }

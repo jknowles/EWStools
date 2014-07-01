@@ -6,40 +6,6 @@ data(BostonHousing)
 
 BostonHousing <- rbind(BostonHousing, BostonHousing)
 
-#
-dat <- assembleData(BostonHousing, class = "medv", p = 0.8)
-
-context("Test assembling data works in the continuous case")
-
-# Give tests wide tolerance, looking more for equivalence
-test_that("Data can be assembled correctly", {
-  expect_equal(length(dat), 2)
-  expect_identical(names(dat), c("traindata", "testdata"))
-  expect_equal(round(mean(dat$traindata$class), 1), 
-               round(mean(dat$testdata$class),1), tolerance = 0.5)
-  expect_equal(round(median(dat$traindata$class),1), 
-               round(median(dat$testdata$class), 1), tolerance = 0.5)
-  expect_equal(min(dat$traindata$class), 
-               min(dat$testdata$class), tolerance = 2)
-  expect_equal(max(dat$traindata$class), 
-               max(dat$testdata$class), tolerance = 2)
-})
-
-context("Test 3 way split")
-dat <- assembleData(BostonHousing, class = "medv", p = 0.8, pvalid = 0.3)
-
-test_that("Data is split and balanced", {
-  expect_equal(length(dat), 3)
-  expect_identical(names(dat), c("traindata", "testdata", "validdata"))
-  expect_equal(mean(dat$traindata$class), mean(dat$testdata$class), tolerance = 0.5)
-  expect_equal(median(dat$traindata$class), median(dat$testdata$class), tolerance = 0.5)
-  expect_equal(min(dat$traindata$class), min(dat$testdata$class), tolerance = 2)
-  expect_equal(max(dat$traindata$class), max(dat$testdata$class), tolerance = 2)
-  expect_equal(mean(dat$traindata$class), mean(dat$validdata$class), tolerance = 0.5)
-  expect_equal(median(dat$traindata$class), median(dat$validdata$class), tolerance = 0.5)
-  expect_equal(min(dat$traindata$class), min(dat$validdata$class), tolerance = 2)
-  expect_equal(max(dat$traindata$class), max(dat$validdata$class), tolerance = 2)
-})
 
 
 dat <- assembleData(BostonHousing, class = "medv", p = 0.7)
