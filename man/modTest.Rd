@@ -4,8 +4,8 @@
 \title{Train a model and store \code{\linkS4class{ROCit}} tests on different datasets}
 \usage{
 modTest(method, datatype = c("train", "test"), traindata, testdata,
-  modelKeep = FALSE, length, fitControl = NULL, metric = "ROC",
-  cores = NULL, ...)
+  modelKeep = FALSE, length, fitControl = NA, metric = "ROC",
+  cores = NA, ...)
 }
 \arguments{
   \item{method}{a a string specifying which classification
