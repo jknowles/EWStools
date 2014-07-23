@@ -126,52 +126,67 @@ ci <- function(x, scale){
 ##' @return a list with a bunch of elements
 ##' @details if the number of unique methods is less than n, then n defaults to the number of unique methods
 ##' @export
-modSearchResults <- function(df, n = 5){
-  # sanitize n to avoid NA padding
+modSearchResults <- function (df, n = 5) 
+{
+  ## Define the metric to be used in order to determine the 
+  ## best-performing models.
+  
   n <- ifelse(n < length(unique(df$method)), n, length(unique(df$method)))
-  # identify type of results
-  if(names(df)[1] == "RMSE"){
-    dv  <- "RMSE"
+  if (names(df)[1] == "RMSE") {
+    dv <- "RMSE"
     df$sort <- 1 - df[, dv]
-  } else if(names(df[1]) == "sens"){
+  }
+  else if (names(df[1]) == "sens") {
     dv <- "auc"
     df$sort <- df[, dv]
   }
   modSuc <- unique(df$method[!is.na(df[, dv])])
   modFail <- unique(df$method[is.na(df[, dv])])
-  # look at test performance
-  if(!"test" %in% df$grp == TRUE){ # awkward negation checking for test results
+  if (!"test" %in% df$grp == TRUE) {
     message("Rerun modSearch with option to return test data statistics using datatype = 'test'")
     message("Presenting results on training data only")
     grpvar <- "train"
-  } else{
+  }
+  else {
     grpvar <- "test"
   }
   teststats <- df[df$grp == grpvar, ]
-  topMetric <- unique(teststats[, dv])[order(-unique(teststats[, "sort"]))][1:n]
-  topMetric <- topMetric[!is.na(topMetric)]
-  badMetric <- unique(teststats[, dv])[order(unique(teststats[, "sort"]))][1:n]
-  bestMethod <- unique(df$method[df[, dv] %in% topMetric])
-  worstMethod <- unique(df$method[df[, dv] %in% badMetric])
+  
+  ## Calculate the performance of each individual model and
+  ## rank them by that performance.
+  
+  eval(parse(text=paste("temp <- ddply(teststats, .(method), summarize,
+                        maxdv = max(", dv, ", na.rm=TRUE))", sep="")))
+  
+  topMetric <- temp[is.finite(temp$maxdv),]
+  badMetric <- temp[is.finite(temp$maxdv),]
+  
+  topMetric <- topMetric[order(-topMetric$maxdv),]
+  badMetric <- badMetric[order(badMetric$maxdv),]
+  
+  ## Calculate an efficiency index, which is a ratio of
+  ## the performance of each model and the time it took to run.
+  
   effDF <- df[df$grp == grpvar, c(dv, names(df)[4:7], "sort")]
   effDF <- effDF[!duplicated(effDF), ]
   effDF <- na.omit(effDF)
-  if(dv == "RMSE"){
-    effDF$efficiency <- round(10/(effDF$elapsedTime + effDF[, dv]^2), digits = 3)
-  } else{
-    effDF$efficiency <- effDF[, "sort"] / effDF$elapsedTime
+  if (dv == "RMSE") {
+    effDF$efficiency <- round(10/(effDF$elapsedTime + effDF[, 
+                                                            dv]^2), digits = 3)
   }
-  fastMethods <-effDF$method[order(-effDF$efficiency)][1:n]
-  slowMethods <-effDF$method[order(effDF$efficiency)][1:n]
+  else {
+    effDF$efficiency <- effDF[, "sort"]/effDF$elapsedTime
+  }
+  fastMethods <- effDF$method[order(-effDF$efficiency)][1:n]
+  slowMethods <- effDF$method[order(effDF$efficiency)][1:n]
   effDF[, "sort"] <- NULL
   row.names(effDF) <- NULL
-  #
+  
+  ## Return all the metrics necessary.
+  
   TrainResults <- list(modSuc = modSuc, modFail = modFail, 
-                       topMetric = topMetric, badMetric = badMetric,
-                       worstMethod = worstMethod, 
-                       bestMethod = bestMethod,
-                       fastMethods = fastMethods,
-                       slowMethods = slowMethods,
+                       topMetric = topMetric$maxdv, badMetric = badMetric$maxdv, worstMethod = badMetric$method, 
+                       bestMethod = topMetric$method, fastMethods = fastMethods, slowMethods = slowMethods, 
                        efficiencyResults = effDF)
   return(TrainResults)
 }
