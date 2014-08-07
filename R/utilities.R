@@ -130,7 +130,6 @@ modSearchResults <- function (df, n = 5)
 {
   ## Define the metric to be used in order to determine the 
   ## best-performing models.
-  
   n <- ifelse(n < length(unique(df$method)), n, length(unique(df$method)))
   if (names(df)[1] == "RMSE") {
     dv <- "RMSE"
@@ -154,9 +153,13 @@ modSearchResults <- function (df, n = 5)
   
   ## Calculate the performance of each individual model and
   ## rank them by that performance.
+  teststats$method <- as.character(teststats$method)
+  teststats$grp <- NULL
+  names(teststats)[names(teststats) == dv] <- "maxdv"
   
-  eval(parse(text=paste("temp <- ddply(teststats, .(method), summarize,
-                        maxdv = max(", dv, ", na.rm=TRUE))", sep="")))
+  eval(parse(text=paste("temp <- aggregate(teststats, by=list(teststats$method), 
+                        FUN=max, na.rm=TRUE)", sep="")))
+  temp <- temp[,match(c("method", "maxdv"), names(temp))]
   
   topMetric <- temp[is.finite(temp$maxdv),]
   badMetric <- temp[is.finite(temp$maxdv),]
