@@ -17,60 +17,16 @@ out <- buildModels(methodList = c("knn", "glm", "nb", "lda", "ctree"),
 
 # ensemble we will
 
-out.ens <- caretEnsemble(out)
+outEns <- caretEnsemble(out)
 
-ROCtest(out.ens)
+res1 <- ROCtest(outEns)
 
-if(missing(testdata)){
-  yhats <- probExtract(mod)
-  if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-  mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2)
-  a <- mroc$auc[1]
-  thresh <- coords.roc(mroc, x="best")[1]
-  cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
-                        reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-  myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
-                 rarepercent=cm$byClass["Neg Pred Value"], 
-                 falsepositive=1 - cm$byClass["Neg Pred Value"], 
-                 rocobj=mroc,
-                 modtype = class(mod), 
-                 modcall = paste(mod$call), datatype="train")
-  return(myROC)
-} 
+res2t <- ROCtest(outEns, testdata = modeldat$testdata)
 
 
-yhats <- probExtract(mod, testdata = testdata)
-if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
-a <- mroc$auc[1]
-thresh <- coords(mroc, x="best")[1]
-cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
-                      reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
-               rarepercent=cm$byClass["Neg Pred Value"], 
-               falsepositive=1 - cm$byClass["Neg Pred Value"], 
-               rocobj=mroc,
-               modtype = class(mod), 
-               modcall = paste(mod$call), datatype="test")
-return(myROC)
+outEns$metric <- "ROC"
 
-# check functions with different types of levels
-
-ROCtest(out.ens)@confusematrix
-
-confusionMatrix(reclassProb(yhats = yhats, thresh =0.1), 
-                reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-
-mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=3)
-a <- mroc$auc[1]
-t <- coords.roc(mroc, x="best")[1]
-
-confusionMatrix(reclassProb(yhats = yhats, thresh =t), 
-                reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
+MA1 <- modAcc(outEns, datatype = c("test", "train"), testdata = modeldat$testdata)
+testdf1 <- dfExtract(modAcc(outEns, datatype = c("test", "train"), testdata = modeldat$testdata))
 
 
-confusionMatrix(reclassProb(yhats = yhats, thresh =t), 
-                reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-
-
-cm <- confuse_mat(test, t)

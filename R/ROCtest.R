@@ -200,7 +200,7 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
-                   rocobj=mroc,
+                   rocobj= mroc,
                    modtype = names(mod$models), 
                    modcall = "", datatype="train")
     return(myROC)
@@ -218,15 +218,15 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     # end error handling
     yhats <- probExtract(mod, testdata = testdata)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
+    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2)
     a <- mroc$auc[1]
-    modThresh <- coords(mroc, x="best")[1]
+    modThresh <- coords.roc(mroc, x="best")[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
-                   rocobj=mroc,
+                   rocobj= mroc,
                    modtype = names(mod$models), 
                    modcall = "", datatype="train")
     return(myROC)
