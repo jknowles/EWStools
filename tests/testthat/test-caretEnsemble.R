@@ -19,6 +19,40 @@ out <- buildModels(methodList = c("knn", "glm", "nb", "lda", "ctree"),
 
 out.ens <- caretEnsemble(out)
 
+ROCtest(out.ens)
+
+if(missing(testdata)){
+  yhats <- probExtract(mod)
+  if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
+  mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2)
+  a <- mroc$auc[1]
+  thresh <- coords.roc(mroc, x="best")[1]
+  cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
+                        reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
+  myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+                 rarepercent=cm$byClass["Neg Pred Value"], 
+                 falsepositive=1 - cm$byClass["Neg Pred Value"], 
+                 rocobj=mroc,
+                 modtype = class(mod), 
+                 modcall = paste(mod$call), datatype="train")
+  return(myROC)
+} 
+
+
+yhats <- probExtract(mod, testdata = testdata)
+if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
+mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
+a <- mroc$auc[1]
+thresh <- coords(mroc, x="best")[1]
+cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
+                      reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
+myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
+               rarepercent=cm$byClass["Neg Pred Value"], 
+               falsepositive=1 - cm$byClass["Neg Pred Value"], 
+               rocobj=mroc,
+               modtype = class(mod), 
+               modcall = paste(mod$call), datatype="test")
+return(myROC)
 
 # check functions with different types of levels
 

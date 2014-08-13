@@ -194,15 +194,15 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
     mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2)
     a <- mroc$auc[1]
-    thresh <- coords.roc(mroc, x="best", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
+    modThresh <- coords.roc(mroc, x="best")[1]
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-    myROC <- ROCit(thresh=t, auc=a, confusematrix=cm, 
+    myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
                    rocobj=mroc,
-                   modtype = class(mod), 
-                   modcall = paste(mod$call), datatype="train")
+                   modtype = names(mod$models), 
+                   modcall = "", datatype="train")
     return(myROC)
   }
   else if(!missing(testdata)){
@@ -220,15 +220,15 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
     mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
     a <- mroc$auc[1]
-    thresh <- coords(mroc, x="best")[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
+    modThresh <- coords(mroc, x="best")[1]
+    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-    myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
+    myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
                    rocobj=mroc,
-                   modtype = class(mod), 
-                   modcall = paste(mod$call), datatype="test")
+                   modtype = names(mod$models), 
+                   modcall = "", datatype="train")
     return(myROC)
   }
 }
