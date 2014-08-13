@@ -220,7 +220,7 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
     mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
     a <- mroc$auc[1]
-    thresh <- coords.roc(mroc, x="best", ...)[1]
+    thresh <- coords(mroc, x="best")[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
