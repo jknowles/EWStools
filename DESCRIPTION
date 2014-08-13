@@ -15,7 +15,8 @@ Depends:
     R (>= 3.0),
     pROC,
     caret,
-    methods
+    methods,
+    e1071
 Suggests:
     testthat,
     MASS, 

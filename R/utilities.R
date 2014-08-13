@@ -213,7 +213,7 @@ probExtract <- function(mod, testdata = NULL){
     } else {
       yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds)
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
-                          .outcome = mod$models[[1]]$trainingData$.outcome)
+                          .outcome = testdata$class)
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
       return(yhats)
     }

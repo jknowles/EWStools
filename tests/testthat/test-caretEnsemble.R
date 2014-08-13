@@ -17,26 +17,16 @@ out <- buildModels(methodList = c("knn", "glm", "nb", "lda", "ctree"),
 
 # ensemble we will
 
-out.ens <- caretEnsemble(out)
+outEns <- caretEnsemble(out)
+
+res1 <- ROCtest(outEns)
+
+res2t <- ROCtest(outEns, testdata = modeldat$testdata)
 
 
-# check functions with different types of levels
+outEns$metric <- "ROC"
 
-ROCtest(out.ens)@confusematrix
-
-confusionMatrix(reclassProb(yhats = yhats, thresh =0.1), 
-                reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-
-mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=3)
-a <- mroc$auc[1]
-t <- coords.roc(mroc, x="best")[1]
-
-confusionMatrix(reclassProb(yhats = yhats, thresh =t), 
-                reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
+MA1 <- modAcc(outEns, datatype = c("test", "train"), testdata = modeldat$testdata)
+testdf1 <- dfExtract(modAcc(outEns, datatype = c("test", "train"), testdata = modeldat$testdata))
 
 
-confusionMatrix(reclassProb(yhats = yhats, thresh =t), 
-                reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
-
-
-cm <- confuse_mat(test, t)

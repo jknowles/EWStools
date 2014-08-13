@@ -254,8 +254,8 @@ dfExtractROC <- function(mod){
                             spec = smooth(mod$summaryTr@rocobj)$specificities, 
                             grp="train", 
                             auc = mod$summaryTr@auc,
-                            method = mod$method, 
                             aucSD = mod$metricSD,
+                            method = ifelse(is.null(mod$method), NA, mod$method),
                             elapsedTime = ifelse(is.null(mod$time), NA, mod$time), 
                             check.rows=FALSE, 
                             row.names=NULL)
@@ -266,7 +266,7 @@ dfExtractROC <- function(mod){
                             grp="test",
                             auc  = mod$summaryTe@auc,
                             aucSD = mod$metricSD,
-                            method = mod$method, 
+                            method = ifelse(is.null(mod$method), NA, mod$method), 
                             elapsedTime =ifelse(is.null(mod$time), NA, mod$time), 
                             check.rows=FALSE, 
                             row.names=NULL)
