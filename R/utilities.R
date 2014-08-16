@@ -69,7 +69,7 @@ dissimMethod <- function(methods, k, distancemethod, n,
   } else if(what == "tags"){
     data(caretTags)
     sub <- caretTags[caretTags$method %in% methods, ]
-    sub$cluster <- cuts
+    sub$cluster <- cutree(clustObj, k = k)
     method.sample <- sub[ 
       unlist( 
         tapply( 
