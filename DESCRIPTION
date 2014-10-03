@@ -10,7 +10,7 @@ Maintainer: Jared E. Knowles <jknowles@gmail.com>
 Description: A number of convenience functions for developing early warning
     models in education using a predictive modeling framework. Includes methods
     for ROC testing, model search, and post-prediction model adjustment.
-License: GPL-2
+License: GPL-3
 Depends:
     R (>= 3.0),
     pROC,
