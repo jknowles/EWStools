@@ -3,3 +3,4 @@
 todo.txt
 .gitignore
 LICENSE
+^\.travis\.yml$
