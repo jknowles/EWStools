@@ -1,12 +1,5 @@
-# 
-# context("Test building of data")
-# 
 
-## Test splitData
-## Test buildModelMatrix
-## Test assembleData
-## Test omitLinearCombos
-
+library(EWStools)
 set.seed(442)
 library(caret)
 full <- twoClassSim(n = 1500, intercept = -8, linearVars = 1, 

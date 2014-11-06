@@ -1,5 +1,5 @@
 # Set up a classification test
-
+library(EWStools)
 set.seed(442)
 library(caret)
 train <- twoClassSim(n = 500, intercept = -8, linearVars = 1, 
