@@ -1,21 +1,15 @@
 # Tests for EWStools for regression
 # Build data
 
-library(mlbench); library(rpart)
-data(BostonHousing)
-
-BostonHousing <- rbind(BostonHousing, BostonHousing)
-
-
-
-dat <- assembleData(BostonHousing, class = "medv", p = 0.7)
+data(EWStestData)
+dat <- assembleData(fulldat[sample(1:nrow(fulldat), 500),], class = "assessmentRead", 
+                    p = 0.7, classification=FALSE)
 
 context("Extract accuracy from a regular caret object")
-
 ctrl <- trainControl(method = "cv", repeats = 5)
 myFit <- train(x = dat$traindata$preds, y = dat$traindata$class,
                   "rpart",
-                  tuneLength = 9, trControl = ctrl)
+                  tuneLength = 5, trControl = ctrl)
 
 
 test_that("RMSEtest.train works as expected", {
@@ -49,14 +43,7 @@ test_that("modTest throws errors with ROC metric misspecified", {
                     modelKeep = FALSE, length = 12, fitControl = ctrl, metric = "RMSE"), 
             "list")
 })
-
-
-
-#out <- buildRMSEFrame(methods = "rpart")
-
-
 # buildFrame test
-
 context("Test that buildRMSEframe works")
 
 test_that("corect frame is built", {
@@ -68,8 +55,6 @@ test_that("corect frame is built", {
 # dfExtract functions
 
 context("Test that RMSE frames are extracted from RMSE modAccs")
-
-
 mod1 <- modAcc(myFit, datatype = c("train", "test"), testdata = dat$testdata)
 mod2 <- modAcc(myFit, datatype = c("train"), testdata = dat$testdata)
 mod3 <- modAcc(myFit, datatype = c("test"), testdata = dat$testdata)
@@ -100,7 +85,8 @@ test_that("Train and test metrics not identical", {
 context("Test that modSearch functions for metric RMSE")
 
 ctrl <- trainControl(method = "cv", repeats = 5)
-dat <- assembleData(BostonHousing, class = "medv", p = 0.7)
+dat <- assembleData(fulldat[sample(1:nrow(fulldat), 500),], class = "assessmentRead", 
+                    p = 0.7, classification=FALSE)
 
 resultSet1 <- modSearch(methods = c("knn", "glm", "rpart", "lm"), 
                         datatype = c("train", "test"), 
@@ -154,13 +140,3 @@ test_that("Errors are thrown when objects are misspecified", {
                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
                          metric = "ROC"))
 })
-
-
- 
-# modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
-#         modelKeep = FALSE, length = 12, fitControl = ctrl, metric = "RMSE")
-# 
-# modTest(method = "rpart", datatype = c("train", "test"), traindata = dat$traindata, 
-#         testdata = dat$testdata, modelKeep = FALSE, 
-#         length = 12, fitControl = ctrl, metric = "RMSE")
-# 
