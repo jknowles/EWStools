@@ -59,7 +59,8 @@ buildModelMatrix <- function(data, predvars = NULL, keepNA = FALSE){
   }
   findFac <- function(x) !is.numeric(x) # quick function to find non-numeric columns
   # convert non-numeric columns to factors
-  data[, sapply(data, findFac)] <- lapply(data[, sapply(data, findFac)], factor)
+  idx <- sapply(data, findFac)
+  data[idx] <- lapply(data[idx], as.factor)
   FORM <-  paste0("~ 0 + ", paste0(predvars, collapse = " + "))
   FORM <- as.formula(FORM)
   if(keepNA == FALSE){
