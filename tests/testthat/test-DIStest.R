@@ -25,14 +25,9 @@ dat <- assembleData(rbind(train,test), class = "Class", p = 0.8)
 
 
 test_that("DIStest.train works as expected", {
-  expect_error(DIStest.train(myFit))
   expect_is(EWStools:::DIStest.train(myFit), "DISit")
   expect_identical(EWStools:::DIStest.train(myFit), DIStest(myFit))
-})
-
-test_that("DIStest accepts testdata", {
   expect_is(DIStest(myFit, testdata = dat$testdata), "DISit")
-  
 })
 
 
