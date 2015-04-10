@@ -9,6 +9,13 @@ r_packages:
   - klaR
   - party
   - e1071
+  - nnet
+  - mvtnorm
+  - pROC
+  - zoo
+  - rpart
+  - strucchange
+  - modeltools
 
 notifications:
   email:
