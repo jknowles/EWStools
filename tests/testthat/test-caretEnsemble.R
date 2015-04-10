@@ -1,7 +1,5 @@
 # Test-caretEnsemble
-
 library(caretEnsemble)
-library(EWStools)
 data(EWStestData)
 
 test_that("ROCtests work for caretEnsembles", {

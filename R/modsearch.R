@@ -326,8 +326,8 @@ dfExtractROC <- function(mod){
 ##' @export
 modTest <- function(method, datatype=c("train", "test"), traindata, 
                     testdata=NULL, 
-                      modelKeep=FALSE, length, fitControl = NA, 
-                    metric = "ROC", cores = NA, ...){
+                      modelKeep=FALSE, length = NULL, fitControl = NA, 
+                    metric = NULL, cores = NA, ...){
   args <- eval(substitute(alist(...)))
   args <- lapply(args, eval, parent.frame())
     if("omit" %in% names(args)){
@@ -370,6 +370,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
                    "y" = quote(traindata$class))
   if(!is.null(names(args))){
     callList <- c(callList, args)
+    callList <- Filter(Negate(is.null), callList)
   }
     fit <- tryCatch({
       do.call("train", callList)},

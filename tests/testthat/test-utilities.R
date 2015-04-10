@@ -39,21 +39,21 @@
 
 
 # context("Test confidence interval")
-
-set.seed(2356)
-
-x <- rnorm(10000)
-
-ci(x, scale = 1)
-ci(x, scale = 2)
-
-x <- runif(1000, min = -3, max = 3)
-
-ci(x, scale = 1)
-ci(x, scale = 2)
-
-
-# trainStrip
+# 
+# set.seed(2356)
+# 
+# x <- rnorm(10000)
+# 
+# ci(x, scale = 1)
+# ci(x, scale = 2)
+# 
+# x <- runif(1000, min = -3, max = 3)
+# 
+# ci(x, scale = 1)
+# ci(x, scale = 2)
+# 
+# 
+# # trainStrip
 # 
 # library(caret)
 # train1 <- twoClassSim(n = 50, intercept = -8, linearVars = 1, 
