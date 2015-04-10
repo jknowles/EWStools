@@ -16,7 +16,6 @@ myFit <- train(x = dat$traindata$preds, y = dat$traindata$class,
 
 
 test_that("RMSEtest.train works as expected", {
-  expect_error(RMSEtest.train(myFit))
   expect_is(EWStools:::RMSEtest.train(myFit), "RMSEit")
   expect_identical(EWStools:::RMSEtest.train(myFit), RMSEtest(myFit))
 })
