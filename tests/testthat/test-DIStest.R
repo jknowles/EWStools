@@ -110,18 +110,27 @@ context("Test that modSearch functions for metric Dist")
 
 ctrl <- trainControl(method = "cv", repeats = 5)
 
+resultSet <- modSearch(methods = c("knn", "glm", "rpart"), 
+                       datatype = c("train", "test"), 
+                       traindata = dat$traindata, 
+                       testdata = dat$testdata, modelKeep = FALSE,
+                       length = 6, fitControl = ctrl, 
+                       metric = "ROC")
+
+
 resultSet1 <- modSearch(methods = c("knn", "glm", "rpart", "ctree"), 
                         datatype = c("train", "test"), 
                         traindata = dat$traindata, 
-                        testdata = dat$testdata, 
+                        testdata = dat$testdata, modelKeep = FALSE,
                         length = 6, fitControl = ctrl, 
-                        metric = "Dist", maximize = FALSE)
+                        metric = "Dist")
 
 
 resultSet1a <- modSearch(methods = c("knn", "glm", "rpart", "ctree"), 
                          datatype = c("train"), 
-                         traindata = dat$traindata, 
-                         testdata = dat$testdata, 
+                         traindata = list(preds = dat$traindata$preds, 
+                                          class = dat$traindata$class), 
+                         modelKeep = FALSE,
                          length = 6, fitControl = ctrl, 
                          metric = "Dist", maximize = FALSE)
 
