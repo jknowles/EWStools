@@ -25,14 +25,9 @@ dat <- assembleData(rbind(train,test), class = "Class", p = 0.8)
 
 
 test_that("DIStest.train works as expected", {
-  expect_error(DIStest.train(myFit))
   expect_is(EWStools:::DIStest.train(myFit), "DISit")
   expect_identical(EWStools:::DIStest.train(myFit), DIStest(myFit))
-})
-
-test_that("DIStest accepts testdata", {
   expect_is(DIStest(myFit, testdata = dat$testdata), "DISit")
-  
 })
 
 
@@ -49,9 +44,9 @@ test_that("modAcc accepts datatype values", {
 context("Testing modTest")
 
 test_that("modTest throws errors with RMSE metric misspecified", {
-  expect_error(modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
+  expect_error(modTest(method = "knn", datatype = "train", traindata = dat$traindata, 
                        modelKeep = FALSE, length = 12, fitControl = ctrl, metric = "RMSE"))
-  expect_is(modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
+  expect_is(modTest(method = "knn", datatype = "train", traindata = dat$traindata, 
                     modelKeep = FALSE, length = 12, fitControl = ctrl, 
                     metric = "Dist", maximize = FALSE), 
             "list")
@@ -59,11 +54,11 @@ test_that("modTest throws errors with RMSE metric misspecified", {
 
 
 test_that("modTest accepts maximize as an argument", {
-  expect_is(modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
+  expect_is(modTest(method = "knn", datatype = "train", traindata = dat$traindata, 
                     modelKeep = FALSE, length = 12, fitControl = ctrl, 
                     metric = "Dist", maximize = FALSE), 
             "list")
-  expect_is(modTest(method = "rpart", datatype = "train", traindata = dat$traindata, 
+  expect_is(modTest(method = "knn", datatype = "train", traindata = dat$traindata, 
                     modelKeep = FALSE, length = 12, fitControl = ctrl, 
                     metric = "Dist", maximize = TRUE), 
             "list")
@@ -74,8 +69,8 @@ test_that("modTest accepts maximize as an argument", {
 context("Test that buildDISframe works")
 
 test_that("corect frame is built", {
-  expect_equal(nrow(EWStools:::buildDISFrame(methods = "rpart")), 1)
-  expect_equal(nrow(EWStools:::buildDISFrame(methods = c("rpart", "knn", "glm"))), 3)
+  expect_equal(nrow(EWStools:::buildDISFrame(methods = "knn")), 1)
+  expect_equal(nrow(EWStools:::buildDISFrame(methods = c("knn", "knn", "glm"))), 3)
   expect_equal(length(EWStools:::buildDISFrame(methods = "car")), 7)
 })
 
@@ -113,35 +108,51 @@ test_that("Train and test metrics not identical", {
 # modSearch passes
 context("Test that modSearch functions for metric Dist")
 
-ctrl <- trainControl(method = "cv", repeats = 5)
+ctrl <- trainControl(method = "cv", 
+                     number = 3, classProbs = TRUE, 
+                     summaryFunction = twoClassSummary)
 
-resultSet1 <- modSearch(methods = c("knn", "glm", "rpart", "ctree"), 
+ctrl2 <- trainControl(method = "cv", 
+                     number = 3, classProbs = TRUE, 
+                     summaryFunction = fourStatsSummary)
+
+
+resultSet <- modSearch(methods = c("knn", "glm", "ctree"), 
+                       datatype = c("train", "test"), 
+                       traindata = dat$traindata, 
+                       testdata = dat$testdata, modelKeep = FALSE,
+                       length = 6, fitControl = ctrl, 
+                       metric = "ROC")
+
+
+resultSet1 <- modSearch(methods = c("knn", "glm", "ctree"), 
                         datatype = c("train", "test"), 
                         traindata = dat$traindata, 
-                        testdata = dat$testdata, 
-                        length = 6, fitControl = ctrl, 
-                        metric = "Dist", maximize = FALSE)
+                        testdata = dat$testdata, modelKeep = FALSE,
+                        length = 6, fitControl = ctrl2, 
+                        metric = "Dist")
 
 
-resultSet1a <- modSearch(methods = c("knn", "glm", "rpart", "ctree"), 
+resultSet1a <- modSearch(methods = c("knn", "glm", "ctree"), 
                          datatype = c("train"), 
-                         traindata = dat$traindata, 
-                         testdata = dat$testdata, 
-                         length = 6, fitControl = ctrl, 
+                         traindata = list(preds = dat$traindata$preds, 
+                                          class = dat$traindata$class), 
+                         modelKeep = FALSE,
+                         length = 6, fitControl = ctrl2, 
                          metric = "Dist", maximize = FALSE)
 
 
-resultSet1b <- modSearch(methods = c("knn", "glm", "rpart", "ctree"), 
+resultSet1b <- modSearch(methods = c("knn", "glm", "ctree"), 
                          datatype = c("test"), 
                          traindata = dat$traindata, 
                          testdata = dat$testdata, 
-                         length = 6, fitControl = ctrl, 
+                         length = 6, fitControl = ctrl2, 
                          metric = "Dist", maximize = FALSE)
 
 test_that("Results are correctly formatted", {
-  expect_equal(nrow(resultSet1), 8)
-  expect_equal(nrow(resultSet1a), 4)
-  expect_equal(nrow(resultSet1b), 4)
+  expect_equal(nrow(resultSet1), 6)
+  expect_equal(nrow(resultSet1a), 3)
+  expect_equal(nrow(resultSet1b), 3)
   expect_equal(length(resultSet1b), 7)
   expect_false(identical(resultSet1a, resultSet1b))
   expect_false(identical(resultSet1, resultSet1b))
@@ -154,79 +165,10 @@ test_that("Results are correctly formatted", {
 
 
 test_that("Errors are thrown when objects are misspecified", {
-  expect_error(modSearch(methods = c("knn", "glm", "rpart", "lm"), 
+  expect_error(modSearch(methods = c("knn", "glm", "lm"), 
                          datatype = c("test"), 
                          traindata = dat$traindata, 
                          testdata = dat$testdata, 
                          modelKeep = FALSE, length = 6, fitControl = ctrl, 
                          metric = "MAD"))
-  expect_error(modSearch(methods = c("knn", "glm", "rpart", "lm"), 
-                           datatype = c("test"), 
-                           traindata = dat$traindata, 
-                           testdata = dat$testdata, 
-                           modelKeep = FALSE, length = 6, fitControl = ctrl, 
-                           metric = "ROC"))
 })
-
-
-# set.seed(442)
-# library(caret)
-# train <- twoClassSim(n = 500, intercept = -8, linearVars = 1, 
-#                      noiseVars = 10, corrVars = 2, corrValue = 0.6)
-# test <- twoClassSim(n = 1000, intercept = -7, linearVars = 1, 
-#                     noiseVars = 10, corrVars = 2, corrValue = 0.6)
-# 
-# 
-# ctrl <- trainControl(method = "cv", 
-#                      number = 3, classProbs = TRUE, 
-#                      summaryFunction = fourStatsSummary)
-# 
-# fullModel <- train(Class ~ ., data = train, 
-#                    method = "knn", 
-#                    preProc = c("center", "scale"), 
-#                    tuneLength = 8, 
-#                    metric = "Dist", maximize = FALSE,
-#                    trControl = ctrl)
-# 
-# 
-# 
-# DIStest(fullModel)@confusematrix
-# dist(DIStest(fullModel)@coords)
-# 
-# fullModel <- train(x = train[, 1:18], y = train[, 19], 
-#                    method = "lda2", 
-#                    # preProc = c("center", "scale"), 
-#                    tuneLength = 8, 
-#                    metric = "Dist", maximize = FALSE,
-#                    trControl = ctrl)
-# 
-# DIStest(fullModel, testdata = list(preds = test[, 1:18], class = test[, 19]))
-# 
-# dfExtract(modAcc(fullModel, datatype = c("test", "train"), 
-#                  testdata = list(preds = test[, 1:18], class = test[, 19])))
-# 
-# EWStools:::probExtract(fullModel, testdata = list(preds = test[, 1:18], class = test[, 19]))
-# yhats <- predict(fullModel, newdata = test, type = "prob")
-# 
-# fullModel <- train(Class ~ ., data = train, 
-#                    method = glmDist, 
-#                    preProc = c("center", "scale"), 
-#                    tuneLength = 8, 
-#                    metric = "Dist", maximize = FALSE,
-#                    trControl = ctrl)
-# 
-# 
-# 
-# 
-# 
-# 
-# dfExtract(test1)
-# 
-# resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"), 
-#                        datatype = c("train", "test"), 
-#                        traindata = list(preds = train[, -19], class = train[, 19]), 
-#                        testdata = list(preds = test[, -19], class = test[, 19]), 
-#                        modelKeep = FALSE, length = 6, fitControl = ctrl, 
-#                        metric = "Dist")
-# 
-# 

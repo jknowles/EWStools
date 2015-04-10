@@ -24,9 +24,9 @@ construct using the `twoClassSim` function in the `caret` package:
 ```{r builddata}
 set.seed(442)
 library(caret)
-train <- twoClassSim(n = 1000, intercept = -8, linearVars = 3, 
+trainD <- twoClassSim(n = 1000, intercept = -8, linearVars = 3, 
                         noiseVars = 10, corrVars = 4, corrValue = 0.6)
-test <- twoClassSim(n = 1500, intercept = -7, linearVars = 3, 
+testD <- twoClassSim(n = 1500, intercept = -7, linearVars = 3, 
                        noiseVars = 10, corrVars = 4, corrValue = 0.6)
 
 ```
@@ -34,8 +34,8 @@ test <- twoClassSim(n = 1500, intercept = -7, linearVars = 3,
 Let's see what this produces
 
 ```{r inspectdata}
-head(train[, c(1:5, 20:23)])
-table(train$Class)
+head(trainD[, c(1:5, 20:23)])
+table(trainD$Class)
 ```
 
 Our training data has an imbalanced class structure and 22 predictors that are scaled 
@@ -45,8 +45,8 @@ A key thing to note is that the `train` and `test` data have the exact same
 variable names and scales:
 
 ```{r compare}
-names(train)
-names(test)
+names(trainD)
+names(testD)
 ```
 
 Now let's build a model:
@@ -55,7 +55,7 @@ Now let's build a model:
 ctrl <- trainControl(method = "cv", classProbs = TRUE, 
                      summaryFunction = twoClassSummary)
 
-fullModel <- train(Class ~ ., data = train, 
+fullModel <- train(Class ~ ., data = trainD, 
                    method = "knn", 
                    preProc = c("center", "scale"), 
                    tuneLength = 8, 
@@ -78,8 +78,8 @@ and test data. `EWStools` makes this easy:
 library(EWStools)
 
 mod.out <- modTest("knn", datatype=c("train", "test"),
-                     traindata = list(preds = train[, -23], class = train[, 23]),
-                     testdata = list(preds = test[, -23], class = test[, 23]), 
+                     traindata = list(preds = trainD[, -23], class = trainD[, 23]),
+                     testdata = list(preds = testD[, -23], class = testD[, 23]), 
                       modelKeep=FALSE, length = 5, fitControl = ctrl, 
                      metric = "ROC")
 
@@ -100,8 +100,8 @@ storing them), the user may:
 
 ```{r}
 mod.out <- modSearch(methods = c("glm", "knn"), datatype=c("train", "test"),
-                     traindata = list(preds = train[, -23], class = train[, 23]),
-                     testdata = list(preds = test[, -23], class = test[, 23]), 
+                     traindata = list(preds = trainD[, -23], class = trainD[, 23]),
+                     testdata = list(preds = testD[, -23], class = testD[, 23]), 
                       modelKeep=FALSE, length = 5, fitControl = ctrl, 
                      metric = "ROC")
 ```
@@ -135,8 +135,8 @@ the same function to evaluate performance on the test data using a named list of
 new data:
 
 ```{r roctesttestdata}
-test2 <- ROCtest(fullModel, testdata = list(preds = test[, -23], 
-                                            class = test[, "Class"]))
+test2 <- ROCtest(fullModel, testdata = list(preds = testD[, -23], 
+                                            class = testD[, "Class"]))
 
 print(test2)
 ```
@@ -149,8 +149,8 @@ if we want to compare many models?
 
 ```{r modacc}
 test3 <- modAcc(fullModel, datatype = c("train","test"), 
-                testdata = list(preds = test[, 1:22], 
-                                                     class = test[, 23]))
+                testdata = list(preds = testD[, 1:22], 
+                                                     class = testD[, 23]))
 
 summary(dfExtract(test3))
 ```
@@ -164,7 +164,7 @@ can certainly produce models using a glm, we can also compare `glm` objects dire
 
 
 ```{r glmexamp}
-glmModel <- glm(Class ~ . , data=train, family = binomial)
+glmModel <- glm(Class ~ . , data=trainD, family = binomial)
 testGLM <- ROCtest(glmModel)
 ```
 
@@ -177,8 +177,8 @@ And, we can use this to automate our process of inspecting the performance on
 test data as well:
 
 ```{r glmtestdata}
-testGLM2 <- ROCtest(glmModel, testdata = list(preds = test[, -23], 
-                                            class = test[, "Class"]))
+testGLM2 <- ROCtest(glmModel, testdata = list(preds = testD[, -23], 
+                                            class = testD[, "Class"]))
 
 print(testGLM2)
 ```
@@ -188,8 +188,8 @@ And, we can extract results and generate dataframes of the performance profiles 
 
 ```{r glmmodacc}
 testGLM3 <- modAcc(glmModel, datatype =c("train", "test"), 
-                   testdata = list(preds = test[, 1:22], 
-                                                     class = test[, 23]))
+                   testdata = list(preds = testD[, 1:22], 
+                                                     class = testD[, 23]))
 
 summary(dfExtract(testGLM3))
 ```

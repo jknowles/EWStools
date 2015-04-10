@@ -1,8 +1,5 @@
 # Test-caretEnsemble
-
-#install_github("jknowles/caretEnsemble")
 library(caretEnsemble)
-library(EWStools)
 data(EWStestData)
 
 test_that("ROCtests work for caretEnsembles", {

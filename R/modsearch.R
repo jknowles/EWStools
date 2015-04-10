@@ -16,7 +16,7 @@
 ##' }
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function for ROC objects.
 ##' @export
-modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE, ...){
+modAcc <- function(fit, datatype = c("test", "train"), testdata = NULL, modelKeep = FALSE, ...){
   if (missing(modelKeep)){
     modelKeep <- FALSE
   }
@@ -250,8 +250,8 @@ dfExtract <- function(mod){
 ##' @export
 dfExtractROC <- function(mod){
   if(class(mod$summaryTr) != "NULL"){
-      newdatB <- data.frame(sens = smooth(mod$summaryTr@rocobj)$sensitivities, 
-                            spec = smooth(mod$summaryTr@rocobj)$specificities, 
+      newdatB <- data.frame(sens = as.numeric(mod$summaryTr@rocobj$sensitivities), 
+                            spec = as.numeric(mod$summaryTr@rocobj$specificities), 
                             grp="train", 
                             auc = mod$summaryTr@auc,
                             aucSD = mod$metricSD,
@@ -261,8 +261,8 @@ dfExtractROC <- function(mod){
                             row.names=NULL)
       }
     if(class(mod$summaryTe) != "NULL"){
-      newdatA <- data.frame(sens = smooth(mod$summaryTe@rocobj)$sensitivities, 
-                            spec = smooth(mod$summaryTe@rocobj)$specificities, 
+      newdatA <- data.frame(sens = as.numeric(mod$summaryTe@rocobj$sensitivities), 
+                            spec = as.numeric(mod$summaryTe@rocobj$specificities), 
                             grp="test",
                             auc  = mod$summaryTe@auc,
                             aucSD = mod$metricSD,
@@ -324,11 +324,12 @@ dfExtractROC <- function(mod){
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' For some model types linear combos of predictors may be omitted.
 ##' @export
-modTest <- function(method, datatype=c("train", "test"), traindata, testdata, 
-                      modelKeep=FALSE, length, fitControl = NA, 
-                    metric = "ROC", cores = NA, ...){
-  
-    args <- as.list(substitute(list(...)))
+modTest <- function(method, datatype=c("train", "test"), traindata, 
+                    testdata=NULL, 
+                      modelKeep=FALSE, length = NULL, fitControl = NA, 
+                    metric = NULL, cores = NA, ...){
+  args <- eval(substitute(alist(...)))
+  args <- lapply(args, eval, parent.frame())
     if("omit" %in% names(args)){
       stop("Cannot omit an index of variables. Instead see caret:::findLinearCombos")
     }
@@ -360,11 +361,20 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
   } else{
     keep <-  1:ncol(traindata$preds)
   }
+  
+  callList <- list("method" = method, 
+                  "trControl" = quote(fitControl), 
+                   "tuneLength" = length, 
+                   "metric" = metric, 
+                   "x" = quote(traindata$preds[, keep]), 
+                   "y" = quote(traindata$class))
+  if(!is.null(names(args))){
+    callList <- c(callList, args)
+    callList <- Filter(Negate(is.null), callList)
+  }
     fit <- tryCatch({
-      train(traindata$preds[, keep], traindata$class,
-            method=method,
-            trControl=fitControl,
-            tuneLength = length, metric= metric, ...)}, error = function(e) 
+      do.call("train", callList)},
+       error = function(e) 
               message(paste0("Model failed to run: ", method)))
   # multicore
   if(!missing(cores) & !is.null(cores)){
@@ -377,10 +387,13 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     message(paste0("Model failed to run: ", method))
     
   } else if(class(fit) == "train"){
-      fitSum <- modAcc(fit, datatype = datatype, 
-                     testdata=list(preds = testdata$preds[, keep], 
-                                   class = testdata$class ), 
-                     modelKeep = modelKeep)
+    callList2 <- list("fit" = quote(fit), 
+                      "datatype" = datatype, 
+                      "testdata" = quote(list(preds = testdata$preds[, keep], 
+                                              class = testdata$class )),
+                      "modelKeep" = modelKeep)
+    
+    fitSum <- do.call(modAcc, callList2)
     } 
   return(fitSum)
 }
@@ -500,56 +513,33 @@ buildDISFrame <- function(methods){
 ##' 
 modSearch <- function(methods, ...){
   # parse ellipsis for modTest
-  args <- as.list(substitute(list(...)))[-1L]
+  args <- eval(substitute(alist(...)))
+  args <- lapply(args, eval, parent.frame())
   # sanitize arguments
   if(exists("metric", args)){
-    if(!is.character(args$metric)){ # consider using paste instead of print
-      metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 2))
-      args$metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 2))
-    } else {
       metric <- args$metric
-    }
-  } else {
+    } else {
     warning("No metric defined, default will be ROC")
     args$metric <- "ROC"
     metric <- "ROC"
-  }
-  if(exists("datatype", args)){
-    if(!is.character(args$datatype)){
-      datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 2))
-      args$datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 2))
-    } else {
-      datatype <- args$datatype
     }
-  } else {
+  if(exists("datatype", args)){
+      datatype <- args$datatype
+    } else {
     warning("Parameter datatype is undefined, default is training")
     args$datatype <- "train"
     datatype <- "train"
   }
   if(exists("length", args)){
-    if(!is.character(args$length)){
-      length <- do.call(paste, list(args$length), envir = parent.frame(n = 2))
-      args$length <- do.call(paste, list(args$length), envir = parent.frame(n = 2))
-      length <- as.numeric(length)
-      args$length <- as.numeric(args$length)
+    length <- args$length
     } else {
-      length <- args$length
-    }    
-  } else {
-    warning("Parameter length is undefined, default is 6 for tuneLength")
-    args$length <- 6
-    length <- 6
+    warning("Parameter length is undefined, default is 4 for tuneLength")
+    args$length <- 4
+    length <- 4
   }
   if(exists("cores", args)){
-    if(!is.character(args$cores)){
-      cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 2))
-      args$cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 2))
-      cores <- as.numeric(cores)
-      args$cores <- as.numeric(args$cores)
+    cores <- args$cores
     } else {
-      cores <- args$cores
-    }
-  } else {
     message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
     cores <- NULL
   }
@@ -578,13 +568,15 @@ modSearch <- function(methods, ...){
   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
   for(i in methods){
     p <- match(i, methods)
-    z<-list(method = i)
-    z<-c(z,args)
+    z <- list(method = i)
+    z <- c(z, args)
     fit <- try(do.call(modTest, z), silent = TRUE)
     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
     if(class(tmp) == "data.frame"){
-      ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
+      ModelFits <- ModelFits[ModelFits$method != i, ] 
+      ModelFits <- rbind(ModelFits, tmp)
+      rm(tmp)
     } else{
       ModelFits <- ModelFits
       message(paste(tmp, "failure for model type:", i, sep=" "))
@@ -594,82 +586,3 @@ modSearch <- function(methods, ...){
   ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
   return(ModelFits)
 }
-
-# ##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
-# ##' @description Used for generating the data to make good looking ROC curves of 
-# ##' training and test data.
-# ##' @param methods a list of \code{train} method names to generate the dataframe for
-# ##' @param ... additional arguments passed to \code{\link{modTest}}
-# ##' @return a \code{\link{data.frame}} with the following columns:
-# ##' \itemize{
-# ##' \item{sens - the sensitivities of the model at various thresholds}
-# ##' \item{spec - the specificities of the model at various thresholds}
-# ##' \item{grp - whether the model is using training or test data}
-# ##' \item{auc - the area under the curve}
-# ##' \item{method - the model method}
-# ##' \item{elapsedTime - the time reported for the model to run}
-# ##' }
-# ##' @note Currently the arguments passed to modSearch are evaluated in the parent frame. 
-# ##' This means that you cannot pass list elements or data.frame elements to the parameters 
-# ##' of modSearch that get passed along to \code{\link{modTest}} via \code{...}. 
-# ##' Instead, you need to declare them as separate variables in the parent 
-# ##' environment and save them there. 
-# ##' @details The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
-# ##' \code{\linkS4class{ROCit}} object
-# ##' @export
-# modSearch2 <- function(methods, datatype = c("train", "test"), traindata, 
-#                        testdata = NULL, modelKeep = FALSE, length = 6, 
-#                        fitControl, metric, cores = NULL, ...){
-#   # parse ellipsis for modTest
-#   args <- as.list(substitute(list(...)))[-1L]
-#   if(!missing(cores)){
-#     if(!is.numeric(cores)){
-#       stop("Cores must be numeric.")
-#     }
-#   } else {
-#     message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
-#     cores <- NULL
-#   }
-#   if(metric == "ROC"){
-#     if(length(datatype) > 1){
-#       ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
-#     } else{
-#       ModelFits <- buildROCcurveFrame(methods)
-#     }
-#   } else if(metric == "RMSE"){
-#     if(length(datatype) > 1){
-#       ModelFits <- rbind(buildRMSEFrame(methods), buildRMSEFrame(methods))
-#     } else {
-#       ModelFits <- buildRMSEFrame(methods)
-#     }
-#     
-#   } else if(metric == "Dist"){
-#     if(length(datatype) > 1){
-#       ModelFits <- rbind(buildDISFrame(methods), buildDISFrame(methods))
-#     } else {
-#       ModelFits <- buildDISFrame(methods)
-#     }
-#   } else{
-#     stop("No custom performance frame defined for metric")
-#   }
-#   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
-#   for(i in methods){
-#     z <- list(method = i, datatype = datatype, traindata = traindata, 
-#                   testdata = testdata, modelKeep = modelKeep, 
-#                   length = length, fitControl = fitControl, 
-#                   metric = metric, cores = cores)
-#     p <- match(i, methods)
-#     fit <- try(do.call(modTest, mget(z, envir=globalenv(), ifnotfound = z), quote = TRUE), silent = TRUE)
-#     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
-#     #
-#     if(class(tmp) == "data.frame"){
-#       ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
-#     } else{
-#       ModelFits <- ModelFits
-#       message(paste(tmp, "failure for model type:", i, sep=" "))
-#     }
-#     setTxtProgressBar(pb, p)      
-#   }
-#   ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
-#   return(ModelFits)
-# }
