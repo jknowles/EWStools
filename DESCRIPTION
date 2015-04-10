@@ -22,7 +22,6 @@ Suggests:
     testthat,
     MASS, 
     doParallel, 
-    knitr,
-    caretEnsemble
+    knitr
 Roxygen: list(wrap = TRUE)
 VignetteBuilder: knitr

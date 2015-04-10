@@ -114,7 +114,7 @@ test_that("A data.frame can be extracted from model accuracy objects...", {
 test_that("dfExtract functions when only test or training data present", {
   expect_that(nrow(dfExtract(modobj)), is_more_than(nrow(dfExtract(modobj2))))
   expect_that(nrow(dfExtract(modobj)), is_more_than(nrow(dfExtract(modobj3))))
-  expect_identical(nrow(dfExtract(modobj2)), nrow(dfExtract(modobj3)))
+  expect_false(identical(nrow(dfExtract(modobj2)), nrow(dfExtract(modobj3))))
 })
 
 context("Evaluate modTest function ")
@@ -193,8 +193,8 @@ test_that("modSearch returns the right objects", {
   expect_that(resultSet2a, is_a("data.frame"))
   expect_that(resultSet2b, is_a("data.frame"))
   expect_more_than(nrow(resultSet2), nrow(resultSet2a))
-  expect_equal(nrow(resultSet2b), nrow(resultSet2a))
-  expect_equal(nrow(resultSet), nrow(resultSet2))
+  expect_false(identical(nrow(resultSet2b), nrow(resultSet2a)))
+  expect_false(identical(nrow(resultSet), nrow(resultSet2)))
   expect_equal(ncol(resultSet), ncol(resultSet2))
   expect_equal(ncol(resultSet), ncol(resultSet2a))
   expect_equal(ncol(resultSet), ncol(resultSet2b))
@@ -205,10 +205,9 @@ test_that("modSearch returns the right objects", {
 })
 
 context("Check functioning of non standard evaluation")
-
-# NSE test
 mymet <- "ROC"
 mylen <- 6
+
 
 resultSetNSE1 <- modSearch(methods = c("knn", "glm", "svmRadial"), 
                            datatype = c("train", "test"), 
@@ -217,12 +216,8 @@ resultSetNSE1 <- modSearch(methods = c("knn", "glm", "svmRadial"),
                            modelKeep = FALSE, length = mylen, fitControl = ctrl, 
                            metric = mymet)
 
-
 mydt <- "train"
 mypar <- list(metric = mymet, length = mylen, datatype = mydt)
-
-# todo -- check on unpacking the list elmeent
-## check reference for parameters
 
 resultSetNSE2 <- modSearch(methods = c("knn", "glm", "svmRadial"), 
                            datatype = mypar$datatype, 
@@ -230,6 +225,16 @@ resultSetNSE2 <- modSearch(methods = c("knn", "glm", "svmRadial"),
                            testdata = list(preds = test[, -19], class = test[, 19]), 
                            modelKeep = FALSE, length = mypar$length, fitControl = ctrl, 
                            metric = mypar$metric)
+# 
+# anon <- function(){
+#   modSearch(methods = c("knn", "glm", "svmRadial"), 
+#             datatype = mypar$datatype, 
+#             traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
+#             testdata = list(preds = test[, -19], class = test[, 19]), 
+#             modelKeep = FALSE, length = mypar$length, fitControl = ctrl, 
+#             metric = mypar$metric)
+# }
+# 
 
 
 test_that("modSearch returns the right objects", {
@@ -269,116 +274,116 @@ test_that("modSearch returns the right objects", {
 #   expect_true(identical(resultSet[resultSet$grp == "train", 1], resultSet[resultSet$grp == "test", 1]))
 # })
 # # 
-# # context("Test modTest and modSearch in parallel on Windows")
+# # # context("Test modTest and modSearch in parallel on Windows")
+# # # 
+# # # if(Sys.info()['sysname'] != "Windows"){
+# # #   print("Not running test now")
+# # #   } else{
+# # #     library(doParallel)
+# # #     CORES <- 2
+# # #     testSVM <- modTest(method = "svmRadial", datatype = c("train", "test"), 
+# # #                        traindata = list(preds = train[, -19], class = train[, 19]), 
+# # #                        testdata = list(preds = test[, -19], class = test[, 19]), 
+# # #                        modelKeep = TRUE, length = 6, fitControl = ctrl, 
+# # #                        metric = "ROC", cores = CORES)
+# # #     
+# # #     resultSet2 <- modSearch(methods = c("svmRadial", "knn", "lda2", "fda", "earth"), 
+# # #                             datatype = c("train", "test"), 
+# # #                             traindata = list(preds = train[, -19], class = train[, 19]), 
+# # #                             testdata = list(preds = test[, -19], class = test[, 19]), 
+# # #                             modelKeep = FALSE, length = 6, fitControl = ctrl, 
+# # #                             metric = "ROC", cores = CORES)
+# # #     #   
+# # #     #   resultSet2 <- modSearch(methods = c("avNNet"), 
+# # #     #                           datatype = c("train", "test"), 
+# # #     #                           traindata = list(preds = train[, -19], class = train[, 19]), 
+# # #     #                           testdata = list(preds = test[, -19], class = test[, 19]), 
+# # #     #                           modelKeep = FALSE, length = 6, fitControl = ctrl, 
+# # #     #                           metric = "ROC", cores = CORES)
+# # #     #   
+# # #     #   zed <- train(train[, -19], train[, 19], method = "mlp", 
+# # #     #                trControl = ctrl, length = 6, metric = "ROC")
+# # #     #   
+# # #     #   testSVM <- modTest(method = "nnet", datatype = c("train", "test"), 
+# # #     #                      traindata = list(preds = train[, -19], class = train[, 19]), 
+# # #     #                      testdata = list(preds = test[, -19], class = test[, 19]), 
+# # #     #                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
+# # #     #                      metric = "ROC", cores = CORES)
+# # #     #   
+# # #     #   resultSet3 <- modSearch(methods = c("mlp", "nnet", "lda2", "hda"), 
+# # #     #                           datatype = c("train", "test"), 
+# # #     #                           traindata = list(preds = train[, -19], class = train[, 19]), 
+# # #     #                           testdata = list(preds = test[, -19], class = test[, 19]), 
+# # #     #                           modelKeep = FALSE, length = 12, fitControl = ctrl, 
+# # #     #                           metric = "ROC", cores = CORES)
+# # # 
+# # # }
+# # # 
+# # # 
+# # # if(Sys.info()['sysname'] != "Windows"){
+# # #   print("Not running test now")
+# # # } else{
+# # #   test_that("parallelism works", {
+# # #     expect_that(resultSet2, is_a("data.frame"))
+# # #     expect_that(testSVM, is_a("list"))
+# # #   })
+# # # }
+# # # 
+# # # # 
+# # # # context("Test handling of assembleData data")
+# # # # 
+# # # # set.seed(442)
+# # # # full <- twoClassSim(n = 1200, intercept = -8, linearVars = 1, 
+# # # #                      noiseVars = 1, corrVars = 1, corrValue = 0.6)
+# # # # 
+# # # # prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
+# # # #               "Corr1")
+# # # # 
+# # # # zed <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
+# # # # 
+# # # # testSVM <- modTest(method = "pda2", datatype = c("train", "test"), 
+# # # #                    traindata = zed$traindata, 
+# # # #                    testdata = zed$testdata, 
+# # # #                    modelKeep = TRUE, length = 5, fitControl = ctrl, 
+# # # #                    metric = "ROC", cores = 2+1)
+# # # # 
+# # # # ctrl <- trainControl(method='cv', number=5, savePredictions = FALSE, 
+# # # #                            classProbs=TRUE, summaryFunction = twoClassSummary)
+# # # # 
+# # # # fix <- preProcess(zed$testdata$preds, method = c("center", "scale"))
+# # # # zed$traindata$preds <- predict(fix, zed$traindata$preds)
+# # # # zed$testdata$preds <- predict(fix, zed$testdata$preds); rm(fix)
+# # # # zed$traindata$preds <- as.data.frame(zed$traindata$preds)
+# # # # zed$testdata$preds <- as.data.frame(zed$testdata$preds)
+# # # # 
+# # # # resultSet2 <- modSearch(methods = c("C5.0"), 
+# # # #                         datatype = c("train", "test"), 
+# # # #                         traindata = zed$traindata, 
+# # # #                         testdata = zed$testdata, 
+# # # #                         length = 2, fitControl = ctrl, 
+# # # #                         metric = "ROC", cores = 2+1)
+# # # # 
+# # # # 
+# # # # resultSet2 <- modSearch(methods = c("sddaLDA", "LogitBoost", "C5.0"), 
+# # # #                         datatype = c("train", "test"), 
+# # # #                         traindata = zed$traindata, 
+# # # #                         testdata = zed$testdata, 
+# # # #                         length = 2, fitControl = ctrl, 
+# # # #                         metric = "ROC", cores = 2+1)
+# # # # 
+# # # # mymethods <- c("bagFDA", "C5.0", "C5.0Rules", "C5.0Tree", "fda", "hda", "lda",
+# # # #                "lda2", "LogitBoost", "multinom", "pda", "pda2", "plr", "rda",
+# # # #                "sda", "sddaQDA", "sparseLDA", "stepLDA", "stepQDA")
+# # # # 
+# # # # resultSet2 <- modSearch(methods = mymethods[12:17], 
+# # # #                         datatype = c("train", "test"), 
+# # # #                         traindata = zed$traindata, 
+# # # #                         testdata = zed$testdata, 
+# # # #                         length = 5, fitControl = ctrl, 
+# # # #                         metric = "ROC", cores = 2+1)
+# # # # 
+# # # # 
 # # 
-# # if(Sys.info()['sysname'] != "Windows"){
-# #   print("Not running test now")
-# #   } else{
-# #     library(doParallel)
-# #     CORES <- 2
-# #     testSVM <- modTest(method = "svmRadial", datatype = c("train", "test"), 
-# #                        traindata = list(preds = train[, -19], class = train[, 19]), 
-# #                        testdata = list(preds = test[, -19], class = test[, 19]), 
-# #                        modelKeep = TRUE, length = 6, fitControl = ctrl, 
-# #                        metric = "ROC", cores = CORES)
-# #     
-# #     resultSet2 <- modSearch(methods = c("svmRadial", "knn", "lda2", "fda", "earth"), 
-# #                             datatype = c("train", "test"), 
-# #                             traindata = list(preds = train[, -19], class = train[, 19]), 
-# #                             testdata = list(preds = test[, -19], class = test[, 19]), 
-# #                             modelKeep = FALSE, length = 6, fitControl = ctrl, 
-# #                             metric = "ROC", cores = CORES)
-# #     #   
-# #     #   resultSet2 <- modSearch(methods = c("avNNet"), 
-# #     #                           datatype = c("train", "test"), 
-# #     #                           traindata = list(preds = train[, -19], class = train[, 19]), 
-# #     #                           testdata = list(preds = test[, -19], class = test[, 19]), 
-# #     #                           modelKeep = FALSE, length = 6, fitControl = ctrl, 
-# #     #                           metric = "ROC", cores = CORES)
-# #     #   
-# #     #   zed <- train(train[, -19], train[, 19], method = "mlp", 
-# #     #                trControl = ctrl, length = 6, metric = "ROC")
-# #     #   
-# #     #   testSVM <- modTest(method = "nnet", datatype = c("train", "test"), 
-# #     #                      traindata = list(preds = train[, -19], class = train[, 19]), 
-# #     #                      testdata = list(preds = test[, -19], class = test[, 19]), 
-# #     #                      modelKeep = TRUE, length = 6, fitControl = ctrl, 
-# #     #                      metric = "ROC", cores = CORES)
-# #     #   
-# #     #   resultSet3 <- modSearch(methods = c("mlp", "nnet", "lda2", "hda"), 
-# #     #                           datatype = c("train", "test"), 
-# #     #                           traindata = list(preds = train[, -19], class = train[, 19]), 
-# #     #                           testdata = list(preds = test[, -19], class = test[, 19]), 
-# #     #                           modelKeep = FALSE, length = 12, fitControl = ctrl, 
-# #     #                           metric = "ROC", cores = CORES)
+# # ## n = number of models to return
+# # ## df = result of modSearchResults
 # # 
-# # }
-# # 
-# # 
-# # if(Sys.info()['sysname'] != "Windows"){
-# #   print("Not running test now")
-# # } else{
-# #   test_that("parallelism works", {
-# #     expect_that(resultSet2, is_a("data.frame"))
-# #     expect_that(testSVM, is_a("list"))
-# #   })
-# # }
-# # 
-# # # 
-# # # context("Test handling of assembleData data")
-# # # 
-# # # set.seed(442)
-# # # full <- twoClassSim(n = 1200, intercept = -8, linearVars = 1, 
-# # #                      noiseVars = 1, corrVars = 1, corrValue = 0.6)
-# # # 
-# # # prednames <- c("TwoFactor1", "TwoFactor2", "Linear1", "Nonlinear1", "Nonlinear3", 
-# # #               "Corr1")
-# # # 
-# # # zed <- assembleData(full, class = "Class", p = 0.25, predvars = prednames)
-# # # 
-# # # testSVM <- modTest(method = "pda2", datatype = c("train", "test"), 
-# # #                    traindata = zed$traindata, 
-# # #                    testdata = zed$testdata, 
-# # #                    modelKeep = TRUE, length = 5, fitControl = ctrl, 
-# # #                    metric = "ROC", cores = 2+1)
-# # # 
-# # # ctrl <- trainControl(method='cv', number=5, savePredictions = FALSE, 
-# # #                            classProbs=TRUE, summaryFunction = twoClassSummary)
-# # # 
-# # # fix <- preProcess(zed$testdata$preds, method = c("center", "scale"))
-# # # zed$traindata$preds <- predict(fix, zed$traindata$preds)
-# # # zed$testdata$preds <- predict(fix, zed$testdata$preds); rm(fix)
-# # # zed$traindata$preds <- as.data.frame(zed$traindata$preds)
-# # # zed$testdata$preds <- as.data.frame(zed$testdata$preds)
-# # # 
-# # # resultSet2 <- modSearch(methods = c("C5.0"), 
-# # #                         datatype = c("train", "test"), 
-# # #                         traindata = zed$traindata, 
-# # #                         testdata = zed$testdata, 
-# # #                         length = 2, fitControl = ctrl, 
-# # #                         metric = "ROC", cores = 2+1)
-# # # 
-# # # 
-# # # resultSet2 <- modSearch(methods = c("sddaLDA", "LogitBoost", "C5.0"), 
-# # #                         datatype = c("train", "test"), 
-# # #                         traindata = zed$traindata, 
-# # #                         testdata = zed$testdata, 
-# # #                         length = 2, fitControl = ctrl, 
-# # #                         metric = "ROC", cores = 2+1)
-# # # 
-# # # mymethods <- c("bagFDA", "C5.0", "C5.0Rules", "C5.0Tree", "fda", "hda", "lda",
-# # #                "lda2", "LogitBoost", "multinom", "pda", "pda2", "plr", "rda",
-# # #                "sda", "sddaQDA", "sparseLDA", "stepLDA", "stepQDA")
-# # # 
-# # # resultSet2 <- modSearch(methods = mymethods[12:17], 
-# # #                         datatype = c("train", "test"), 
-# # #                         traindata = zed$traindata, 
-# # #                         testdata = zed$testdata, 
-# # #                         length = 5, fitControl = ctrl, 
-# # #                         metric = "ROC", cores = 2+1)
-# # # 
-# # # 
-# 
-# ## n = number of models to return
-# ## df = result of modSearchResults
-# 

@@ -518,56 +518,33 @@ buildDISFrame <- function(methods){
 ##' 
 modSearch <- function(methods, ...){
   # parse ellipsis for modTest
-  args <- as.list(substitute(list(...)))[-1L]
+  args <- eval(substitute(alist(...)))
+  args <- lapply(args, eval, parent.frame())
   # sanitize arguments
   if(exists("metric", args)){
-    if(!is.character(args$metric)){ # consider using paste instead of print
-      metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 2))
-      args$metric <- do.call(paste, list(args$metric), envir = parent.frame(n = 2))
-    } else {
       metric <- args$metric
-    }
-  } else {
+    } else {
     warning("No metric defined, default will be ROC")
     args$metric <- "ROC"
     metric <- "ROC"
-  }
-  if(exists("datatype", args)){
-    if(!is.character(args$datatype)){
-      datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 2))
-      args$datatype <- do.call(paste, list(args$datatype), envir = parent.frame(n = 2))
-    } else {
-      datatype <- args$datatype
     }
-  } else {
+  if(exists("datatype", args)){
+      datatype <- args$datatype
+    } else {
     warning("Parameter datatype is undefined, default is training")
     args$datatype <- "train"
     datatype <- "train"
   }
   if(exists("length", args)){
-    if(!is.character(args$length)){
-      length <- do.call(paste, list(args$length), envir = parent.frame(n = 2))
-      args$length <- do.call(paste, list(args$length), envir = parent.frame(n = 2))
-      length <- as.numeric(length)
-      args$length <- as.numeric(args$length)
+    length <- args$length
     } else {
-      length <- args$length
-    }    
-  } else {
-    warning("Parameter length is undefined, default is 6 for tuneLength")
-    args$length <- 6
-    length <- 6
+    warning("Parameter length is undefined, default is 4 for tuneLength")
+    args$length <- 4
+    length <- 4
   }
   if(exists("cores", args)){
-    if(!is.character(args$cores)){
-      cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 2))
-      args$cores <- do.call(paste, list(args$cores), envir = parent.frame(n = 2))
-      cores <- as.numeric(cores)
-      args$cores <- as.numeric(args$cores)
+    cores <- args$cores
     } else {
-      cores <- args$cores
-    }
-  } else {
     message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
     cores <- NULL
   }
@@ -597,7 +574,7 @@ modSearch <- function(methods, ...){
   for(i in methods){
     p <- match(i, methods)
     z <- list(method = i)
-    z <- c(z,args)
+    z <- c(z, args)
     fit <- try(do.call(modTest, z), silent = TRUE)
     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
