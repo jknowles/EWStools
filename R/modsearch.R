@@ -250,8 +250,8 @@ dfExtract <- function(mod){
 ##' @export
 dfExtractROC <- function(mod){
   if(class(mod$summaryTr) != "NULL"){
-      newdatB <- data.frame(sens = smooth(mod$summaryTr@rocobj)$sensitivities, 
-                            spec = smooth(mod$summaryTr@rocobj)$specificities, 
+      newdatB <- data.frame(sens = as.numeric(mod$summaryTr@rocobj$sensitivities), 
+                            spec = as.numeric(mod$summaryTr@rocobj$specificities), 
                             grp="train", 
                             auc = mod$summaryTr@auc,
                             aucSD = mod$metricSD,
@@ -261,8 +261,8 @@ dfExtractROC <- function(mod){
                             row.names=NULL)
       }
     if(class(mod$summaryTe) != "NULL"){
-      newdatA <- data.frame(sens = smooth(mod$summaryTe@rocobj)$sensitivities, 
-                            spec = smooth(mod$summaryTe@rocobj)$specificities, 
+      newdatA <- data.frame(sens = as.numeric(mod$summaryTe@rocobj$sensitivities), 
+                            spec = as.numeric(mod$summaryTe@rocobj$specificities), 
                             grp="test",
                             auc  = mod$summaryTe@auc,
                             aucSD = mod$metricSD,
@@ -360,11 +360,23 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
   } else{
     keep <-  1:ncol(traindata$preds)
   }
+  
+  callList <- list("method" = method, 
+                  "trControl" = quote(fitControl), 
+                   "tuneLength" = length, 
+                   "metric" = metric, 
+                   "x" = quote(traindata$preds[, keep]), 
+                   "y" = quote(traindata$class))
+  if(!is.null(names(args))){
+    callList <- c(callList, args)
+  }
     fit <- tryCatch({
-      train(traindata$preds[, keep], traindata$class,
-            method=method,
-            trControl=fitControl,
-            tuneLength = length, metric= metric, ...)}, error = function(e) 
+      do.call(train, callList)},
+#       train(traindata$preds[, keep], traindata$class,
+#             method=method,
+#             trControl=fitControl,
+#             tuneLength = length, metric= metric, ...)}, 
+       error = function(e) 
               message(paste0("Model failed to run: ", method)))
   # multicore
   if(!missing(cores) & !is.null(cores)){
@@ -377,10 +389,16 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     message(paste0("Model failed to run: ", method))
     
   } else if(class(fit) == "train"){
-      fitSum <- modAcc(fit, datatype = datatype, 
-                     testdata=list(preds = testdata$preds[, keep], 
-                                   class = testdata$class ), 
-                     modelKeep = modelKeep)
+    callList2 <- list("fit" = quote(fit), 
+                      "datatype" = datatype, 
+                      "testdata" = quote(list(preds = testdata$preds[, keep], 
+                                              class = testdata$class )),
+                      "modelKeep" = modelKeep)
+    fitSum <- do.call(modAcc, callList2)
+#       fitSum <- modAcc(fit, datatype = datatype, 
+#                      testdata=list(preds = testdata$preds[, keep], 
+#                                    class = testdata$class ), 
+#                      modelKeep = modelKeep)
     } 
   return(fitSum)
 }
@@ -578,13 +596,15 @@ modSearch <- function(methods, ...){
   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
   for(i in methods){
     p <- match(i, methods)
-    z<-list(method = i)
-    z<-c(z,args)
+    z <- list(method = i)
+    z <- c(z,args)
     fit <- try(do.call(modTest, z), silent = TRUE)
     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
     #
     if(class(tmp) == "data.frame"){
-      ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
+      ModelFits <- ModelFits[ModelFits$method != i, ] 
+      ModelFits <- rbind(ModelFits, tmp)
+      rm(tmp)
     } else{
       ModelFits <- ModelFits
       message(paste(tmp, "failure for model type:", i, sep=" "))
@@ -594,82 +614,3 @@ modSearch <- function(methods, ...){
   ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
   return(ModelFits)
 }
-
-# ##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists
-# ##' @description Used for generating the data to make good looking ROC curves of 
-# ##' training and test data.
-# ##' @param methods a list of \code{train} method names to generate the dataframe for
-# ##' @param ... additional arguments passed to \code{\link{modTest}}
-# ##' @return a \code{\link{data.frame}} with the following columns:
-# ##' \itemize{
-# ##' \item{sens - the sensitivities of the model at various thresholds}
-# ##' \item{spec - the specificities of the model at various thresholds}
-# ##' \item{grp - whether the model is using training or test data}
-# ##' \item{auc - the area under the curve}
-# ##' \item{method - the model method}
-# ##' \item{elapsedTime - the time reported for the model to run}
-# ##' }
-# ##' @note Currently the arguments passed to modSearch are evaluated in the parent frame. 
-# ##' This means that you cannot pass list elements or data.frame elements to the parameters 
-# ##' of modSearch that get passed along to \code{\link{modTest}} via \code{...}. 
-# ##' Instead, you need to declare them as separate variables in the parent 
-# ##' environment and save them there. 
-# ##' @details The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
-# ##' \code{\linkS4class{ROCit}} object
-# ##' @export
-# modSearch2 <- function(methods, datatype = c("train", "test"), traindata, 
-#                        testdata = NULL, modelKeep = FALSE, length = 6, 
-#                        fitControl, metric, cores = NULL, ...){
-#   # parse ellipsis for modTest
-#   args <- as.list(substitute(list(...)))[-1L]
-#   if(!missing(cores)){
-#     if(!is.numeric(cores)){
-#       stop("Cores must be numeric.")
-#     }
-#   } else {
-#     message("Cores is not defined. To run in parallel define cores or construct parallel outside of function call.")
-#     cores <- NULL
-#   }
-#   if(metric == "ROC"){
-#     if(length(datatype) > 1){
-#       ModelFits <-rbind(buildROCcurveFrame(methods), buildROCcurveFrame(methods))
-#     } else{
-#       ModelFits <- buildROCcurveFrame(methods)
-#     }
-#   } else if(metric == "RMSE"){
-#     if(length(datatype) > 1){
-#       ModelFits <- rbind(buildRMSEFrame(methods), buildRMSEFrame(methods))
-#     } else {
-#       ModelFits <- buildRMSEFrame(methods)
-#     }
-#     
-#   } else if(metric == "Dist"){
-#     if(length(datatype) > 1){
-#       ModelFits <- rbind(buildDISFrame(methods), buildDISFrame(methods))
-#     } else {
-#       ModelFits <- buildDISFrame(methods)
-#     }
-#   } else{
-#     stop("No custom performance frame defined for metric")
-#   }
-#   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
-#   for(i in methods){
-#     z <- list(method = i, datatype = datatype, traindata = traindata, 
-#                   testdata = testdata, modelKeep = modelKeep, 
-#                   length = length, fitControl = fitControl, 
-#                   metric = metric, cores = cores)
-#     p <- match(i, methods)
-#     fit <- try(do.call(modTest, mget(z, envir=globalenv(), ifnotfound = z), quote = TRUE), silent = TRUE)
-#     tmp <- tryCatch(dfExtract(fit), error = function(e) "No Model Ran")
-#     #
-#     if(class(tmp) == "data.frame"){
-#       ModelFits[ModelFits$method == i,] <- tmp[tmp$method == i,]
-#     } else{
-#       ModelFits <- ModelFits
-#       message(paste(tmp, "failure for model type:", i, sep=" "))
-#     }
-#     setTxtProgressBar(pb, p)      
-#   }
-#   ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
-#   return(ModelFits)
-# }

@@ -157,7 +157,7 @@ test_that("modTest returns the right objects", {
 
 context("Evaluate modSearch function ")
 
-resultSet <- modSearch(methods = c("knn", "glm", "rpart"), 
+resultSet <- modSearch(methods = c("knn", "glm", "svmRadial"), 
                             datatype = c("train", "test"), 
                             traindata = list(preds = trainT[1:500, -19], class = trainT[1:500, 19]), 
                             testdata = list(preds = test[1:200, -19], class = test[1:200, 19]), 
@@ -198,63 +198,66 @@ test_that("modSearch returns the right objects", {
   expect_equal(ncol(resultSet), ncol(resultSet2))
   expect_equal(ncol(resultSet), ncol(resultSet2a))
   expect_equal(ncol(resultSet), ncol(resultSet2b))
+  expect_true(nrow(resultSet) > 5)
+  expect_true(nrow(resultSet2a) > 5)
+  expect_true(nrow(resultSet2) > 5)
+  expect_true(nrow(resultSet2b) > 5)
 })
 
-# context("Check functioning of non standard evaluation")
-# 
-# # NSE test
-# mymet <- "ROC"
-# mylen <- 6
-# 
-# resultSetNSE1 <- modSearch(methods = c("knn", "glm", "rpart"), 
-#                            datatype = c("train", "test"), 
-#                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
-#                            testdata = list(preds = test[, -19], class = test[, 19]), 
-#                            modelKeep = FALSE, length = mylen, fitControl = ctrl, 
-#                            metric = mymet)
-# 
-# 
-# mydt <- "train"
-# mypar <- list(metric = mymet, length = mylen, datatype = mydt)
-# 
-# # todo -- check on unpacking the list elmeent
-# ## check reference for parameters
-# ## check out if it is just easier to parse in PRES_EWS upfront
-# 
-# resultSetNSE2 <- modSearch(methods = c("knn", "glm", "rpart"), 
-#                            datatype = mypar$mydt, 
-#                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
-#                            testdata = list(preds = test[, -19], class = test[, 19]), 
-#                            modelKeep = FALSE, length = mypar$mylen, fitControl = ctrl, 
-#                            metric = mypar$metric)
-# 
-# 
-# test_that("modSearch returns the right objects", {
-#   expect_that(resultSetNSE1, is_a("data.frame"))
-#   expect_true(nrow(resultSetNSE1) > 2000)
-#   expect_equal(ncol(resultSetNSE1), ncol(resultSet))
-# })
-# 
-# mymet <- "Dist"
-# ctrl <- trainControl(method = "repeatedcv", 
-#                      repeats = 3, classProbs = TRUE, 
-#                      summaryFunction = fourStatsSummary)
-# 
-# 
-# resultSetNSE3 <- modSearch(methods = c("knn", "glm", "rpart"), 
-#                            datatype = c("train", "test"), 
-#                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
-#                            testdata = list(preds = test[, -19], class = test[, 19]), 
-#                            modelKeep = FALSE, length = mylen, fitControl = ctrl, 
-#                            metric = mymet)
-# 
-# 
-# test_that("modSearch returns the right objects", {
-#   expect_that(resultSetNSE3, is_a("data.frame"))
-#   expect_true(nrow(resultSetNSE3) < 20)
-#   expect_equal(ncol(resultSetNSE3), ncol(resultSet))
-# })
-# 
+context("Check functioning of non standard evaluation")
+
+# NSE test
+mymet <- "ROC"
+mylen <- 6
+
+resultSetNSE1 <- modSearch(methods = c("knn", "glm", "svmRadial"), 
+                           datatype = c("train", "test"), 
+                           traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
+                           testdata = list(preds = test[, -19], class = test[, 19]), 
+                           modelKeep = FALSE, length = mylen, fitControl = ctrl, 
+                           metric = mymet)
+
+
+mydt <- "train"
+mypar <- list(metric = mymet, length = mylen, datatype = mydt)
+
+# todo -- check on unpacking the list elmeent
+## check reference for parameters
+
+resultSetNSE2 <- modSearch(methods = c("knn", "glm", "svmRadial"), 
+                           datatype = mypar$datatype, 
+                           traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
+                           testdata = list(preds = test[, -19], class = test[, 19]), 
+                           modelKeep = FALSE, length = mypar$length, fitControl = ctrl, 
+                           metric = mypar$metric)
+
+
+test_that("modSearch returns the right objects", {
+  expect_that(resultSetNSE1, is_a("data.frame"))
+  expect_true(nrow(resultSetNSE1) > 2000)
+  expect_equal(ncol(resultSetNSE1), ncol(resultSet))
+})
+
+mymet <- "Dist"
+ctrl <- trainControl(method = "repeatedcv", 
+                     repeats = 3, classProbs = TRUE, 
+                     summaryFunction = fourStatsSummary)
+
+
+resultSetNSE3 <- modSearch(methods = c("knn", "glm", "svmRadial"), 
+                           datatype = c("train", "test"), 
+                           traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
+                           testdata = list(preds = test[, -19], class = test[, 19]), 
+                           modelKeep = FALSE, length = mylen, fitControl = ctrl, 
+                           metric = mymet)
+
+
+test_that("modSearch returns the right objects", {
+  expect_that(resultSetNSE3, is_a("data.frame"))
+  expect_true(nrow(resultSetNSE3) < 20)
+  expect_equal(ncol(resultSetNSE3), ncol(resultSet))
+})
+
 # 
 # context("Test modTest returns reliable results")
 # 
