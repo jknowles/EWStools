@@ -16,7 +16,7 @@
 ##' }
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function for ROC objects.
 ##' @export
-modAcc <- function(fit, datatype = c("test", "train"), testdata, modelKeep = FALSE, ...){
+modAcc <- function(fit, datatype = c("test", "train"), testdata = NULL, modelKeep = FALSE, ...){
   if (missing(modelKeep)){
     modelKeep <- FALSE
   }
@@ -324,11 +324,12 @@ dfExtractROC <- function(mod){
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' For some model types linear combos of predictors may be omitted.
 ##' @export
-modTest <- function(method, datatype=c("train", "test"), traindata, testdata, 
+modTest <- function(method, datatype=c("train", "test"), traindata, 
+                    testdata=NULL, 
                       modelKeep=FALSE, length, fitControl = NA, 
                     metric = "ROC", cores = NA, ...){
-  
-    args <- as.list(substitute(list(...)))
+  args <- eval(substitute(alist(...)))
+  args <- lapply(args, eval, parent.frame())
     if("omit" %in% names(args)){
       stop("Cannot omit an index of variables. Instead see caret:::findLinearCombos")
     }
@@ -371,11 +372,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
     callList <- c(callList, args)
   }
     fit <- tryCatch({
-      do.call(train, callList)},
-#       train(traindata$preds[, keep], traindata$class,
-#             method=method,
-#             trControl=fitControl,
-#             tuneLength = length, metric= metric, ...)}, 
+      do.call("train", callList)},
        error = function(e) 
               message(paste0("Model failed to run: ", method)))
   # multicore
@@ -394,11 +391,8 @@ modTest <- function(method, datatype=c("train", "test"), traindata, testdata,
                       "testdata" = quote(list(preds = testdata$preds[, keep], 
                                               class = testdata$class )),
                       "modelKeep" = modelKeep)
+    
     fitSum <- do.call(modAcc, callList2)
-#       fitSum <- modAcc(fit, datatype = datatype, 
-#                      testdata=list(preds = testdata$preds[, keep], 
-#                                    class = testdata$class ), 
-#                      modelKeep = modelKeep)
     } 
   return(fitSum)
 }
