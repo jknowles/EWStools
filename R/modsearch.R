@@ -326,8 +326,8 @@ dfExtractROC <- function(mod){
 ##' @export
 modTest <- function(method, datatype=c("train", "test"), traindata, 
                     testdata=NULL, 
-                      modelKeep=FALSE, length = NULL, fitControl = NA, 
-                    metric = NULL, cores = NA, ...){
+                      modelKeep=FALSE, length = NULL, fitControl = NULL, 
+                    metric = NULL, cores = NULL, ...){
   args <- eval(substitute(alist(...)))
   args <- lapply(args, eval, parent.frame())
     if("omit" %in% names(args)){
@@ -335,6 +335,9 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
     }
   # Let's dump out some defaults
   # Set up cores for Windows
+  if("cores" %in% names(args)){
+    cores <- args$cores
+  }
   if(!missing(cores) & !is.null(cores)){
     myOS <- Sys.info()['sysname']
     if(myOS!="Windows"){  
