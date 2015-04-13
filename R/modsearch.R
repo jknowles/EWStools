@@ -324,6 +324,8 @@ dfExtractROC <- function(mod){
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' For some model types linear combos of predictors may be omitted.
 ##' @export
+##' @import doParallel
+##' @import caret
 modTest <- function(method, datatype=c("train", "test"), traindata, 
                     testdata=NULL, 
                       modelKeep=FALSE, length = NULL, fitControl = NULL, 
@@ -331,7 +333,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
   args <- eval(substitute(alist(...)))
   args <- lapply(args, eval, parent.frame())
     if("omit" %in% names(args)){
-      stop("Cannot omit an index of variables. Instead see caret:::findLinearCombos")
+      stop("Cannot omit an index of variables. Instead see caret::findLinearCombos")
     }
   # Let's dump out some defaults
   # Set up cores for Windows
@@ -513,7 +515,8 @@ buildDISFrame <- function(methods){
 ##' @details The sensitivities and specificities come from the \code{\link{roc}} object stored in the 
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
-##' 
+##' @import caret
+##' @import doParallel
 modSearch <- function(methods, ...){
   # parse ellipsis for modTest
   args <- eval(substitute(alist(...)))
