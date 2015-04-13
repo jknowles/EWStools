@@ -71,6 +71,8 @@ DISit <- setClass("DISit", representation(thresh = "numeric",
 ##' @title Getting an DIStest on a train object
 ##' @rdname DIStest
 ##' @method DIStest train
+##' @importFrom pROC roc
+##' @importFrom pROC coords.roc
 ##' @export
 DIStest.train <- function(mod, testdata, ...){
   if(missing(testdata)){

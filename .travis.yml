@@ -3,18 +3,12 @@ language: r
 r_packages: 
   - caretEnsemble
   - testthat
-  - kernlab
-  - nnet
-  - MASS
-  - klaR
   - party
-  - e1071
-  - nnet
-  - mvtnorm
   - pROC
-  - zoo
+  - e1071
+  - mvtnorm
+  - ggplot2
   - rpart
-  - strucchange
   - modeltools
 
 notifications:

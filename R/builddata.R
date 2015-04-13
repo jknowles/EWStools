@@ -12,6 +12,7 @@
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package. pvalid 
 ##' is defined against the records remaining after holding out p for the training set.
 ##' @export
+##' @import caret
 splitData <- function(data, class, p, pvalid = NULL){
   if(p == 1){
     warning("Extreme value of p selected and may result in NULL test data set")

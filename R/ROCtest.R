@@ -73,6 +73,8 @@ ROCit <- setClass(Class = "ROCit", slots = c(thresh = "numeric",
 ##' @note ROC coordinates are unsmoothed.
 ##' @export ROCtest
 ##' @rdname ROCtest
+##' @importFrom pROC roc
+##' @importFrom pROC coords
 ##' @author Jared E. Knowles
 ROCtest <- function(mod, testdata=NULL, ...){
   UseMethod("ROCtest")
@@ -82,6 +84,7 @@ ROCtest <- function(mod, testdata=NULL, ...){
 ##' @rdname ROCtest
 ##' @method ROCtest glm
 ##' @export
+##' @import caret
 ROCtest.glm <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)
@@ -139,6 +142,7 @@ ROCtest.glm <- function(mod, testdata, ...){
 ##' @rdname ROCtest
 ##' @method ROCtest train
 ##' @export
+##' @import caret
 ROCtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)

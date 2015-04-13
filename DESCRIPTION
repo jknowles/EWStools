@@ -16,12 +16,15 @@ Depends:
     pROC,
     caret,
     methods,
-    e1071, 
-    caretEnsemble
+    doParallel
+Imports:
+    proxy,
+    stats
 Suggests:
     testthat,
     MASS, 
-    doParallel, 
-    knitr
+    knitr, 
+    caretEnsemble,
+    e1071
 Roxygen: list(wrap = TRUE)
 VignetteBuilder: knitr
