@@ -3,17 +3,9 @@ language: r
 r_packages: 
   - caretEnsemble
   - testthat
-  - kernlab
-  - nnet
   - MASS
   - klaR
-  - party
-  - e1071
-  - nnet
-  - mvtnorm
   - pROC
-  - zoo
-  - rpart
   - strucchange
   - modeltools
 

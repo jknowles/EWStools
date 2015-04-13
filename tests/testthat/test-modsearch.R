@@ -15,9 +15,9 @@ ctrl <- trainControl(method = "repeatedcv",
 
 
 fullModel <- train(Class ~ ., data = trainT, 
-                   method = "nnet", 
+                   method = "lda2", 
                    preProc = c("center", "scale"), 
-                   tuneLength = 8, 
+                   tuneLength = 3, 
                    metric = "ROC", 
                    trControl = ctrl)
 
@@ -120,10 +120,10 @@ test_that("dfExtract functions when only test or training data present", {
 context("Evaluate modTest function ")
  
 
-test1 <- modTest(method = "nnet", datatype = c("train", "test"), 
+test1 <- modTest(method = "lda2", datatype = c("train", "test"), 
                    traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                    testdata = list(preds = test[, -19], class = test[, 19]), 
-                   modelKeep = FALSE, length = 6, fitControl = ctrl, 
+                   modelKeep = FALSE, length = 3, fitControl = ctrl, 
                    metric = "ROC")
 
 test1a <- modTest(method = "knn", datatype =  "test", 
@@ -138,10 +138,10 @@ test1b <- modTest(method = "knn", datatype =  "train",
                   modelKeep = FALSE, length = 6, fitControl = ctrl, 
                   metric = "ROC")
 
-test2 <- modTest(method = "nnet", datatype = c("train", "test"), 
+test2 <- modTest(method = "lda2", datatype = c("train", "test"), 
                traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                testdata = list(preds = test[, -19], class = test[, 19]), 
-               modelKeep = TRUE, length = 6, fitControl = ctrl, 
+               modelKeep = TRUE, length = 3, fitControl = ctrl, 
                metric = "ROC")
  
 test_that("modTest returns the right objects", {
@@ -206,10 +206,10 @@ test_that("modSearch returns the right objects", {
 
 context("Check functioning of non standard evaluation")
 mymet <- "ROC"
-mylen <- 6
+mylen <- 3
 
 
-resultSetNSE1 <- modSearch(methods = c("knn", "glm", "nnet"), 
+resultSetNSE1 <- modSearch(methods = c("knn", "glm", "lda2"), 
                            datatype = c("train", "test"), 
                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                            testdata = list(preds = test[, -19], class = test[, 19]), 
@@ -219,7 +219,7 @@ resultSetNSE1 <- modSearch(methods = c("knn", "glm", "nnet"),
 mydt <- "train"
 mypar <- list(metric = mymet, length = mylen, datatype = mydt)
 
-resultSetNSE2 <- modSearch(methods = c("knn", "glm", "nnet"), 
+resultSetNSE2 <- modSearch(methods = c("knn", "glm", "lda2"), 
                            datatype = mypar$datatype, 
                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                            testdata = list(preds = test[, -19], class = test[, 19]), 
@@ -249,7 +249,7 @@ ctrl <- trainControl(method = "repeatedcv",
                      summaryFunction = fourStatsSummary)
 
 
-resultSetNSE3 <- modSearch(methods = c("knn", "glm", "nnet"), 
+resultSetNSE3 <- modSearch(methods = c("knn", "glm", "lda2"), 
                            datatype = c("train", "test"), 
                            traindata = list(preds = trainT[, -19], class = trainT[, 19]), 
                            testdata = list(preds = test[, -19], class = test[, 19]), 

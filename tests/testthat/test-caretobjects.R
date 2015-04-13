@@ -13,7 +13,7 @@ ctrl <- trainControl(method = "repeatedcv",
 
 
 fullModel <- train(Class ~ ., data = train, 
-                   method = "nnet", 
+                   method = "lda2", 
                    preProc = c("center", "scale"), 
                    tuneLength = 8, 
                    metric = "ROC", 
@@ -66,8 +66,6 @@ test_that("ROCit object has correct slots", {
 
 test_that("ROCit objects pass best threshold parameters through", {
   expect_more_than(res3@thresh, res2@thresh)
-  expect_more_than(res3@rarepercent, res3@falsepositive)
-  expect_more_than(res2@rarepercent, res2@falsepositive)
   expect_equal(res2@auc, res3@auc)
 })
 
