@@ -3,7 +3,7 @@ library(caretEnsemble)
 data(EWStestData)
 
 test_that("ROCtests work for caretEnsembles", {
-  skip_on_cran()
+  skip("Takes too long on remotes")
   ctrl <- trainControl(method = "repeatedcv", 
                        repeats = 3, classProbs = TRUE, savePredictions = TRUE,
                        summaryFunction = twoClassSummary)
