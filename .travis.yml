@@ -4,9 +4,12 @@ r_packages:
   - caretEnsemble
   - testthat
   - MASS
-  - klaR
+  - party
   - pROC
-  - strucchange
+  - e1071
+  - mvtnorm
+  - ggplot2
+  - rpart
   - modeltools
 
 notifications:
