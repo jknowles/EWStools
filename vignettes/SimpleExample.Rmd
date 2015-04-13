@@ -23,8 +23,8 @@ construct using the `twoClassSim` function in the `caret` package:
 
 ```{r builddata}
 set.seed(442)
-library(caret)
-trainD <- twoClassSim(n = 1000, intercept = -8, linearVars = 3, 
+library(caret); library(MASS); library(pROC)
+trainD <- twoClassSim(n = 5000, intercept = -8, linearVars = 3, 
                         noiseVars = 10, corrVars = 4, corrValue = 0.6)
 testD <- twoClassSim(n = 1500, intercept = -7, linearVars = 3, 
                        noiseVars = 10, corrVars = 4, corrValue = 0.6)
@@ -52,13 +52,13 @@ names(testD)
 Now let's build a model:
 
 ```{r buildexamplemodel}
-ctrl <- trainControl(method = "cv", classProbs = TRUE, 
+ctrl <- trainControl(method = "cv", number = 5, classProbs = TRUE, 
                      summaryFunction = twoClassSummary)
 
-fullModel <- train(Class ~ ., data = trainD, 
+fullModel <- train(Class ~ . , data = trainD,
                    method = "knn", 
                    preProc = c("center", "scale"), 
-                   tuneLength = 8, 
+                   tuneLength = 5, 
                    metric = "ROC", 
                    trControl = ctrl)
 
@@ -77,7 +77,7 @@ and test data. `EWStools` makes this easy:
 ```{r}
 library(EWStools)
 
-mod.out <- modTest("knn", datatype=c("train", "test"),
+mod.out <- modTest("lda2", datatype=c("train", "test"),
                      traindata = list(preds = trainD[, -23], class = trainD[, 23]),
                      testdata = list(preds = testD[, -23], class = testD[, 23]), 
                       modelKeep=FALSE, length = 5, fitControl = ctrl, 
@@ -99,7 +99,7 @@ a few easy easy functions. For example, to compare multiple models (without
 storing them), the user may:
 
 ```{r}
-mod.out <- modSearch(methods = c("glm", "knn"), datatype=c("train", "test"),
+mod.out <- modSearch(methods = c("glm", "lda2"), datatype=c("train", "test"),
                      traindata = list(preds = trainD[, -23], class = trainD[, 23]),
                      testdata = list(preds = testD[, -23], class = testD[, 23]), 
                       modelKeep=FALSE, length = 5, fitControl = ctrl, 
