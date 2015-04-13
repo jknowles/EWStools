@@ -3,7 +3,6 @@ language: r
 r_packages: 
   - caretEnsemble
   - testthat
-  - MASS
   - party
   - pROC
   - e1071
