@@ -13,7 +13,7 @@ ctrl <- trainControl(method = "repeatedcv",
 
 
 fullModel <- train(Class ~ ., data = train, 
-                   method = "svmRadial", 
+                   method = "nnet", 
                    preProc = c("center", "scale"), 
                    tuneLength = 8, 
                    metric = "ROC", 
