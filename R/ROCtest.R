@@ -201,7 +201,7 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- coords(mroc, x="best", ret="threshold")
+    modThresh <- coords(mroc, x="best", ret="threshold")[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
