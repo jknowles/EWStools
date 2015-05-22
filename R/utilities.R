@@ -229,6 +229,21 @@ probExtract <- function(mod, testdata = NULL){
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
       return(yhats)
     }
+    } else if(class(mod)[1] == "caretStack"){
+      if(missing(testdata)){
+        yhats <- predict(mod, type = "prob") # caretEnsemble seems to predict non-reference class
+        yhats <- data.frame(yhat = yhats[, 2], yhatInv = yhats[, 1], 
+                            .outcome = mod$models[[1]]$trainingData$.outcome)
+        names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
+        # proper class
+        return(yhats)
+      } else {
+        yhats <- predict(mod, type = "prob", newdata = testdata$preds)
+        yhats <- data.frame(yhat = yhats[, 2], yhatInv = yhats[, 1], 
+                            .outcome = testdata$class)
+        names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
+        return(yhats)
+      }
     } else {
     stop("Please provide either a caretEnsemble or train object")
   }
