@@ -7,9 +7,9 @@
 modSearch(methods, ...)
 }
 \arguments{
-  \item{methods}{a list of \code{train} method names
-  to generate the dataframe for} \item{...}{additional
-  arguments passed to \code{\link{modTest}}}
+  \item{methods}{a list of \code{train} method names to
+  generate the dataframe for} \item{...}{additional arguments
+  passed to \code{\link{modTest}}}
 }
 \value{
 a \code{\link{data.frame}} with the following columns:

@@ -14,10 +14,10 @@ assembleData(data, class, p, predvars, classification = TRUE,
   {the proportion of data to be placed into a training
   set} \item{predvars}{a character vector of the names of
   predictor variables} \item{classification}{Is the training
-  set for a classification problem or not? Default is
-  TRUE.} \item{keepNA}{Should missing values be preserved
-  in the data sets? Logical. Default is FALSE.} \item{...}
-  {additional arguments to be passed to assembleData}
+  set for a classification problem or not? Default is TRUE.}
+  \item{keepNA}{Should missing values be preserved in the
+  data sets? Logical. Default is FALSE.} \item{...}{additional
+  arguments to be passed to assembleData}
 }
 \value{
 A list of lists with the following items:

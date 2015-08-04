@@ -8,8 +8,8 @@ reclassProb(yhats, thresh)
 }
 \arguments{
   \item{yhats}{a dataframe resulting from a call to
-  \code{\link{probExtract}}} \item{thresh}{a numeric from 0
-  to 1 representing the cutpoint for the probability}
+  \code{\link{probExtract}}} \item{thresh}{a numeric from 0 to
+  1 representing the cutpoint for the probability}
 }
 \value{
 a vector the length of rows in yhats representing the

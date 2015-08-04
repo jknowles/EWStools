@@ -9,8 +9,8 @@ modSearchResults(df, n = 5)
 \arguments{
   \item{df}{a dataframe resulting from a call to
   \code{\link{modSearch}}} \item{n}{an integer specified by
-  the user representing how many "best" and "worst" models
-  to report, defaults to 5}
+  the user representing how many "best" and "worst" models to
+  report, defaults to 5}
 }
 \value{
 a list with a bunch of elements

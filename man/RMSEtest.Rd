@@ -11,9 +11,9 @@ RMSEtest(mod, testdata, ...)
 }
 \arguments{
   \item{mod}{A model object to generate an
-  \code{\linkS4class{RMSEit}} for} \item{testdata}{A
-  dataframe to generate the ROC for the mode on} \item{...}
-  {optional additional parameters.}
+  \code{\linkS4class{RMSEit}} for} \item{testdata}{A dataframe
+  to generate the ROC for the mode on} \item{...}{optional
+  additional parameters.}
 }
 \value{
 A \code{\linkS4class{RMSEit}} object

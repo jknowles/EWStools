@@ -10,14 +10,14 @@ modAcc(fit, datatype = c("test", "train"), testdata = NULL,
 \arguments{
   \item{fit}{a \code{\linkS4class{train}} object generated
   by \code{\link{ROCtest}} or \code{\link{RMSEtest}}}
-  \item{datatype}{a named character representing the
-  accuracy object be built on either "train" or "test" data,
-  user can include both} \item{testdata}{a list of length
-  two containing a named slot for the matrix of predictors
-  (pred) and the vector of classes (class)} \item{modelKeep}
-  {a logical indicating whether the original model object
-  should be stored, default is FALSE} \item{...}{additional
-  arguments passed to \code{\link{modSearch}}}
+  \item{datatype}{a named character representing the accuracy
+  object be built on either "train" or "test" data, user
+  can include both} \item{testdata}{a list of length two
+  containing a named slot for the matrix of predictors (pred)
+  and the vector of classes (class)} \item{modelKeep}{a
+  logical indicating whether the original model object should
+  be stored, default is FALSE} \item{...}{additional arguments
+  passed to \code{\link{modSearch}}}
 }
 \value{
 a list with the following: \itemize{ \item{method -

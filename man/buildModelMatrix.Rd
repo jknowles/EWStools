@@ -7,10 +7,10 @@
 buildModelMatrix(data, predvars = NULL, keepNA = FALSE)
 }
 \arguments{
-  \item{data}{a dataframe that the user would like to
-  convert to a model matrix} \item{predvars}{a character
-  vector of the names of predictor variables} \item{keepNA}
-  {behavior with missing values, defaults to FALSE}
+  \item{data}{a dataframe that the user would like to convert
+  to a model matrix} \item{predvars}{a character vector of the
+  names of predictor variables} \item{keepNA}{behavior with
+  missing values, defaults to FALSE}
 }
 \value{
 A model matrix
