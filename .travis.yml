@@ -19,7 +19,6 @@ r_binary_packages:
   - rpart
   - modeltools
   - proxy
-  - parallel
   - doParallel
   - MASS
   - knitr
