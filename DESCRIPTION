@@ -2,7 +2,7 @@ Package: EWStools
 Type: Package
 Title: Tools for automating the testing and evaluation of education early
     warning system models
-Version: 0.9
+Version: 0.9.100
 Date: 2015-02-10
 Authors@R: person(c("Jared", "E."), "Knowles", role=c("aut", "cre"),
     email="Jared.Knowles@dpi.wi.gov")
@@ -13,18 +13,18 @@ Description: A number of convenience functions for developing early warning
 License: GPL-3
 Depends:
     R (>= 3.0),
-    pROC,
     caret,
     methods,
     doParallel
 Imports:
-    proxy,
+    pROC,
     stats
 Suggests:
     testthat,
     MASS, 
     knitr, 
     caretEnsemble,
-    e1071
+    e1071,
+    party
 Roxygen: list(wrap = TRUE)
 VignetteBuilder: knitr

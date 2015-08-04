@@ -72,7 +72,7 @@ DISit <- setClass("DISit", representation(thresh = "numeric",
 ##' @rdname DIStest
 ##' @method DIStest train
 ##' @importFrom pROC roc
-##' @importFrom pROC coords.roc
+##' @importFrom pROC coords
 ##' @export
 DIStest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
@@ -81,7 +81,7 @@ DIStest.train <- function(mod, testdata, ...){
     
     mroc <- roc(yhats$.outcome, yhats$yhat, percent=TRUE, algorithm=2)
     a <- mroc$auc[1]
-    thresh <- coords.roc(mroc, x="best", ...)[1]
+    thresh <- coords(mroc, x="best", ret="threshold", ...)
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     # create a distance matrix
@@ -115,7 +115,7 @@ DIStest.train <- function(mod, testdata, ...){
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
     mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
     a <- mroc$auc[1]
-    thresh <- coords.roc(mroc, x="best", ...)[1]
+    thresh <- coords(mroc, x="best", ret="threshold", ...)
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     # create a distance matrix

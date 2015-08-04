@@ -347,8 +347,8 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
                              you can declare parallel outside of the modTest 
                              or modSearch call.")
     } else {
-      myclus <- makeCluster(cores)
-      registerDoParallel(myclus)
+      myclus <- doParallel::makeCluster(cores)
+      doParallel::registerDoParallel(myclus)
     } 
   }
   datD <- c('rda', 'lda2', 'hda', 'mda', 'mlp', 'mlpWeightDecay', 
@@ -384,8 +384,8 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
   # multicore
   if(!missing(cores) & !is.null(cores)){
     if(myOS == "Windows"){
-      try(stopCluster(myclus))
-      try(stopImplicitCluster())
+      try(doParallel::stopCluster(myclus))
+      try(doParallel::stopImplicitCluster())
     }
   }
   if(class(fit) == "character"){
