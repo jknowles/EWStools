@@ -5,27 +5,24 @@
 \alias{caretMethods}
 \title{Extended version of caret model list from caret package}
 \source{
-Max Kuhn. Contributions from Jed Wing, Steve Weston,
-Andre Williams, Chris Keefer, Allan Engelhardt, Tony
-Cooper, Zachary Mayer and the R Core Team (2014). caret:
-Classification and Regression Training. R package version
-6.0-24. http://CRAN.R-project.org/package=caret
+Max Kuhn. Contributions from Jed Wing, Steve Weston, Andre Williams, Chris Keefer, Allan
+Engelhardt, Tony Cooper, Zachary Mayer and the R Core Team (2014). caret: Classification and
+Regression Training. R package version 6.0-24. http://CRAN.R-project.org/package=caret
 }
 \description{
 Data on caret model types.
 }
 \details{
-A dataframe with the following fields - most binary
-indicators: \itemize{ \item{model - Name of the model}
-\item{methodName - name of method for calling model
-in \code{\link{caret}}} \item{type - a factor with
-three levels: Classification, Dual Use, and Regression}
+A dataframe with the following fields - most binary indicators:
+\itemize{
+\item{model - Name of the model}
+\item{methodName - name of method for calling model in \code{\link{caret}}}
+\item{type - a factor with three levels: Classification, Dual Use, and Regression}
 \item{packages - names of packages needed for the model}
-\item{tuningParameters - comma separated string of
-tuning parameters} \item{tags - comma separated string of
-tags associated with model} \item{requiresJava - yes/no
-indicating whether Java is needed to install packages and
-run model} }
+\item{tuningParameters - comma separated string of tuning parameters}
+\item{tags - comma separated string of tags associated with model}
+\item{requiresJava - yes/no indicating whether Java is needed to install packages and run model}
+}
 }
 \references{
 Caret website: \url{http://caret.r-forge.r-project.org/}

@@ -8,10 +8,10 @@ are passed properly}
 cleanArg(args)
 }
 \arguments{
-  \item{args}{a list extracted from ...}
+\item{args}{a list extracted from ...}
 }
 \description{
-Reevaluates the ... arguments in the global environment to
-extract the proper values
+Reevaluates the ... arguments in the global environment to extract
+the proper values
 }
 

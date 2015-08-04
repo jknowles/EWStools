@@ -7,14 +7,15 @@
 subscores(df, VAR, RISK)
 }
 \arguments{
-  \item{df}{a dataframe} \item{VAR}{a character representing
-  the name of a variable in DF} \item{RISK}{a character
-  representing the name of a variable in DF}
+\item{df}{a dataframe}
+
+\item{VAR}{a character representing the name of a variable in DF}
+
+\item{RISK}{a character representing the name of a variable in DF}
 }
 \description{
-Given a dataframe, specify a variable to be the overall
-risk field and loop through all other fields and score them
-on whether the observation is closest to the others on the
-overall risk
+Given a dataframe, specify a variable to be the overall risk field and
+loop through all other fields and score them on whether the observation is closest to
+the others on the overall risk
 }
 

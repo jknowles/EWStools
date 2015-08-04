@@ -7,26 +7,23 @@
 reclassProb(yhats, thresh)
 }
 \arguments{
-  \item{yhats}{a dataframe resulting from a call to
-  \code{\link{probExtract}}} \item{thresh}{a numeric from 0 to
-  1 representing the cutpoint for the probability}
+\item{yhats}{a dataframe resulting from a call to \code{\link{probExtract}}}
+
+\item{thresh}{a numeric from 0 to 1 representing the cutpoint for the probability}
 }
 \value{
-a vector the length of rows in yhats representing the
-conversion from a numeric probability to a factor using the
-threshold thresh
+a vector the length of rows in yhats representing the conversion from a numeric
+probability to a factor using the threshold thresh
 }
 \description{
 For building confusion matrices
 }
 \details{
-Only works for caretEnsemble, train, and glm objects
-currently. Corrects for the differential ordering in what
-the predicted probability is with respect to.
+Only works for caretEnsemble, train, and glm objects currently. Corrects for
+the differential ordering in what the predicted probability is with respect to.
 }
 \note{
-If you find errors, it is likely that the probabilities are
-inverted. Please report this.
+If you find errors, it is likely that the probabilities are inverted. Please report this.
 }
 \keyword{internal}
 

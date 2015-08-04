@@ -10,6 +10,7 @@
 ##' for the dissimilarity matrix
 ##' @return Returns either a dataframe or a matrix with the dissimilarity values 
 ##' for the methods sampled and the names of the methods. 
+##' @importFrom proxy dist
 ##' @export
 ##' @examples
 #' require(EWStools)

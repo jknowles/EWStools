@@ -7,15 +7,13 @@
 dfExtract(mod)
 }
 \arguments{
-  \item{mod}{a list resulting from a call to
-  \code{\link{modAcc}}}
+\item{mod}{a list resulting from a call to \code{\link{modAcc}}}
 }
 \value{
 a data.frame with columns relating to RMSE or ROC fits
 }
 \description{
-Generic function to extract either ROC data or RMSE data
-from models
+Generic function to extract either ROC data or RMSE data from models
 }
 \note{
 See dfExtractRMSE or dfExtractROC for details

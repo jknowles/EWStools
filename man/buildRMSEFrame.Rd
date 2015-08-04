@@ -7,24 +7,24 @@
 buildRMSEFrame(methods)
 }
 \arguments{
-  \item{methods}{a list of \code{train} method names to
-  generate the dataframe for}
+\item{methods}{a list of \code{train} method names to generate the dataframe for}
 }
 \value{
 a \code{\link{data.frame}} with the following columns:
-\itemize{ \item{RMSE - the RMSE for the model on the test or
-training data} \item{RMSEsd - the standard deviation of the
-RMSE reported by training with caret} \item{Rsquare - The R
-squared reported for the best-fit in caret} \item{RsquareSD
-- the model method} \item{method - the area under the curve}
-\item{grp - the area under the curve} \item{elapsedTime -
-the time reported for the model to run} }
+\itemize{
+\item{RMSE - the RMSE for the model on the test or training data}
+\item{RMSEsd - the standard deviation of the RMSE reported by training with caret}
+\item{Rsquare - The R squared reported for the best-fit in caret}
+\item{RsquareSD - the model method}
+\item{method - the area under the curve}
+\item{grp - the area under the curve}
+\item{elapsedTime - the time reported for the model to run}
+}
 }
 \description{
 Used for generating the data to make comparative RMSE plots.
 }
 \note{
-The measures come from the \code{\linkS4class{RMSEit}}
-object
+The measures come from the \code{\linkS4class{RMSEit}} object
 }
 

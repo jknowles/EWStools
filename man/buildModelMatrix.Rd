@@ -7,10 +7,11 @@
 buildModelMatrix(data, predvars = NULL, keepNA = FALSE)
 }
 \arguments{
-  \item{data}{a dataframe that the user would like to convert
-  to a model matrix} \item{predvars}{a character vector of the
-  names of predictor variables} \item{keepNA}{behavior with
-  missing values, defaults to FALSE}
+\item{data}{a dataframe that the user would like to convert to a model matrix}
+
+\item{predvars}{a character vector of the names of predictor variables}
+
+\item{keepNA}{behavior with missing values, defaults to FALSE}
 }
 \value{
 A model matrix
@@ -19,8 +20,7 @@ A model matrix
 Turn a dataframe into a model matrix for caret functions
 }
 \note{
-Built on the \code{\link{model.matrix}} function. Does not
-produce an intercept term. Does not drop collinear factor
-levels.
+Built on the \code{\link{model.matrix}} function. Does not produce an
+intercept term. Does not drop collinear factor levels.
 }
 

@@ -4,11 +4,11 @@
 ##' @param p the proportion of data to be placed into a training set 
 ##' @param pvalid the proportion of data to be placed into the validation set 
 ##' @return A list with the following items:
-##' \itemize{
-##' \item{train - a data frame of the training values}
-##' \item{test - a data frame of the test values}
-##' \item{indexes - the row indexes of the original data frame selected to be in the training set}
-##' } 
+##' \describe{
+##' \item{train}{a data frame of the training values}
+##' \item{test}{a data frame of the test values}
+##' \item{indexes}{the row indexes of the original data frame selected to be in the training set}
+##' }
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package. pvalid 
 ##' is defined against the records remaining after holding out p for the training set.
 ##' @export
@@ -81,15 +81,15 @@ buildModelMatrix <- function(data, predvars = NULL, keepNA = FALSE){
 ##' @title Assemble train and test data for model building with EWStools
 ##' @param data a dataframe that the user would like to split into training and sample sets
 ##' @param class character value of the name of the dependent variable 
-##' @param predvars  a character vector of the names of predictor variables
+##' @param predvars a character vector of the names of predictor variables
 ##' @param p the proportion of data to be placed into a training set 
 ##' @param classification Is the training set for a classification problem or not? Default is TRUE.
 ##' @param keepNA Should missing values be preserved in the data sets? Logical. Default is FALSE.
 ##' @param ... additional arguments to be passed to assembleData
 ##' @return A list of lists with the following items:
-##' \itemize{
-##' \item{traindata - a list with a dataframe of the predictor matrix called preds, and the class called class}
-##' \item{testdata - a list with a dataframe of the predictor matrix called preds, and the class called class}
+##' \describe{
+##' \item{traindata}{a list with a dataframe of the predictor matrix called preds, and the class called class}
+##' \item{testdata}{a list with a dataframe of the predictor matrix called preds, and the class called class}
 ##' } 
 ##' @note Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
 ##' @details To return a 3-way split with a validation set, use the \code{pvalid} argument.If classification is set to true the "class" component of the list will be forced to a factor 

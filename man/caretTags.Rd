@@ -5,22 +5,22 @@
 \alias{caretTags}
 \title{Matrix of caret models by tag}
 \source{
-Max Kuhn. Contributions from Jed Wing, Steve Weston,
-Andre Williams, Chris Keefer, Allan Engelhardt, Tony
-Cooper, Zachary Mayer and the R Core Team (2014). caret:
-Classification and Regression Training. R package version
-6.0-24. http://CRAN.R-project.org/package=caret
+Max Kuhn. Contributions from Jed Wing, Steve Weston, Andre Williams, Chris Keefer, Allan
+Engelhardt, Tony Cooper, Zachary Mayer and the R Core Team (2014). caret: Classification and
+Regression Training. R package version 6.0-24. http://CRAN.R-project.org/package=caret
 }
 \description{
 Data on caret model types.
 }
 \details{
-A dataframe with the following fields - most binary
-indicators: \itemize{ \item{model - Name of the
-model} \item{Classification - Binary indicator of
-classification model} \item{Regression - Binary indicator
-of regression model} \item{Bagging - model does bagging}
-\item{Bayesian.Model - model is Bayesian} }
+A dataframe with the following fields - most binary indicators:
+\itemize{
+\item{model - Name of the model}
+\item{Classification - Binary indicator of classification model}
+\item{Regression  - Binary indicator of regression model}
+\item{Bagging - model does bagging}
+\item{Bayesian.Model - model is Bayesian}
+}
 }
 \references{
 Caret website: \url{http://caret.r-forge.r-project.org/}

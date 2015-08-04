@@ -18,7 +18,8 @@ Depends:
     doParallel
 Imports:
     pROC,
-    stats
+    proxy,
+    parallel
 Suggests:
     testthat,
     MASS, 
@@ -26,5 +27,4 @@ Suggests:
     caretEnsemble,
     e1071,
     party
-Roxygen: list(wrap = TRUE)
 VignetteBuilder: knitr

@@ -7,22 +7,25 @@
 dissimMethod(methods, k, distancemethod, n, what = c("tags", "matrix"))
 }
 \arguments{
-  \item{methods}{a vector of character representing
-  method names in caret} \item{k}{the number of clusters}
-  \item{distancemethod}{the method used to calculate the
-  dissimilarity} \item{n}{number methods to sample per
-  cluster} \item{what}{what to return, either "tags" for the
-  caretTags data or "matrix" for the dissimilarity matrix}
+\item{methods}{a vector of character representing method names in caret}
+
+\item{k}{the number of clusters}
+
+\item{distancemethod}{the method used to calculate the dissimilarity}
+
+\item{n}{number methods to sample per cluster}
+
+\item{what}{what to return, either "tags" for the caretTags data or "matrix"
+for the dissimilarity matrix}
 }
 \value{
-Returns either a dataframe or a matrix with the
-dissimilarity values for the methods sampled and the names
-of the methods.
+Returns either a dataframe or a matrix with the dissimilarity values
+for the methods sampled and the names of the methods.
 }
 \description{
 Create a subset of caret methods in an effort to maximize
-dissimilarity between them along the features identified in
-the caretTags dataset
+dissimilarity between them along the features identified in the caretTags
+dataset
 }
 \examples{
 require(EWStools)

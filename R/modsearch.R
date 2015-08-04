@@ -293,7 +293,7 @@ dfExtractROC <- function(mod){
 ##' @title Train a model and store \code{\linkS4class{ROCit}} tests on different datasets
 ##' @description This function wraps the \code{train} function in the \code{caret} package with model accuracy reports. 
 ##' It also allows for errors in fitting models to be caught to make it easier to use in a loop. 
-##' @param method a a string specifying which classification or regression model to use. Possible values are found using \code{names(getModelInfo())}. See http://caret.r-forge.r-project.org/bytag.html. A list of funciotns can also be passed for a custom model function. See http://caret.r-forge.r-project.org/custom_models.html for details
+##' @param method a a string specifying which classification or regression model to use. Possible values are found using \code{names(getModelInfo())}.
 ##' @param datatype a named character representing the accuracy object be built on either "train" or "test" data, 
 ##' user can include both
 ##' @param traindata a list of length two containing a named slot for the matrix of predictors 
@@ -324,7 +324,10 @@ dfExtractROC <- function(mod){
 ##' @note The values presented are for the optimal threshold as computed by the \code{\link{roc}} function.
 ##' For some model types linear combos of predictors may be omitted.
 ##' @export
-##' @import doParallel
+##' @importFrom parallel makeCluster
+##' @importFrom parallel stopCluster
+##' @importFrom doParallel stopImplicitCluster
+##' @importFrom doParallel registerDoParallel
 ##' @import caret
 modTest <- function(method, datatype=c("train", "test"), traindata, 
                     testdata=NULL, 
@@ -347,7 +350,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
                              you can declare parallel outside of the modTest 
                              or modSearch call.")
     } else {
-      myclus <- doParallel::makeCluster(cores)
+      myclus <- parallel::makeCluster(cores)
       doParallel::registerDoParallel(myclus)
     } 
   }
@@ -384,7 +387,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
   # multicore
   if(!missing(cores) & !is.null(cores)){
     if(myOS == "Windows"){
-      try(doParallel::stopCluster(myclus))
+      try(parallel::stopCluster(myclus))
       try(doParallel::stopImplicitCluster())
     }
   }
@@ -516,7 +519,6 @@ buildDISFrame <- function(methods){
 ##' \code{\linkS4class{ROCit}} object
 ##' @export
 ##' @import caret
-##' @import doParallel
 modSearch <- function(methods, ...){
   # parse ellipsis for modTest
   args <- eval(substitute(alist(...)))

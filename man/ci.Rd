@@ -7,20 +7,18 @@
 ci(x, scale)
 }
 \arguments{
-  \item{x}{a numeric vector, can contain missing values, if
-  so, they are ignored} \item{scale}{the factor to multiply
-  the standard deviation by when creating the interval}
+\item{x}{a numeric vector, can contain missing values, if so, they are ignored}
+
+\item{scale}{the factor to multiply the standard deviation by when creating the
+interval}
 }
 \value{
-a numeric vector with three elements, the low end of the
-confidence interval, the median, and the high end of the
-confidence interval
+a numeric vector with three elements, the low end of the confidence
+interval, the median, and the high end of the confidence interval
 }
 \description{
-Given a vector, this function produces a three number
-summary consisting of the median, the median minus the
-standard deviation (multiplied by a scaling factor), and the
-median plus the standard deviation multiplied by a scaling
-factor.
+Given a vector, this function produces a three number summary consisting
+of the median, the median minus the standard deviation (multiplied by a scaling
+factor), and the median plus the standard deviation multiplied by a scaling factor.
 }
 

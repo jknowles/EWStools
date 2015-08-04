@@ -6,23 +6,24 @@
 \alias{DISit-class}
 \title{Class "DISit" of distance statistics}
 \description{
-A \code{\link{glm}} or \code{\link{train}} object with
-a binary classification with rare events can be easily
-summarized using a distance statistic. This class provides
-an efficient mechanism to store and compare these results
-across models and across test, train, and validation
-datasets.
+A \code{\link{glm}} or \code{\link{train}} object with a binary classification
+with rare events can be easily summarized using a distance statistic.
+This class provides an efficient mechanism to store and compare these results
+across models and across test, train, and validation datasets.
 }
 \details{
-The object has the following items \itemize{ \item{bestFit
-- best results from train} \item{RMSE - best RMSE}
-\item{datatype - whether the ROC was computed on the "train"
-or the "test" data} \item{modtype - the class of the model
-object} \item{modcall - the call to the model fitting
-function} }
+The object has the following items
+\itemize{
+\item{bestFit - best results from train}
+\item{RMSE - best RMSE}
+\item{datatype - whether the ROC was computed on the "train" or the "test" data}
+\item{modtype - the class of the model object}
+\item{modcall - the call to the model fitting function}
+}
 }
 \section{Objects from the Class}{
-  Objects are created by calls to \code{\link{DISit}}.
+ Objects are created by calls to
+\code{\link{DISit}}.
 }
 \examples{
 showClass("DISit")

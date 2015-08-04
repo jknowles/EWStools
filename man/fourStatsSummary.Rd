@@ -7,13 +7,13 @@
 fourStatsSummary(data, lev = levels(data$obs), model = NULL)
 }
 \arguments{
-  \item{data}{a data frame or matrix with columns obs
-  and pred for the observed and predicted outcomes. For
-  twoClassSummary, columns should also include predicted
-  probabilities for each class. See the classProbs argument
-  to \code{\link{trainControl}}} \item{lev}{a character vector
-  of factors levels for the response} \item{model}{a character
-  string for the model name}
+\item{data}{a data frame or matrix with columns obs and pred for the observed
+and predicted outcomes. For twoClassSummary, columns should also include
+predicted probabilities for each class. See the classProbs argument to \code{\link{trainControl}}}
+
+\item{lev}{a character vector of factors levels for the response}
+
+\item{model}{a character string for the model name}
 }
 \description{
 Calculate distance from perfect prediction on resamples
@@ -22,7 +22,6 @@ Calculate distance from perfect prediction on resamples
 Max Kuhn
 }
 \references{
-\url{http://appliedpredictivemodeling.com/blog/?
-offset=1393611546982}
+\url{http://appliedpredictivemodeling.com/blog/?offset=1393611546982}
 }
 

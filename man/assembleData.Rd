@@ -8,36 +8,35 @@ assembleData(data, class, p, predvars, classification = TRUE,
   keepNA = FALSE, ...)
 }
 \arguments{
-  \item{data}{a dataframe that the user would like to split
-  into training and sample sets} \item{class}{character
-  value of the name of the dependent variable} \item{p}
-  {the proportion of data to be placed into a training
-  set} \item{predvars}{a character vector of the names of
-  predictor variables} \item{classification}{Is the training
-  set for a classification problem or not? Default is TRUE.}
-  \item{keepNA}{Should missing values be preserved in the
-  data sets? Logical. Default is FALSE.} \item{...}{additional
-  arguments to be passed to assembleData}
+\item{data}{a dataframe that the user would like to split into training and sample sets}
+
+\item{class}{character value of the name of the dependent variable}
+
+\item{p}{the proportion of data to be placed into a training set}
+
+\item{predvars}{a character vector of the names of predictor variables}
+
+\item{classification}{Is the training set for a classification problem or not? Default is TRUE.}
+
+\item{keepNA}{Should missing values be preserved in the data sets? Logical. Default is FALSE.}
+
+\item{...}{additional arguments to be passed to assembleData}
 }
 \value{
 A list of lists with the following items:
-\itemize{ \item{traindata - a list with a dataframe of the
-predictor matrix called preds, and the class called class}
-\item{testdata - a list with a dataframe of the predictor
-matrix called preds, and the class called class} }
+\describe{
+\item{traindata}{a list with a dataframe of the predictor matrix called preds, and the class called class}
+\item{testdata}{a list with a dataframe of the predictor matrix called preds, and the class called class}
+}
 }
 \description{
-Assemble train and test data for model building with
-EWStools
+Assemble train and test data for model building with EWStools
 }
 \details{
-To return a 3-way split with a validation set, use the
-\code{pvalid} argument.If classification is set to true the
-"class" component of the list will be forced to a factor for
-being fed into the train routine.
+To return a 3-way split with a validation set, use the \code{pvalid} argument.If classification is set to true the "class" component of the list will be forced to a factor
+for being fed into the train routine.
 }
 \note{
-Built on the \code{\link{createDataPartition}} function in
-the \code{caret} package.
+Built on the \code{\link{createDataPartition}} function in the \code{caret} package.
 }
 
