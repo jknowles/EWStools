@@ -3,7 +3,9 @@ library(caretEnsemble)
 data(EWStestData)
 
 test_that("ROCtests work for caretEnsembles", {
-  skip_on_cran("Takes too long on remotes")
+  skip_on_cran()
+  skip_if_not_installed("MASS")
+  skip_if_not_installed("klaR")
   ctrl <- trainControl(method = "repeatedcv", 
                        repeats = 3, classProbs = TRUE, savePredictions = TRUE,
                        summaryFunction = twoClassSummary)
@@ -16,16 +18,18 @@ test_that("ROCtests work for caretEnsembles", {
   outEns$metric <- "ROC"
   MA1 <- modAcc(outEns, datatype = c("test", "train"), testdata = modeldat$testdata)
   testdf1 <- dfExtract(modAcc(outEns, datatype = c("test", "train"), testdata = modeldat$testdata))
-  expect_is("res1", "ROCit")
-  expect_is("res2t", "ROCit")
-  expect_is("MA1", "list")
-  expect_is("testdf1", "data.frame")
-  expect_is("out", "caretList")
-  expect_is("outEns", "caretEnsemble")
+  expect_is(res1, "ROCit")
+  expect_is(res2t, "ROCit")
+  expect_is(MA1, "list")
+  expect_is(testdf1, "data.frame")
+  expect_is(out, "caretList")
+  expect_is(outEns, "caretEnsemble")
 })
 
 test_that("ROCtests work for caretStack", {
-  skip_on_cran("Takes too long on remotes")
+  skip_on_cran()
+  skip_if_not_installed("MASS")
+  skip_if_not_installed("klaR")
   ctrl <- trainControl(method = "repeatedcv", 
                        repeats = 3, classProbs = TRUE, savePredictions = TRUE,
                        summaryFunction = twoClassSummary)
@@ -34,14 +38,14 @@ test_that("ROCtests work for caretStack", {
                    y = modeldat$traindata$class, tuneLength = 5)
   outStack <- caretStack(out, method = 'glm')
   res1 <- ROCtest(outStack)
-  res2t <- ROCtest(outEns, testdata = modeldat$testdata)
+  res2t <- ROCtest(outStack, testdata = modeldat$testdata)
   outStack$metric <- "ROC"
   MA1 <- modAcc(outStack, datatype = c("test", "train"), testdata = modeldat$testdata)
   testdf1 <- dfExtract(modAcc(outStack, datatype = c("test", "train"), testdata = modeldat$testdata))
-  expect_is("res1", "ROCit")
-  expect_is("res2t", "ROCit")
-  expect_is("MA1", "list")
-  expect_is("testdf1", "data.frame")
-  expect_is("out", "caretList")
-  expect_is("outEns", "caretEnsemble")
+  expect_is(res1, "ROCit")
+  expect_is(res2t, "ROCit")
+  expect_is(MA1, "list")
+  expect_is(testdf1, "data.frame")
+  expect_is(out, "caretList")
+  expect_is(outStack, "caretStack")
 })

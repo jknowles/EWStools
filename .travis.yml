@@ -1,7 +1,15 @@
 language: r
 
-r_packages: 
-  - caretEnsemble
+sudo: required
+
+env:
+  global:
+    - WARNINGS_ARE_ERRORS=1
+  matrix:
+    - NOT_CRAN="true"
+    - NOT_CRAN="false"
+
+r_binary_packages: 
   - testthat
   - party
   - pROC
@@ -10,6 +18,18 @@ r_packages:
   - ggplot2
   - rpart
   - modeltools
+  - proxy
+  - parallel
+  - doParallel
+  - MASS
+  - knitr
+
+r_github_packages:
+  - zachmayer/caretEnsemble
+  - jimhester/covr
+
+after_success:
+  - Rscript -e 'library(covr);coveralls()'
 
 notifications:
   email:
