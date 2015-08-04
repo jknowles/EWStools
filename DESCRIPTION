@@ -13,13 +13,12 @@ Description: A number of convenience functions for developing early warning
 License: GPL-3
 Depends:
     R (>= 3.0),
-    caret,
-    methods,
-    doParallel
+    caret
 Imports:
     pROC,
     proxy,
-    parallel
+    parallel,
+    doParallel
 Suggests:
     testthat,
     MASS, 
