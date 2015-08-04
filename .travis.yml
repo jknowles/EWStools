@@ -22,6 +22,7 @@ r_binary_packages:
   - doParallel
   - MASS
   - knitr
+  - rpart
 
 r_github_packages:
   - zachmayer/caretEnsemble
