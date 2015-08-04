@@ -26,5 +26,6 @@ Suggests:
     caretEnsemble,
     e1071,
     party,
-    ggplot2
+    ggplot2,
+    rpart
 VignetteBuilder: knitr
