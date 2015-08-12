@@ -2,7 +2,7 @@ Package: EWStools
 Type: Package
 Title: Tools for automating the testing and evaluation of education early
     warning system models
-Version: 0.9.100
+Version: 0.9.1.9100
 Date: 2015-02-10
 Authors@R: person(c("Jared", "E."), "Knowles", role=c("aut", "cre"),
     email="Jared.Knowles@dpi.wi.gov")

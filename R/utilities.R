@@ -347,7 +347,7 @@ cleanArg <- function(args){
 ##' @return a numeric vector with three elements, the low end of the confidence 
 ##' interval, the median, and the high end of the confidence interval
 ##' @export
-ci <- function(x, scale){
+ci_pred <- function(x, scale){
   lowCI <- median(x, na.rm=T) - (scale * sd(x, na.rm=T))
   hiCI <- median(x, na.rm=T) + (scale * sd(x, na.rm=T))
   med <- median(x, na.rm=T)
@@ -373,7 +373,7 @@ ci <- function(x, scale){
 subscores <- function(df, VAR, RISK){
   cis <- tapply(df[, match(VAR, colnames(df))], 
                 df[, match(RISK, colnames(df))], 
-                function(x){(ci(x, 0.5))}, simplify=TRUE)
+                function(x){(ci_pred(x, 0.5))}, simplify=TRUE)
   
   thresh <- expand.grid(group = c("High", "Moderate", "Low"), 
                         min = rep(NA), med = rep(NA),
