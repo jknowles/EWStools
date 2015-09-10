@@ -81,7 +81,7 @@ DIStest.train <- function(mod, testdata, ...){
     
     mroc <- roc(yhats$.outcome, yhats$yhat, percent=TRUE, algorithm=2)
     a <- mroc$auc[1]
-    thresh <- coords(mroc, x="best", ret="threshold", ...)
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     # create a distance matrix
@@ -113,21 +113,21 @@ DIStest.train <- function(mod, testdata, ...){
     # end error handling
     yhats <- probExtract(mod, testdata = testdata)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
+    mroc <- pROC::roc(.outcome ~ yhat, data=yhats, precent=TRUE, algorithm=2)
     a <- mroc$auc[1]
-    thresh <- coords(mroc, x="best", ret="threshold", ...)
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     # create a distance matrix
-    coords <- matrix(c(1, 1, cm$byClass["Specificity"], 
+    coordsb <- matrix(c(1, 1, cm$byClass["Specificity"], 
                        cm$byClass["Sensitivity"]), 
                      ncol = 2, 
                      byrow = TRUE)
-    colnames(coords) <- c("Spec", "Sens")
-    rownames(coords) <- c("Best", "Current")
-    Dist = dist(coords)[1]
+    colnames(coordsb) <- c("Spec", "Sens")
+    rownames(coordsb) <- c("Best", "Current")
+    Dist = dist(coordsb)[1]
     myDIS <- DISit(thresh = thresh, 
-                   dist = Dist, coords = coords,
+                   dist = Dist, coords = coordsb,
                    auc = a, confusematrix = cm, 
                    rocobj = mroc,
                    modtype = class(mod), 

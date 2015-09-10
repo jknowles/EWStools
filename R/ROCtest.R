@@ -56,7 +56,7 @@ ROCit <- setClass(Class = "ROCit", slots = c(thresh = "numeric",
 ##' @usage ROCtest(mod, testdata, ...)
 ##' @param mod A model object to generate an \code{\linkS4class{ROCit}} for
 ##' @param testdata A dataframe to generate the ROC for the mode on
-##' @param ... optional additional parameters. 
+##' @param ... optional additional parameters to pass to pROC::coords such as best.weights 
 ##' @return A \code{\linkS4class{ROCit}} object 
 ##' @details
 ##' The object has the following items
@@ -89,9 +89,9 @@ ROCtest.glm <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)
    # message("Generating ROC...")
-    mroc <- roc(.outcome ~ yhat, percent=TRUE, data = yhats)
+    mroc <- pROC::roc(.outcome ~ yhat, percent=TRUE, data = yhats)
     a <- mroc$auc[1]
-    thresh <- coords(mroc, x="best", ret="threshold", ...)
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                          reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
@@ -121,9 +121,9 @@ ROCtest.glm <- function(mod, testdata, ...){
 #     testdata <- factor_norm(mod, testdata, ...)
     yhats <- probExtract(mod, testdata = testdata)
     #message("Generating ROC...")
-    mroc <- roc(.outcome ~ yhat, percent=TRUE, data=yhats, smooth = FALSE)
+    mroc <- pROC::roc(.outcome ~ yhat, percent=TRUE, data=yhats, smooth = FALSE)
     a <- mroc$auc[1]
-    thresh <- coords(mroc, x="best", ret="threshold", ...)
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
@@ -147,10 +147,10 @@ ROCtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
+    mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                  smooth = FALSE)
     a <- mroc$auc[1]
-    thresh <- coords(mroc, x="best", ret="threshold", ...)
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
@@ -174,10 +174,10 @@ ROCtest.train <- function(mod, testdata, ...){
     # end error handling
     yhats <- probExtract(mod, testdata = testdata)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
+    mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    thresh <- coords(mroc, x="best", ret="threshold", ...)
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
@@ -198,10 +198,10 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
+    mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- coords(mroc, x="best", ret="threshold")[1]
+    modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
@@ -225,10 +225,10 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     # end error handling
     yhats <- probExtract(mod, testdata = testdata)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
+    mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- coords(mroc, x="best", ret="threshold")[1]
+    modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
@@ -249,10 +249,10 @@ ROCtest.caretStack <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
+    mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- coords(mroc, x="best", ret="threshold")[1]
+    modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
@@ -276,10 +276,10 @@ ROCtest.caretStack <- function(mod, testdata, ...){
     # end error handling
     yhats <- probExtract(mod, testdata = testdata)
     if(is.null(yhats)==TRUE) stop("Cannot generate probabilities")
-    mroc <- roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
+    mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- coords(mroc, x="best", ret="threshold")[1]
+    modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
@@ -316,7 +316,7 @@ print.ROCit <- function(x, ...){
 
 ##' @title Extract a summary of an \code{\linkS4class{ROCit}} object
 ##' @param object a \code{\linkS4class{ROCit}} object generated by \code{\link{ROCtest}}
-##' @param ... optional additional parameters. 
+##' @param ... optional additional parameters 
 ##' @return A list with the following items:
 ##' \itemize{
 ##' \item{datatype - whether the ROC was computed on the "train" or the "test" data}

@@ -23,7 +23,7 @@ ROCtest(mod, testdata, ...)
 
 \item{testdata}{A dataframe to generate the ROC for the mode on}
 
-\item{...}{optional additional parameters.}
+\item{...}{optional additional parameters to pass to pROC::coords such as best.weights}
 }
 \value{
 A \code{\linkS4class{ROCit}} object
