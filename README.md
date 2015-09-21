@@ -1,7 +1,7 @@
 ## EWStools
 
 [![Build Status](https://travis-ci.org/jknowles/EWStools.png?branch=master)](https://travis-ci.org/jknowles/EWStools)
-
+[![Coverage Status](https://coveralls.io/repos/jknowles/EWStools/badge.svg?branch=master&service=github)](https://coveralls.io/github/jknowles/EWStools?branch=master)
 ### Overview
 
 `EWStools` is the source-code behind many of the modules within the [Wisconsin 
