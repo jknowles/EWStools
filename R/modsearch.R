@@ -575,6 +575,8 @@ modSearch <- function(methods, ...){
   }
   pb <- txtProgressBar(min = 0, max = length(methods), style = 3)
   for(i in methods){
+    message(paste0("Started method ", i, " at ", Sys.time(), "."))
+    processStartTime <- Sys.time()
     p <- match(i, methods)
     z <- list(method = i)
     z <- c(z, args)
@@ -589,6 +591,10 @@ modSearch <- function(methods, ...){
       ModelFits <- ModelFits
       message(paste(tmp, "failure for model type:", i, sep=" "))
     }
+      message(paste0("Processed method ", i, " for ", 
+      round(as.numeric(difftime(Sys.time(), processStartTime, u = 'mins')), 2),
+      " minutes."))
+      rm(processStartTime)
       setTxtProgressBar(pb, p)      
   }
   ModelFits <- ModelFits[!duplicated(ModelFits),] # drop duplicates
